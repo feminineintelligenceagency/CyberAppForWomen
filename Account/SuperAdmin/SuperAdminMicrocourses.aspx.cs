@@ -47,7 +47,7 @@ namespace CyberApp_FIA.Account
 
         protected void BtnLogout_Click(object sender, EventArgs e)
         {
-            Session.Clear();
+            AuthSession.SignOut(Context);   // Epic #7: fully end the session and delete session + token cookies
             Response.Redirect("~/Welcome_Page.aspx");
         }
 

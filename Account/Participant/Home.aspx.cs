@@ -533,7 +533,7 @@ namespace CyberApp_FIA.Participant
 
             foreach (XmlElement conv in doc.SelectNodes($"/helperMessages/conversation[@participantId='{participantId}' and @helperId='{helperId}']"))
             {
-                var topic = conv.GetAttribute("topic") ?? "";
+                var topic = DataProtector.Decrypt(conv.GetAttribute("topic") ?? "");   // Epic #7: decrypt topic for the conversation card
                 var createdOnStr = conv.GetAttribute("createdOn");
                 var lastUpdatedStr = conv.GetAttribute("lastUpdated");
 
@@ -1970,7 +1970,7 @@ namespace CyberApp_FIA.Participant
 
         protected void BtnLogout_Click(object sender, EventArgs e)
         {
-            Session.Clear();
+            AuthSession.SignOut(Context);   // Epic #7: fully end the session and delete session + token cookies
             Response.Redirect("~/Welcome_Page.aspx");
         }
 
@@ -2276,9 +2276,3 @@ namespace CyberApp_FIA.Participant
         }
     }
 }
-
-
-
-
-
-

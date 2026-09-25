@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Web.UI;
 using System.Xml;
+using System.Globalization;   // Epic #7 (Piece 3): needed to read the saved lockout time
 using System.Security.Cryptography;
 using CyberApp_FIA.Services;
 
@@ -20,6 +21,12 @@ namespace CyberApp_FIA.Account
         /// App_Data is not served directly by IIS, making it suitable for lightweight data files.
         /// </summary>
         private string XmlPath => Server.MapPath("~/App_Data/users.xml");
+
+        // Epic #7 (Piece 3): lock an account after this many wrong passwords in a row...
+        private const int MaxFailedAttempts = 5;
+
+        // ...for this long.
+        private static readonly TimeSpan LockoutDuration = TimeSpan.FromMinutes(15);
 
         /// <summary>
         /// Click handler for the Login button:
@@ -48,9 +55,18 @@ namespace CyberApp_FIA.Account
             // Normalize input email to lowercase-invariant for consistent matching.
             var emailLower = Email.Text.Trim().ToLowerInvariant();
 
-            // XPath uses translate() to normalize stored emails to lowercase, enabling case-insensitive search.
-            var userNode = doc.SelectSingleNode(
-                $"/users/user[translate(email,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='{emailLower}']");
+            // Epic #7: find the user by looping and comparing emails as plain text, instead of
+            // building an XPath query from user input (prevents XPath injection).
+            XmlNode userNode = null;
+            foreach (XmlNode node in doc.SelectNodes("/users/user"))
+            {
+                var storedEmail = (node["email"]?.InnerText ?? "").Trim().ToLowerInvariant();
+                if (storedEmail == emailLower)
+                {
+                    userNode = node;
+                    break;
+                }
+            }
 
             // If not found, do not reveal whether the email exists—return a generic failure message.
             if (userNode == null)
@@ -102,6 +118,17 @@ namespace CyberApp_FIA.Account
                 return;
             }
 
+            // --- Epic #7 (Piece 3): is this account currently locked? ---
+            // If so, stop here WITHOUT checking the password, so guessing can't continue
+            // during the lockout (even a correct guess is rejected until it expires).
+            var lockoutText = GetChildText(userNode, "lockoutUntil");
+            if (DateTime.TryParse(lockoutText, null, DateTimeStyles.RoundtripKind, out var lockoutUntil)
+                && lockoutUntil > DateTime.UtcNow)
+            {
+                var minutesLeft = (int)Math.Ceiling((lockoutUntil - DateTime.UtcNow).TotalMinutes);
+                FormMessage.Text = $"<span style='color:#c21d1d'>Too many failed sign-in attempts. Please try again in {minutesLeft} minute(s).</span>";
+                return;
+            }
 
             // Retrieve stored salt and hash from the XML node. Both must be present.
             var saltB64 = userNode["passwordSalt"]?.InnerText ?? "";
@@ -132,6 +159,25 @@ namespace CyberApp_FIA.Account
             // Compare hashes using a constant-time routine to reduce timing side-channel leakage.
             if (!SecureEquals(storedHash, enteredHash))
             {
+
+                // --- Epic #7 (Piece 3): count this failure; lock the account after too many ---
+                int.TryParse(GetChildText(userNode, "failedAttempts"), out var failedAttempts);
+                failedAttempts++;
+
+                bool nowLocked = failedAttempts >= MaxFailedAttempts;
+                if (nowLocked)
+                {
+                    // Lock until 15 minutes from now, and reset the counter for after the lock ends.
+                    SetChildText(doc, userNode, "lockoutUntil", DateTime.UtcNow.Add(LockoutDuration).ToString("o"));
+                    SetChildText(doc, userNode, "failedAttempts", "0");
+                }
+                else
+                {
+                    SetChildText(doc, userNode, "failedAttempts", failedAttempts.ToString());
+                }
+                doc.Save(XmlPath);
+
+
                 // --- AUDIT: log failed password attempt for an existing account ---
                 try
                 {
@@ -164,13 +210,15 @@ namespace CyberApp_FIA.Account
                     entry.SetAttribute("id", "log-" + Guid.NewGuid().ToString("N"));
                     entry.SetAttribute("university", uni);
                     entry.SetAttribute("role", string.IsNullOrWhiteSpace(roleAttr) ? "Unknown" : roleAttr);
-                    entry.SetAttribute("type", "Sign In Failed (Bad Password)");
+                    entry.SetAttribute("type", nowLocked ? "Account Locked (Too Many Failed Sign-Ins)" : "Sign In Failed (Bad Password)");
                     entry.SetAttribute("timestamp", DateTime.UtcNow.ToString("o"));
                     entry.SetAttribute("email", emailLower);
                     entry.SetAttribute("firstName", firstName);
 
                     var detailsEl = auditDoc.CreateElement("details");
-                    detailsEl.InnerText = "Incorrect password entered for existing account during sign in.";
+                    detailsEl.InnerText = nowLocked
+                        ? $"Account locked for {LockoutDuration.TotalMinutes} minutes after {MaxFailedAttempts} incorrect passwords."
+                        : "Incorrect password entered for existing account during sign in.";
                     entry.AppendChild(detailsEl);
 
                     auditDoc.DocumentElement.AppendChild(entry);
@@ -181,10 +229,19 @@ namespace CyberApp_FIA.Account
                     // Best-effort only; never block login failure flow if audit logging breaks.
                 }
 
-                FormMessage.Text = "<span style='color:#c21d1d'>Invalid email or password.</span>";
+                FormMessage.Text = nowLocked
+                    ? $"<span style='color:#c21d1d'>Too many failed sign-in attempts. Please try again in {LockoutDuration.TotalMinutes} minutes.</span>"
+                    : "<span style='color:#c21d1d'>Invalid email or password.</span>";
                 return;
             }
 
+            // --- Epic #7 (Piece 3): correct password, so clear any failed-attempt history ---
+            if (userNode["failedAttempts"] != null || userNode["lockoutUntil"] != null)
+            {
+                RemoveChild(userNode, "failedAttempts");
+                RemoveChild(userNode, "lockoutUntil");
+                doc.Save(XmlPath);
+            }
 
             // --- Authentication succeeded ---
             // Extract id and role attributes from the <user> element for session initialization.
@@ -199,6 +256,7 @@ namespace CyberApp_FIA.Account
 
             // Optionally load the user's university (may be empty for some roles).
             Session["University"] = userNode["university"]?.InnerText ?? "";
+            AuthSession.SignIn(Context);
 
             // --- AUDIT: log sign-in for all primary roles into University Admin audit log ---
             var normalizedRole = (role ?? string.Empty).Trim();
@@ -256,6 +314,38 @@ namespace CyberApp_FIA.Account
                 return pbkdf2.GetBytes(32); // 256-bit
             }
         }
+
+
+        // ===================== Epic #7: small XML helpers =====================
+
+        /// <summary>
+        /// Reads a child element's text, or "" if it doesn't exist.</summary>
+        private static string GetChildText(XmlNode node, string name)
+        {
+            return node[name]?.InnerText ?? "";
+        }
+
+        /// <summary>
+        /// Sets a child element's text, creating the element if it doesn't exist yet.</summary>
+        private static void SetChildText(XmlDocument doc, XmlNode node, string name, string value)
+        {
+            var child = node[name];
+            if (child == null)
+            {
+                child = doc.CreateElement(name);
+                node.AppendChild(child);
+            }
+            child.InnerText = value;
+        }
+
+        /// <summary>
+        /// Removes a child element if it exists.</summary>
+        private static void RemoveChild(XmlNode node, string name)
+        {
+            var child = node[name];
+            if (child != null) node.RemoveChild(child);
+        }
+
 
         /// <summary>
         /// Constant-time byte array comparison to mitigate timing attacks.

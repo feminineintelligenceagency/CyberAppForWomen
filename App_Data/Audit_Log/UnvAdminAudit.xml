@@ -13,4 +13,28 @@
         firstName   : first name for quick scanning in UI
     - <details>   : short human-readable description of what happened
   -->
+  <entry id="log-8dd9d7dce5d54f969fa9f35064667a8d" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-24T22:08:58.5390350Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-1b6afc13a1a94a2d923a863eeb9ba657" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-24T22:14:26.1471786Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-cd19504f6213457a968c5a1f4143b05c" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-24T22:14:35.4312990Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-d86f40f5cce74b54ac884306bcac2389" university="" role="SuperAdmin" type="Sign In Failed (Bad Password)" timestamp="2026-09-24T22:16:49.3016479Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>Incorrect password entered for existing account during sign in.</details>
+  </entry>
+  <entry id="log-f42e472759004091bf1e457d3a8bdf93" university="" role="SuperAdmin" type="Sign In Failed (Bad Password)" timestamp="2026-09-24T22:16:51.7230963Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>Incorrect password entered for existing account during sign in.</details>
+  </entry>
+  <entry id="log-4b7ead393dc04b4da9fb87a75c7b08f6" university="" role="SuperAdmin" type="Sign In Failed (Bad Password)" timestamp="2026-09-24T22:16:53.8097072Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>Incorrect password entered for existing account during sign in.</details>
+  </entry>
+  <entry id="log-53dd4d076a16429ba6fb8cfdfbc14d21" university="" role="SuperAdmin" type="Sign In Failed (Bad Password)" timestamp="2026-09-24T22:16:55.9228924Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>Incorrect password entered for existing account during sign in.</details>
+  </entry>
+  <entry id="log-2b60e82a96fa46c0a839a0bad8343444" university="" role="SuperAdmin" type="Account Locked (Too Many Failed Sign-Ins)" timestamp="2026-09-24T22:16:57.9316588Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>Account locked for 15 minutes after 5 incorrect passwords.</details>
+  </entry>
 </auditLog>

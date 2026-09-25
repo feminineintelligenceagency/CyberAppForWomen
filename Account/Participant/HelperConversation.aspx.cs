@@ -70,7 +70,7 @@ namespace CyberApp_FIA.Participant
             if (!string.Equals(convParticipantId, participantId, StringComparison.OrdinalIgnoreCase))
                 throw new InvalidOperationException("Not your conversation.");
 
-            var topic = conv.GetAttribute("topic") ?? "";
+            var topic = DataProtector.Decrypt(conv.GetAttribute("topic") ?? "");   // Epic #7: decrypt topic
             var helperName = conv.GetAttribute("helperName") ?? "";
 
             TopicLiteral.Text = Server.HtmlEncode(topic);
@@ -83,7 +83,7 @@ namespace CyberApp_FIA.Participant
                 var from = msg.GetAttribute("from") ?? "participant";
                 var senderName = msg.GetAttribute("senderName") ?? "";
                 var tsStr = msg.GetAttribute("ts") ?? "";
-                var body = msg.InnerText ?? "";
+                var body = DataProtector.Decrypt(msg.InnerText ?? "");   // Epic #7: decrypt message body
 
                 DateTime tsUtc;
                 if (!DateTime.TryParse(tsStr, CultureInfo.InvariantCulture,
@@ -136,7 +136,7 @@ namespace CyberApp_FIA.Participant
                 EnsureXmlDoc(HelperMessagesXmlPath, "helperMessages");
 
                 // For audit logging after we save
-                string topicForLog = null;
+                
                 string helperNameForLog = null;
 
                 lock (HelperMessagesLock)
@@ -164,13 +164,13 @@ namespace CyberApp_FIA.Participant
                     msg.SetAttribute("from", "participant");
                     msg.SetAttribute("senderName", participantName);
                     msg.SetAttribute("ts", nowUtc.ToString("o", CultureInfo.InvariantCulture));
-                    msg.InnerText = reply;
+                    msg.InnerText = DataProtector.Encrypt(reply);   // Epic #7: encrypt reply
 
                     conv.AppendChild(msg);
                     conv.SetAttribute("lastUpdated", nowUtc.ToString("o", CultureInfo.InvariantCulture));
 
                     // capture for logging outside the lock
-                    topicForLog = conv.GetAttribute("topic") ?? string.Empty;
+                    
                     helperNameForLog = conv.GetAttribute("helperName") ?? string.Empty;
 
                     doc.Save(HelperMessagesXmlPath);
@@ -179,13 +179,12 @@ namespace CyberApp_FIA.Participant
                 // INSERT: audit log for participant reply in conversation
                 try
                 {
-                    var safeTopic = string.IsNullOrWhiteSpace(topicForLog) ? "(no subject)" : topicForLog;
                     var safeHelperName = string.IsNullOrWhiteSpace(helperNameForLog) ? "their Helper" : helperNameForLog;
 
                     UniversityAuditLogger.AppendForCurrentUser(
                         this,
                         "Participant Helper Message (Reply)",
-                        $"Participant replied in a one-on-one conversation with {safeHelperName} (topic: \"{safeTopic}\")."
+                        $"Participant replied in a one-on-one conversation with {safeHelperName}."  // Epic #7: no topic in logs
                     );
                 }
                 catch

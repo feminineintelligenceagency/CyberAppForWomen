@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CyberApp_FIA.Services;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -129,7 +130,7 @@ namespace CyberApp_FIA.Helper
 
                 foreach (XmlElement conv in convNodes)
                 {
-                    var topic = conv.GetAttribute("topic") ?? "";
+                    var topic = DataProtector.Decrypt(conv.GetAttribute("topic") ?? "");   // Epic #7: decrypt topic
                     var id = conv.GetAttribute("id") ?? "";
 
                     var createdOnStr = conv.GetAttribute("createdOn");

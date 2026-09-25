@@ -97,7 +97,7 @@ namespace CyberApp_FIA.Helper
             ParticipantName.Text = GetParticipantDisplayName(participantIdAttr);
 
             // Topic + dates
-            var topic = conv.GetAttribute("topic") ?? "";
+            var topic = DataProtector.Decrypt(conv.GetAttribute("topic") ?? "");   // Epic #7: decrypt topic
             Topic.Text = Server.HtmlEncode(topic);
 
             var createdOnStr = conv.GetAttribute("createdOn");
@@ -239,6 +239,7 @@ namespace CyberApp_FIA.Helper
                 string bodyRaw = m["body"]?.InnerText;
                 if (string.IsNullOrEmpty(bodyRaw))
                     bodyRaw = m.InnerText ?? string.Empty;
+                    bodyRaw = DataProtector.Decrypt(bodyRaw);   // Epic #7: decrypt message body
 
                 var bodyHtml = Server.HtmlEncode(bodyRaw).Replace("\r\n", "<br />").Replace("\n", "<br />");
 
@@ -295,7 +296,7 @@ namespace CyberApp_FIA.Helper
                 msg.SetAttribute("sentOn", DateTime.UtcNow.ToString("o"));
 
                 // Simple inner text message body (participant side can also read this)
-                msg.InnerText = replyText;
+                msg.InnerText = DataProtector.Encrypt(replyText);   // Epic #7: encrypt reply
 
                 conv.AppendChild(msg);
 
@@ -316,17 +317,12 @@ namespace CyberApp_FIA.Helper
 
                     var participantDisplay = GetParticipantDisplayName(participantId);
 
-                    var topic = conv.GetAttribute("topic") ?? string.Empty;
-                    var safeTopic = topic ?? string.Empty;
-                    if (safeTopic.Length > 120)
-                    {
-                        safeTopic = safeTopic.Substring(0, 120) + "...";
-                    }
+                    
 
                     UniversityAuditLogger.AppendForCurrentUser(
                         this,
                         "Helper Message (Reply)",
-                        $"Helper replied in a one-on-one conversation with {participantDisplay} (topic: \"{safeTopic}\").");
+                        $"Helper replied in a one-on-one conversation with {participantDisplay}.");   // Epic #7: no topic in logs
                 }
                 catch
                 {

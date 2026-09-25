@@ -1,14 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <users version="1">
-	<user id="aceb0b211edf42cbb0f300460dfb86d8" role="SuperAdmin">
-		<firstName>Lauren</firstName>
-		<lastName>Nignon</lastName>
-		<email>lauren.nignon@gmail.com</email>
-		<university></university>
-		<passwordHash>nH6gMG/4D4kJe4PTbWeVmvMpJyf9n50WTHO9BmiLYX4=</passwordHash>
-		<passwordSalt>J77PGCdQmtfkLna7LHl+yw==</passwordSalt>
-		<createdAt>2026-05-01T04:07:33Z</createdAt>
-		<consentAcceptedAt>2026-05-01T04:07:33Z</consentAcceptedAt>
-		<consentIp>127.0.0.1</consentIp>
-	</user>
+  <user id="aceb0b211edf42cbb0f300460dfb86d8" role="SuperAdmin">
+    <firstName>Lauren</firstName>
+    <lastName>Nignon</lastName>
+    <email>lauren.nignon@gmail.com</email>
+    <university>
+    </university>
+    <passwordHash>nH6gMG/4D4kJe4PTbWeVmvMpJyf9n50WTHO9BmiLYX4=</passwordHash>
+    <passwordSalt>J77PGCdQmtfkLna7LHl+yw==</passwordSalt>
+    <createdAt>2026-05-01T04:07:33Z</createdAt>
+    <consentAcceptedAt>2026-05-01T04:07:33Z</consentAcceptedAt>
+    <consentIp>127.0.0.1</consentIp>
+    <failedAttempts>0</failedAttempts>
+    <lockoutUntil>2026-09-24T22:31:57.9282610Z</lockoutUntil>
+  </user>
 </users>
