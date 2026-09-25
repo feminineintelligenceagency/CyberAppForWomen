@@ -7,7 +7,7 @@ using System.Xml;
 
 namespace CyberApp_FIA.Account
 {
-    public partial class CreateUniversityAdmin : Page
+    public partial class CreateUniversityAdmin : SecurePage
     {
         /// <summary>
         /// Physical path to ~/App_Data/users.xml.
@@ -39,7 +39,7 @@ namespace CyberApp_FIA.Account
 
         protected void BtnLogout_Click(object sender, EventArgs e)
         {
-            Session.Clear();
+            SessionHelper.SignOut(Context);
             Response.Redirect("~/Welcome_Page.aspx");
         }
 

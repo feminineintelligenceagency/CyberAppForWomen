@@ -13,4 +13,46 @@
         firstName   : first name for quick scanning in UI
     - <details>   : short human-readable description of what happened
   -->
+  <entry id="log-cc0581c3d98c4db68d7d76bae4f75c7e" university="" role="Unknown" type="Sign In Failed (Unknown Email)" timestamp="2026-09-23T10:50:28.4691454Z" email="nignon@gmail.com" firstName="">
+    <details>Sign-in attempt with an email address that does not exist in users.xml.</details>
+  </entry>
+  <entry id="log-cee48cc5947c4dfc8f6caab2bda9a8aa" university="Arizona State University" role="Participant" type="Account Created" timestamp="2026-09-23T10:50:39.1521863Z" email="kenny050513@gmail.com" firstName="Kenneth">
+    <details>New Participant account created (userId=81b69831bc794af189b52cc99a3c4d7f). Consent accepted at 2026-09-23T10:50:38.5902150Z UTC from IP ::1.</details>
+  </entry>
+  <entry id="log-3bb1720dca004892b98815170ae3b038" university="" role="Participant" type="Sign In" timestamp="2026-09-23T10:50:42.1820606Z" email="kenny050513@gmail.com" firstName="Kenneth">
+    <details>Participant signed in.</details>
+  </entry>
+  <entry id="log-d662b7b88ef646409a9bce0cf1620d87" university="" role="Participant" type="Sign In" timestamp="2026-09-23T10:50:55.5354419Z" email="kenny050513@gmail.com" firstName="Kenneth">
+    <details>Participant signed in.</details>
+  </entry>
+  <entry id="log-24976ef8b0aa402abbcdfc1988d453cb" university="Arizona State University" role="Participant" type="Account Created" timestamp="2026-09-23T10:52:11.2770873Z" email="knguy162@asu.edu" firstName="Kenneth">
+    <details>New Participant account created (userId=603f37604051464fb2caed64505dd5ec). Consent accepted at 2026-09-23T10:52:10.6817844Z UTC from IP ::1.</details>
+  </entry>
+  <entry id="log-4f3703053da743deb8bf9bf6cc5c80a5" university="" role="Participant" type="Sign In" timestamp="2026-09-23T10:52:14.9582000Z" email="knguy162@asu.edu" firstName="Kenneth">
+    <details>Participant signed in.</details>
+  </entry>
+  <entry id="log-418d2e0658944cf3af2b0e5272a497e4" university="" role="Participant" type="Sign In" timestamp="2026-09-24T22:20:44.8491908Z" email="knguy162@asu.edu" firstName="Kenneth">
+    <details>Participant signed in.</details>
+  </entry>
+  <entry id="log-0871148d60144d11aec1c517e80e99ef" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-24T23:53:37.7962876Z" email="kenny050513@gmail.com" firstName="Kenneth">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-d292bf46c6414c1bb026f1e3e4c8b5a2" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-25T04:46:26.5621960Z" email="kenny050513@gmail.com" firstName="Kenneth">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-c90650b3637c4774ab16891f4a8dec69" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-25T04:47:43.8487575Z" email="kenny050513@gmail.com" firstName="Kenneth">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-a55ac6871ee746d29bc5ebaa812504ac" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-25T05:02:35.9690947Z" email="kenny050513@gmail.com" firstName="Kenneth">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-78d443a1aad84ff0a3374d9fa73924f5" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-25T05:04:42.2510030Z" email="kenny050513@gmail.com" firstName="Kenneth">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-562d7e0b651c4db7a482c9679c73edd2" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-25T05:06:29.1674808Z" email="kenny050513@gmail.com" firstName="Kenneth">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-853d2a8335a44e40af889ca1da49f2df" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-25T05:08:53.9744942Z" email="kenny050513@gmail.com" firstName="Kenneth">
+    <details>SuperAdmin signed in.</details>
+  </entry>
 </auditLog>

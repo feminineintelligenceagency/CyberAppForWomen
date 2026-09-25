@@ -1,14 +1,39 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <users version="1">
-	<user id="aceb0b211edf42cbb0f300460dfb86d8" role="SuperAdmin">
-		<firstName>Lauren</firstName>
-		<lastName>Nignon</lastName>
-		<email>lauren.nignon@gmail.com</email>
-		<university></university>
-		<passwordHash>nH6gMG/4D4kJe4PTbWeVmvMpJyf9n50WTHO9BmiLYX4=</passwordHash>
-		<passwordSalt>J77PGCdQmtfkLna7LHl+yw==</passwordSalt>
-		<createdAt>2026-05-01T04:07:33Z</createdAt>
-		<consentAcceptedAt>2026-05-01T04:07:33Z</consentAcceptedAt>
-		<consentIp>127.0.0.1</consentIp>
-	</user>
+  <user id="aceb0b211edf42cbb0f300460dfb86d8" role="SuperAdmin">
+    <firstName>Lauren</firstName>
+    <lastName>Nignon</lastName>
+    <email>lauren.nignon@gmail.com</email>
+    <university>
+    </university>
+    <passwordHash>nH6gMG/4D4kJe4PTbWeVmvMpJyf9n50WTHO9BmiLYX4=</passwordHash>
+    <passwordSalt>J77PGCdQmtfkLna7LHl+yw==</passwordSalt>
+    <createdAt>2026-05-01T04:07:33Z</createdAt>
+    <consentAcceptedAt>2026-05-01T04:07:33Z</consentAcceptedAt>
+    <consentIp>127.0.0.1</consentIp>
+  </user>
+  <user id="81b69831bc794af189b52cc99a3c4d7f" role="SuperAdmin">
+    <firstName>Kenneth</firstName>
+    <lastName>Nguyen</lastName>
+    <email>kenny050513@gmail.com</email>
+    <university>
+    </university>
+    <passwordHash>qoxQ6hSuJUeiMM4Whim67b2p+4SnHV4Ynp6isf6f66o=</passwordHash>
+    <passwordSalt>jjgruCFPqLkNYqeUSVsRUw==</passwordSalt>
+    <createdAt>2026-09-23T10:50:38.5902150Z</createdAt>
+    <consentAcceptedAt>2026-09-23T10:50:38.5902150Z</consentAcceptedAt>
+    <consentIp>::1</consentIp>
+  </user>
+  <user id="603f37604051464fb2caed64505dd5ec" role="Participant">
+    <firstName>Kenneth</firstName>
+    <lastName>Nguyen</lastName>
+    <email>knguy162@asu.edu</email>
+    <university>
+    </university>
+    <passwordHash>jXTZIYvNsxGGPNg2tbFdS1TuhrX+DwVpxmbSUsqXlSY=</passwordHash>
+    <passwordSalt>KZ8V06Tqt3tMCdZZL2IHSw==</passwordSalt>
+    <createdAt>2026-09-23T10:52:10.6817844Z</createdAt>
+    <consentAcceptedAt>2026-09-23T10:52:10.6817844Z</consentAcceptedAt>
+    <consentIp>::1</consentIp>
+  </user>
 </users>

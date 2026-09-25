@@ -10,7 +10,7 @@ namespace CyberApp_FIA.Helper
     /// Tries to show the URL in an iframe and always offers a
     /// "open in new tab" fallback.
     /// </summary>
-    public partial class ResourceViewer : Page
+    public partial class ResourceViewer : SecurePage
     {
         private string MicrocoursesXmlPath => Server.MapPath("~/App_Data/microcourses.xml");
 

@@ -10,7 +10,7 @@ using CyberApp_FIA.Services;
 
 namespace CyberApp_FIA.Participant
 {
-    public partial class HelperConversation : Page
+    public partial class HelperConversation : SecurePage
     {
         private string HelperMessagesXmlPath => Server.MapPath("~/App_Data/helperMessages.xml");
         private static readonly object HelperMessagesLock = new object();

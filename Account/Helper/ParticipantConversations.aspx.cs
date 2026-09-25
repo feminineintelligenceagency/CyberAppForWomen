@@ -13,7 +13,7 @@ namespace CyberApp_FIA.Helper
     /// Helper view of all conversations with a single participant.
     /// Reads from helperMessages.xml and filters by participantId + helperId.
     /// </summary>
-    public partial class ParticipantConversations : Page
+    public partial class ParticipantConversations : SecurePage
     {
         private string HelperMessagesXmlPath => Server.MapPath("~/App_Data/helperMessages.xml");
         private string UsersXmlPath => Server.MapPath("~/App_Data/users.xml");

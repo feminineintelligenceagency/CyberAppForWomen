@@ -6,7 +6,7 @@ using System.Xml;
 
 namespace CyberApp_FIA.Participant
 {
-    public partial class EnrollSuccess : Page
+    public partial class EnrollSuccess : SecurePage
     {
         private string EventSessionsXmlPath => Server.MapPath("~/App_Data/eventSessions.xml");
         private string MicrocoursesXmlPath => Server.MapPath("~/App_Data/microcourses.xml");

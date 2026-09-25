@@ -16,7 +16,7 @@ namespace CyberApp_FIA.Account.SuperAdmin
     /// - 100,000 iterations
     /// - Base64 stored values
     /// </summary>
-    public partial class PasswordReset : Page
+    public partial class PasswordReset : SecurePage
     {
         private const int SaltByteSize = 16;
         private const int HashByteSize = 32;

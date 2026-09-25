@@ -10,7 +10,7 @@ using CyberApp_FIA.Services;
 
 namespace CyberApp_FIA.Account
 {
-    public partial class UniversityAdminHelperAudit : Page
+    public partial class UniversityAdminHelperAudit : SecurePage
     {
         private const int PageSize = 25;
 

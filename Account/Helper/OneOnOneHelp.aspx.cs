@@ -18,7 +18,7 @@ namespace CyberApp_FIA.Helper
     /// with their first name and email address, plus message indicators.
     /// Also lets Helpers log one-to-one help sessions for certification progress.
     /// </summary>
-    public partial class OneOnOneHelp : Page
+    public partial class OneOnOneHelp : SecurePage
     {
         private string UsersXmlPath => Server.MapPath("~/App_Data/users.xml");
 

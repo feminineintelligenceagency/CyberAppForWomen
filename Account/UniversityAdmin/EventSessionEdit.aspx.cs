@@ -9,7 +9,7 @@ using CyberApp_FIA.Services;
 
 namespace CyberApp_FIA.Account
 {
-    public partial class EventSessionEdit : Page
+    public partial class EventSessionEdit : SecurePage
     {
         private string EventsXmlPath => Server.MapPath("~/App_Data/events.xml");
         private string EventSessionsXmlPath => Server.MapPath("~/App_Data/eventSessions.xml");

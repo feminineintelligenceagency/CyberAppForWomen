@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace CyberApp_FIA.Participant
 {
-    public partial class SelectEvent : Page
+    public partial class SelectEvent : SecurePage
     {
         private string EventsXmlPath => Server.MapPath("~/App_Data/events.xml");
         private string UsersXmlPath => Server.MapPath("~/App_Data/users.xml");

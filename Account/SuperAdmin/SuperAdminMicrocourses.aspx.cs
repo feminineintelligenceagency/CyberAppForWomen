@@ -11,7 +11,7 @@ using CyberApp_FIA.Services;
 
 namespace CyberApp_FIA.Account
 {
-    public partial class SuperAdminMicrocourses : Page
+    public partial class SuperAdminMicrocourses : SecurePage
     {
         // Paths to datastores
         private string MicrocoursesXmlPath => Server.MapPath("~/App_Data/microcourses.xml");
@@ -47,7 +47,7 @@ namespace CyberApp_FIA.Account
 
         protected void BtnLogout_Click(object sender, EventArgs e)
         {
-            Session.Clear();
+            SessionHelper.SignOut(Context);
             Response.Redirect("~/Welcome_Page.aspx");
         }
 

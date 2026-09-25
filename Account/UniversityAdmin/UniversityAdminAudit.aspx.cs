@@ -9,7 +9,7 @@ using System.Xml;
 
 namespace CyberApp_FIA.Account
 {
-    public partial class UniversityAdminAudit : Page
+    public partial class UniversityAdminAudit : SecurePage
     {
         private const int PageSize = 25;
 

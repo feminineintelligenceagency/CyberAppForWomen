@@ -8,7 +8,7 @@ using System.Xml;
 
 namespace CyberApp_FIA.Participant
 {
-    public partial class Badges : Page
+    public partial class Badges : SecurePage
     {
         private string ParticipantBadgesXmlPath => Server.MapPath("~/App_Data/participantBadges.xml");
         private string BadgeDescriptionsXmlPath => Server.MapPath("~/App_Data/badgeDescriptions.xml");

@@ -29,6 +29,17 @@ namespace CyberApp_FIA.Account
         /// - Verifies password with PBKDF2 using the stored salt
         /// - On success, initializes session and redirects by role
         /// </summary>
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!IsPostBack && Request.QueryString["expired"] == "1")
+            {
+                // Make sure the old session is really dead on the server
+                SessionHelper.SignOut(Context);
+
+                FormMessage.Text = "<span style='color:#c21d1d'>Your session has ended. Please log in again.</span>";
+            }
+        }
         protected void BtnLogin_Click(object sender, EventArgs e)
         {
             // Respect ASP.NET validation controls (RequiredFieldValidator, etc.).

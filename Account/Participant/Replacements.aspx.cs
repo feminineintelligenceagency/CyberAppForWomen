@@ -10,7 +10,7 @@ using System.Xml;
 
 namespace CyberApp_FIA.Participant
 {
-    public partial class Replacements : Page
+    public partial class Replacements : SecurePage
     {
         // XML paths
         private string EventSessionsXmlPath => Server.MapPath("~/App_Data/eventSessions.xml");

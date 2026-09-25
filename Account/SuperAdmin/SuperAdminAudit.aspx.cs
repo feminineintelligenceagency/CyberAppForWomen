@@ -11,7 +11,7 @@ using System.Web;
 
 namespace CyberApp_FIA.Account
 {
-    public partial class SuperAdminAudit : Page
+    public partial class SuperAdminAudit : SecurePage
     {
         private const int PageSize = 25;
         private const int CriticalPageSize = 25;

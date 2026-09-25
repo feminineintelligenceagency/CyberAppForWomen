@@ -18,7 +18,7 @@ namespace CyberApp_FIA.Account
     /// - Binds selectable certification rules from ~/App_Data/certificationRules.xml
     /// - NEW: Allows selecting existing microcourses as prerequisites
     /// </summary>
-    public partial class SuperAdminHome : Page
+    public partial class SuperAdminHome : SecurePage
     {
         // Path to microcourses datastore (XML with <microcourses><course .../></microcourses>)
         private string MicrocoursesXmlPath => Server.MapPath("~/App_Data/microcourses.xml");
@@ -55,7 +55,7 @@ namespace CyberApp_FIA.Account
 
         protected void BtnLogout_Click(object sender, EventArgs e)
         {
-            Session.Clear();
+            SessionHelper.SignOut(Context);
             Response.Redirect("~/Welcome_Page.aspx");
         }
 
