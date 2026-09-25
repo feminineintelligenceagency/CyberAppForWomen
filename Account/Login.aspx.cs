@@ -102,93 +102,31 @@ namespace CyberApp_FIA.Account
                 return;
             }
 
-
-            // Retrieve stored salt and hash from the XML node. Both must be present.
-            var saltB64 = userNode["passwordSalt"]?.InnerText ?? "";
-            var hashB64 = userNode["passwordHash"]?.InnerText ?? "";
-            if (string.IsNullOrEmpty(saltB64) || string.IsNullOrEmpty(hashB64))
+            var element = (XmlElement)userNode;
+            bool needsRehash;
+            // Verify the password using the passHasher utility. If verification fails, log the failed attempt and show a generic error message.
+            if (!passHasher.VerifyUser(element, Password.Text, out needsRehash))
             {
-                // Account entry is incomplete or corrupted; fail closed with a safe error message.
-                FormMessage.Text = "<span style='color:#c21d1d'>This account is misconfigured.</span>";
+                var roleAttr = element.GetAttribute("role");
+                WriteFailedSignInAudit(
+                    email: emailLower,
+                    role: string.IsNullOrWhiteSpace(roleAttr) ? "Unknown" : roleAttr,
+                    university: userNode["university"]?.InnerText ?? "",
+                    firstName: userNode["firstName"]?.InnerText ?? "",
+                    type: "Sign In Failed (Bad Password)",
+                    details: "Incorrect password (or missing/corrupted hash data) for existing account during sign in.");
+
+                ShowInvalidCredentials();
                 return;
             }
 
-            // Decode Base64-encoded salt and hash; catch bad formats to avoid exceptions surfacing to the user.
-            byte[] salt, storedHash;
-            try
+            if (needsRehash)
             {
-                salt = Convert.FromBase64String(saltB64);
-                storedHash = Convert.FromBase64String(hashB64);
+                UpgradePasswordHash(emailLower, Password.Text);
             }
-            catch
-            {
-                FormMessage.Text = "<span style='color:#c21d1d'>This account is misconfigured.</span>";
-                return;
-            }
-
-            // Recompute the PBKDF2 hash using the submitted password and the stored per-user salt.
-            var enteredHash = HashPassword(Password.Text, salt);
-
-            // Compare hashes using a constant-time routine to reduce timing side-channel leakage.
-            if (!SecureEquals(storedHash, enteredHash))
-            {
-                // --- AUDIT: log failed password attempt for an existing account ---
-                try
-                {
-                    // userNode is non-null here (email exists in users.xml)
-                    var userElement = (XmlElement)userNode;
-                    var roleAttr = userElement.GetAttribute("role") ?? "";
-                    var uni = userNode["university"]?.InnerText ?? "";
-                    var firstName = userNode["firstName"]?.InnerText ?? "";
-
-                    var auditPath = Server.MapPath("~/App_Data/Audit_Log/UnvAdminAudit.xml");
-
-                    // Ensure directory + file exist
-                    var auditDir = Path.GetDirectoryName(auditPath);
-                    if (!string.IsNullOrEmpty(auditDir) && !Directory.Exists(auditDir))
-                    {
-                        Directory.CreateDirectory(auditDir);
-                    }
-
-                    var auditDoc = new XmlDocument();
-                    if (File.Exists(auditPath))
-                    {
-                        auditDoc.Load(auditPath);
-                    }
-                    else
-                    {
-                        auditDoc.LoadXml("<?xml version='1.0' encoding='utf-8'?><auditLog version='1'></auditLog>");
-                    }
-
-                    var entry = auditDoc.CreateElement("entry");
-                    entry.SetAttribute("id", "log-" + Guid.NewGuid().ToString("N"));
-                    entry.SetAttribute("university", uni);
-                    entry.SetAttribute("role", string.IsNullOrWhiteSpace(roleAttr) ? "Unknown" : roleAttr);
-                    entry.SetAttribute("type", "Sign In Failed (Bad Password)");
-                    entry.SetAttribute("timestamp", DateTime.UtcNow.ToString("o"));
-                    entry.SetAttribute("email", emailLower);
-                    entry.SetAttribute("firstName", firstName);
-
-                    var detailsEl = auditDoc.CreateElement("details");
-                    detailsEl.InnerText = "Incorrect password entered for existing account during sign in.";
-                    entry.AppendChild(detailsEl);
-
-                    auditDoc.DocumentElement.AppendChild(entry);
-                    auditDoc.Save(auditPath);
-                }
-                catch
-                {
-                    // Best-effort only; never block login failure flow if audit logging breaks.
-                }
-
-                FormMessage.Text = "<span style='color:#c21d1d'>Invalid email or password.</span>";
-                return;
-            }
-
 
             // --- Authentication succeeded ---
             // Extract id and role attributes from the <user> element for session initialization.
-            var element = (XmlElement)userNode;
             var id = element.GetAttribute("id");
             var role = element.GetAttribute("role");
 
@@ -245,28 +183,87 @@ namespace CyberApp_FIA.Account
         }
 
         /// <summary>
-        /// PBKDF2 password hashing (same parameters as sign-up so verification matches).
-        /// Uses 100,000 iterations and returns a 32-byte (256-bit) derived key.
-        /// Note: In .NET Framework, Rfc2898DeriveBytes uses HMACSHA1 by default.
+        /// Appends a failed sign-in entry to the University Admin audit log.
         /// </summary>
-        private static byte[] HashPassword(string password, byte[] salt)
+        private void WriteFailedSignInAudit(
+            string email,
+            string role,
+            string university,
+            string firstName,
+            string type,
+            string details)
         {
-            using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 100000))
+            try
             {
-                return pbkdf2.GetBytes(32); // 256-bit
+                var auditDir = Path.GetDirectoryName(Server.MapPath("~/App_Data/Audit_Log/UnvAdminAudit.xml"));
+                if (!string.IsNullOrEmpty(auditDir) && !Directory.Exists(auditDir))
+                {
+                    Directory.CreateDirectory(auditDir);
+                }
+
+                var auditDoc = new XmlDocument();
+                if (File.Exists(Server.MapPath("~/App_Data/Audit_Log/UnvAdminAudit.xml")))
+                {
+                    auditDoc.Load(Server.MapPath("~/App_Data/Audit_Log/UnvAdminAudit.xml"));
+                }
+                else
+                {
+                    auditDoc.LoadXml("<?xml version='1.0' encoding='utf-8'?><auditLog version='1'></auditLog>");
+                }
+
+                var entry = auditDoc.CreateElement("entry");
+                entry.SetAttribute("id", "log-" + Guid.NewGuid().ToString("N"));
+                entry.SetAttribute("university", university ?? "");
+                entry.SetAttribute("role", role ?? "Unknown");
+                entry.SetAttribute("type", type);
+                entry.SetAttribute("timestamp", DateTime.UtcNow.ToString("o"));
+                entry.SetAttribute("email", email ?? "");
+                entry.SetAttribute("firstName", firstName ?? "");
+
+                var detailsEl = auditDoc.CreateElement("details");
+                detailsEl.InnerText = details;
+                entry.AppendChild(detailsEl);
+
+                auditDoc.DocumentElement.AppendChild(entry);
+                auditDoc.Save(Server.MapPath("~/App_Data/Audit_Log/UnvAdminAudit.xml"));
+            }
+            catch
+            {
+                // Best-effort only.
             }
         }
 
         /// <summary>
-        /// Constant-time byte array comparison to mitigate timing attacks.
-        /// Returns true only if arrays are same length and all bytes match.
+        /// Re-hashes the user's password with current Argon2id settings and saves it.
+        /// Reloads users.xml fresh right before saving so we don't overwrite changes other
+        /// requests made since this request first loaded the file.
         /// </summary>
-        private static bool SecureEquals(byte[] a, byte[] b)
+        private void UpgradePasswordHash(string emailLower, string password)
         {
-            if (a == null || b == null || a.Length != b.Length) return false;
-            int diff = 0;
-            for (int i = 0; i < a.Length; i++) diff |= a[i] ^ b[i];
-            return diff == 0;
+            try
+            {
+                var doc = new XmlDocument();
+                doc.Load(XmlPath);
+
+                var userNode = doc.SelectSingleNode($"/users/user[translate(email,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='{emailLower}']");
+                var userEl = userNode as XmlElement;   // null if not found
+                if (userEl == null) return;
+
+                passHasher.SetPassword(userEl, password);
+                doc.Save(XmlPath);
+            }
+            catch
+            {
+                // Swallow: user is already authenticated; upgrade retries on next login.
+            }
+        }
+
+        /// <summary>
+        /// Generic failure message: never reveal whether the email or the password was wrong.
+        /// </summary>
+        private void ShowInvalidCredentials()
+        {
+            FormMessage.Text = "<span style='color:#c21d1d'>Invalid email or password.</span>";
         }
     }
 }

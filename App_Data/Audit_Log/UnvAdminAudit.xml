@@ -13,4 +13,163 @@
         firstName   : first name for quick scanning in UI
     - <details>   : short human-readable description of what happened
   -->
+  <entry id="log-931ab2a333514c3ea4be65d50b917f8b" university="Arizona State University" role="Participant" type="Account Created" timestamp="2026-09-22T19:53:09.4154497Z" email="test@gmail.com" firstName="test">
+    <details>New Participant account created (userId=daeedc79f88742efb1a6625055d94fdf). Consent accepted at 2026-09-22T19:53:08.7816338Z UTC from IP 127.0.0.1.</details>
+  </entry>
+  <entry id="log-f764962bc28d431f85bc83bf84d962cd" university="" role="Participant" type="Sign In" timestamp="2026-09-22T19:53:16.6551409Z" email="test@gmail.com" firstName="test">
+    <details>Participant signed in.</details>
+  </entry>
+  <entry id="log-cca20005458b46a9bfd2716dd511da6b" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-22T19:53:52.1771045Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-f40af86655214662ae129a4210d77af8" university="Arizona State University" role="Participant" type="Account Created" timestamp="2026-09-22T23:56:34.1593220Z" email="test2@gmail.com" firstName="test">
+    <details>New Participant account created (userId=4717efc7c89949c69d621df6afbadd54). Consent accepted at 2026-09-22T23:56:34.0331571Z UTC from IP 127.0.0.1.</details>
+  </entry>
+  <entry id="log-d463d73e40484764b250544aae394fb0" university="Arizona State University" role="Participant" type="Account Created" timestamp="2026-09-22T23:57:01.6509426Z" email="test3@gmail.com" firstName="test">
+    <details>New Participant account created (userId=de357b92df954cd0a2366b33b3ccdb07). Consent accepted at 2026-09-22T23:57:01.5732289Z UTC from IP 127.0.0.1.</details>
+  </entry>
+  <entry id="log-51668a854f274dd8b1232271dad9d737" university="" role="Participant" type="Sign In" timestamp="2026-09-23T03:44:50.9208441Z" email="test2@gmail.com" firstName="test">
+    <details>Participant signed in.</details>
+  </entry>
+  <entry id="log-0a4758bb25ab427fba54064870d232dc" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-23T03:45:27.3378109Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-50ff652a5cd74c47b356248dbd474a69" university="" role="Participant" type="Sign In" timestamp="2026-09-23T03:46:33.2742460Z" email="test2@gmail.com" firstName="test">
+    <details>Participant signed in.</details>
+  </entry>
+  <entry id="log-c397ee3f7a1a456da47ddcc6dd7d0c0e" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-23T03:47:23.3616127Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-0947e3309ea44eb3a54324a67aef6a50" university="" role="Participant" type="Sign In" timestamp="2026-09-23T03:48:28.1307459Z" email="test2@gmail.com" firstName="test">
+    <details>Participant signed in.</details>
+  </entry>
+  <entry id="log-9adf0ab603734666bd2d4cbab300c814" university="ASU" role="UniversityAdmin" type="Sign In" timestamp="2026-09-23T03:48:55.2766364Z" email="asu@asu.edu" firstName="test">
+    <details>UniversityAdmin signed in.</details>
+  </entry>
+  <entry id="log-acefc4ac023343fb933c920405299371" university="" role="Participant" type="Sign In" timestamp="2026-09-23T03:49:42.6228037Z" email="test2@gmail.com" firstName="test">
+    <details>Participant signed in.</details>
+  </entry>
+  <entry id="log-fda88dc259bd4c518f72ffc7f732866e" university="ASU" role="Participant" type="Participant Pre-Event Quiz Completion" timestamp="2026-09-23T03:50:38.3088340Z" email="test2@gmail.com" firstName="test">
+    <details>Participant completed the pre-event cybersecurity quiz.</details>
+  </entry>
+  <entry id="log-e44cf2b740f4444181acec0c0e0f5d24" university="ASU" role="Participant" type="Sign In" timestamp="2026-09-23T03:51:10.1907038Z" email="test2@gmail.com" firstName="test">
+    <details>Participant signed in.</details>
+  </entry>
+  <entry id="log-b6d46137fa6e4c0e8120012b5add2ac9" university="ASU" role="Participant" type="Sign In Failed (Bad Password)" timestamp="2026-09-23T04:01:02.2946288Z" email="test2@gmail.com" firstName="test">
+    <details>Incorrect password (or missing/corrupted hash data) for existing account during sign in.</details>
+  </entry>
+  <entry id="log-3f7f0895ec5446dc83ff320ae646cc57" university="ASU" role="Participant" type="Sign In" timestamp="2026-09-23T04:01:04.7181660Z" email="test2@gmail.com" firstName="test">
+    <details>Participant signed in.</details>
+  </entry>
+  <entry id="log-cbb022842f034be2a0878352ff3ba13d" university="" role="Participant" type="Sign In Failed (Bad Password)" timestamp="2026-09-23T04:01:22.4725865Z" email="test3@gmail.com" firstName="test">
+    <details>Incorrect password (or missing/corrupted hash data) for existing account during sign in.</details>
+  </entry>
+  <entry id="log-9ea6931a109b42cc98334f66396e5a74" university="" role="Participant" type="Sign In" timestamp="2026-09-23T04:01:24.4317126Z" email="test3@gmail.com" firstName="test">
+    <details>Participant signed in.</details>
+  </entry>
+  <entry id="log-902593b9ee8c41f2b648d3707e63afe0" university="ASU" role="UniversityAdmin" type="Sign In Failed (Bad Password)" timestamp="2026-09-23T04:01:33.9575586Z" email="asu@asu.edu" firstName="test">
+    <details>Incorrect password (or missing/corrupted hash data) for existing account during sign in.</details>
+  </entry>
+  <entry id="log-465aa44c7ae64b47ab7cda9024c023f3" university="ASU" role="UniversityAdmin" type="Sign In Failed (Bad Password)" timestamp="2026-09-23T04:01:35.7469429Z" email="asu@asu.edu" firstName="test">
+    <details>Incorrect password (or missing/corrupted hash data) for existing account during sign in.</details>
+  </entry>
+  <entry id="log-a89bd444384f4d63bea33d4986f63a83" university="ASU" role="UniversityAdmin" type="Sign In Failed (Bad Password)" timestamp="2026-09-23T04:01:38.8023381Z" email="asu@asu.edu" firstName="test">
+    <details>Incorrect password (or missing/corrupted hash data) for existing account during sign in.</details>
+  </entry>
+  <entry id="log-05671174d7ba4cfb9ec707463e7e5b05" university="ASU" role="UniversityAdmin" type="Sign In Failed (Bad Password)" timestamp="2026-09-23T04:01:40.9478929Z" email="asu@asu.edu" firstName="test">
+    <details>Incorrect password (or missing/corrupted hash data) for existing account during sign in.</details>
+  </entry>
+  <entry id="log-32bb078bfda047ed893d272e1fb20bd6" university="ASU" role="UniversityAdmin" type="Sign In Failed (Bad Password)" timestamp="2026-09-23T04:01:42.8859634Z" email="asu@asu.edu" firstName="test">
+    <details>Incorrect password (or missing/corrupted hash data) for existing account during sign in.</details>
+  </entry>
+  <entry id="log-d7eb029753c74c8493fd85dc66deeb14" university="ASU" role="UniversityAdmin" type="Sign In Failed (Bad Password)" timestamp="2026-09-23T04:01:47.9917700Z" email="asu@asu.edu" firstName="test">
+    <details>Incorrect password (or missing/corrupted hash data) for existing account during sign in.</details>
+  </entry>
+  <entry id="log-202ee343a1de40a5b86908d9c40f18b4" university="ASU" role="UniversityAdmin" type="Sign In Failed (Bad Password)" timestamp="2026-09-23T04:01:56.7275785Z" email="asu@asu.edu" firstName="test">
+    <details>Incorrect password (or missing/corrupted hash data) for existing account during sign in.</details>
+  </entry>
+  <entry id="log-68ef4a3109004dba928e247620418535" university="ASU" role="UniversityAdmin" type="Sign In Failed (Bad Password)" timestamp="2026-09-23T04:06:19.5454185Z" email="asu@asu.edu" firstName="test">
+    <details>Incorrect password (or missing/corrupted hash data) for existing account during sign in.</details>
+  </entry>
+  <entry id="log-6e607526f89b44e7873f732a586b2435" university="ASU" role="UniversityAdmin" type="Sign In Failed (Bad Password)" timestamp="2026-09-23T04:06:21.9761339Z" email="asu@asu.edu" firstName="test">
+    <details>Incorrect password (or missing/corrupted hash data) for existing account during sign in.</details>
+  </entry>
+  <entry id="log-2f20923209d047b38df3d0f680bba223" university="ASU" role="UniversityAdmin" type="Sign In Failed (Bad Password)" timestamp="2026-09-23T04:06:24.8420158Z" email="asu@asu.edu" firstName="test">
+    <details>Incorrect password (or missing/corrupted hash data) for existing account during sign in.</details>
+  </entry>
+  <entry id="log-e7e51db08bbf4feab9c35a9cdb30222b" university="" role="Unknown" type="Sign In Failed (Unknown Email)" timestamp="2026-09-23T04:07:02.1956215Z" email="test1@gmail.com" firstName="">
+    <details>Sign-in attempt with an email address that does not exist in users.xml.</details>
+  </entry>
+  <entry id="log-2f372fae53c24fd2902bc4f2d94e703f" university="" role="Unknown" type="Sign In Failed (Unknown Email)" timestamp="2026-09-23T04:07:04.2419590Z" email="test1@gmail.com" firstName="">
+    <details>Sign-in attempt with an email address that does not exist in users.xml.</details>
+  </entry>
+  <entry id="log-aed36d24fa274f738902788f1e3c0022" university="ASU" role="Participant" type="Sign In" timestamp="2026-09-23T04:07:07.6841674Z" email="test2@gmail.com" firstName="test">
+    <details>Participant signed in.</details>
+  </entry>
+  <entry id="log-07a480c17a5f4c8a9c32c6643c5d18d3" university="" role="SuperAdmin" type="Sign In Failed (Bad Password)" timestamp="2026-09-23T04:07:29.6249193Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>Incorrect password (or missing/corrupted hash data) for existing account during sign in.</details>
+  </entry>
+  <entry id="log-b7e49e3584fb47c0b6912a54b179ce27" university="" role="Unknown" type="Sign In Failed (Unknown Email)" timestamp="2026-09-23T04:13:27.3403575Z" email="test1@gmail.com" firstName="">
+    <details>Sign-in attempt with an email address that does not exist in users.xml.</details>
+  </entry>
+  <entry id="log-ddd1da6f2f7f43b289754df4464e6c8b" university="" role="Unknown" type="Sign In Failed (Unknown Email)" timestamp="2026-09-23T04:13:31.1159019Z" email="test1@gmail.com" firstName="">
+    <details>Sign-in attempt with an email address that does not exist in users.xml.</details>
+  </entry>
+  <entry id="log-5d74cc3405be4baf98bb1226211859c5" university="" role="Unknown" type="Sign In Failed (Unknown Email)" timestamp="2026-09-23T04:17:45.4660104Z" email="test1@gmail.com" firstName="">
+    <details>Sign-in attempt with an email address that does not exist in users.xml.</details>
+  </entry>
+  <entry id="log-050fa595f476405cac97b1b62e92dfbf" university="" role="Unknown" type="Sign In Failed (Unknown Email)" timestamp="2026-09-23T04:17:47.8631086Z" email="test1@gmail.com" firstName="">
+    <details>Sign-in attempt with an email address that does not exist in users.xml.</details>
+  </entry>
+  <entry id="log-a7c63c9565af4fd9978174748e987378" university="ASU" role="Participant" type="Sign In Failed (Bad Password)" timestamp="2026-09-23T04:17:52.0894222Z" email="test2@gmail.com" firstName="test">
+    <details>Incorrect password (or missing/corrupted hash data) for existing account during sign in.</details>
+  </entry>
+  <entry id="log-4b56cf205d954b01b5df22ae85246ae1" university="ASU" role="Participant" type="Sign In Failed (Bad Password)" timestamp="2026-09-23T04:17:54.7795683Z" email="test2@gmail.com" firstName="test">
+    <details>Incorrect password (or missing/corrupted hash data) for existing account during sign in.</details>
+  </entry>
+  <entry id="log-27c63234a27644a69863982e21ff9cd9" university="" role="Participant" type="Sign In Failed (Bad Password)" timestamp="2026-09-23T04:17:59.8510505Z" email="test3@gmail.com" firstName="test">
+    <details>Incorrect password (or missing/corrupted hash data) for existing account during sign in.</details>
+  </entry>
+  <entry id="log-9e444ac1fbfa4048b5163c7fca43776e" university="ASU" role="Participant" type="Sign In Failed (Bad Password)" timestamp="2026-09-23T04:20:00.1440557Z" email="test2@gmail.com" firstName="test">
+    <details>Incorrect password (or missing/corrupted hash data) for existing account during sign in.</details>
+  </entry>
+  <entry id="log-68b41beb73ec4ec4b076c09669cf6cba" university="" role="Participant" type="Sign In Failed (Bad Password)" timestamp="2026-09-23T04:20:03.6497106Z" email="test3@gmail.com" firstName="test">
+    <details>Incorrect password (or missing/corrupted hash data) for existing account during sign in.</details>
+  </entry>
+  <entry id="log-86177d389bbb420a840cc6a5470d65ad" university="" role="Unknown" type="Sign In Failed (Unknown Email)" timestamp="2026-09-23T04:20:06.1703530Z" email="test1@gmail.com" firstName="">
+    <details>Sign-in attempt with an email address that does not exist in users.xml.</details>
+  </entry>
+  <entry id="log-51d7ce5b01ee45b98373d8e1c4fc5c2d" university="" role="Unknown" type="Sign In Failed (Unknown Email)" timestamp="2026-09-23T04:20:08.2015248Z" email="test1@gmail.com" firstName="">
+    <details>Sign-in attempt with an email address that does not exist in users.xml.</details>
+  </entry>
+  <entry id="log-8060470be78340aeb28e70cb6bbb255a" university="" role="Unknown" type="Sign In Failed (Unknown Email)" timestamp="2026-09-23T04:20:11.1723679Z" email="test1@gmail.com" firstName="">
+    <details>Sign-in attempt with an email address that does not exist in users.xml.</details>
+  </entry>
+  <entry id="log-47b621965d554e849a96903467fc1d48" university="Arizona State University" role="Participant" type="Account Created" timestamp="2026-09-23T04:22:36.1532896Z" email="test4@gmail.com" firstName="test">
+    <details>New Participant account created (userId=2c498caa54424761a022aff40c812c70). Consent accepted at 2026-09-23T04:22:36.0316063Z UTC from IP 127.0.0.1.</details>
+  </entry>
+  <entry id="log-7f6136173c0541f0a64e1344cb88aa0b" university="" role="Participant" type="Sign In" timestamp="2026-09-23T04:22:42.4165778Z" email="test4@gmail.com" firstName="test">
+    <details>Participant signed in.</details>
+  </entry>
+  <entry id="log-419276b5eb6744ea9478d274d423dae7" university="ASU" role="Participant" type="Participant Pre-Event Quiz Completion" timestamp="2026-09-23T04:23:21.3853770Z" email="test4@gmail.com" firstName="test">
+    <details>Participant completed the pre-event cybersecurity quiz.</details>
+  </entry>
+  <entry id="log-664ac7cf6f0f4995bfa43e9fc4f6c06f" university="ASU" role="Participant" type="Sign In Failed (Bad Password)" timestamp="2026-09-23T04:23:34.4903159Z" email="test2@gmail.com" firstName="test">
+    <details>Incorrect password (or missing/corrupted hash data) for existing account during sign in.</details>
+  </entry>
+  <entry id="log-eaf38772ed774a4da658c1e87b109fdf" university="ASU" role="Participant" type="Sign In" timestamp="2026-09-23T04:24:58.7866766Z" email="test4@gmail.com" firstName="test">
+    <details>Participant signed in.</details>
+  </entry>
+  <entry id="log-83e63be9df65403fb576a300e9c1cdfc" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-23T04:25:25.4793383Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-b6609a48a6b14f79a2d112d0d6ac5aa9" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-23T04:25:57.6754567Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-45272390f96341bab0c3a510fbb70f0e" university="" role="Unknown" type="Sign In Failed (Unknown Email)" timestamp="2026-09-23T04:26:07.5999912Z" email="test2@gmail.com" firstName="">
+    <details>Sign-in attempt with an email address that does not exist in users.xml.</details>
+  </entry>
+  <entry id="log-f1704ff062304686b7288bbc4867268e" university="ASU" role="Participant" type="Sign In" timestamp="2026-09-23T04:26:11.2631281Z" email="test4@gmail.com" firstName="test">
+    <details>Participant signed in.</details>
+  </entry>
 </auditLog>

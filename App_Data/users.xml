@@ -1,14 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <users version="1">
-	<user id="aceb0b211edf42cbb0f300460dfb86d8" role="SuperAdmin">
-		<firstName>Lauren</firstName>
-		<lastName>Nignon</lastName>
-		<email>lauren.nignon@gmail.com</email>
-		<university></university>
-		<passwordHash>nH6gMG/4D4kJe4PTbWeVmvMpJyf9n50WTHO9BmiLYX4=</passwordHash>
-		<passwordSalt>J77PGCdQmtfkLna7LHl+yw==</passwordSalt>
-		<createdAt>2026-05-01T04:07:33Z</createdAt>
-		<consentAcceptedAt>2026-05-01T04:07:33Z</consentAcceptedAt>
-		<consentIp>127.0.0.1</consentIp>
-	</user>
+  <user id="aceb0b211edf42cbb0f300460dfb86d8" role="SuperAdmin">
+    <firstName>Lauren</firstName>
+    <lastName>Nignon</lastName>
+    <email>lauren.nignon@gmail.com</email>
+    <university>
+    </university>
+    <passwordHash algo="Argon2" m="19456" t="2" p="1">FZnkgIKV63UEzGJgFrWEcAYl0f9fybTPpA3sAIoPWRM=</passwordHash>
+    <passwordSalt>J6qTMAjq3FS7dVHw0p3kww==</passwordSalt>
+    <createdAt>2026-05-01T04:07:33Z</createdAt>
+    <consentAcceptedAt>2026-05-01T04:07:33Z</consentAcceptedAt>
+    <consentIp>127.0.0.1</consentIp>
+  </user>
+  <user id="2c498caa54424761a022aff40c812c70" role="Participant">
+    <firstName>test</firstName>
+    <lastName>4</lastName>
+    <email>test4@gmail.com</email>
+    <university>ASU</university>
+    <passwordHash algo="Argon2" m="19456" t="2" p="1">1QqF4MW/Izp2YL6FNWcpGqZcs1YjF3CigN9VYH83tcw=</passwordHash>
+    <passwordSalt>ipim3ZUnr8mUZJdJDPXXUA==</passwordSalt>
+    <createdAt>2026-09-23T04:22:36.0316063Z</createdAt>
+    <consentAcceptedAt>2026-09-23T04:22:36.0316063Z</consentAcceptedAt>
+    <consentIp>127.0.0.1</consentIp>
+    <lastEventId>29602fd58adf4ba688e1412a199dcea8</lastEventId>
+  </user>
 </users>

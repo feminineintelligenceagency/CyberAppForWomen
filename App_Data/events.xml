@@ -1,3 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <events version="1">
+  <event id="29602fd58adf4ba688e1412a199dcea8" status="Draft" createdAt="2026-09-23T03:49:30.7207162Z" createdBy="asu@asu.edu">
+    <university>ASU</university>
+    <name>test event</name>
+    <startDate>2026-09-23T02:49:00.0000000Z</startDate>
+    <endDate>2026-10-01T04:49:00.0000000Z</endDate>
+    <description>this is a test event</description>
+    <courses />
+  </event>
 </events>

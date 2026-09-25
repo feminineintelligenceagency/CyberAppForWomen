@@ -333,4 +333,20 @@
     <maxParticipants>
     </maxParticipants>
   </course>
+  <course id="005373ff0ab740759866aa76ec19129f" status="Draft" createdAt="2026-09-23T03:46:04.4375292Z" createdBy="lauren.nignon@gmail.com">
+    <title>Best Practices</title>
+    <summary>this is a test course</summary>
+    <duration>5</duration>
+    <externalLink>
+    </externalLink>
+    <tags />
+    <requiredRules />
+    <prerequisites />
+    <startTime>
+    </startTime>
+    <endTime>
+    </endTime>
+    <maxParticipants>
+    </maxParticipants>
+  </course>
 </microcourses>

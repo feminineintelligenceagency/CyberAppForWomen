@@ -1,11 +1,9 @@
-﻿using CyberApp_FIA.Services;
-using System;
+﻿using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web.UI;
 using System.Xml;
-
 
 namespace CyberApp_FIA.Account
 {
@@ -53,7 +51,6 @@ namespace CyberApp_FIA.Account
             var createdAt = DateTime.UtcNow.ToString("o");
             var consentAt = createdAt; // Consent captured at the same instant as creation.
 
-            /*
             // --- Derive secure password hash ---
             // Generate a cryptographically strong random salt (16 bytes here; can be 16-32+).
             var salt = GenerateSalt(16);
@@ -61,7 +58,6 @@ namespace CyberApp_FIA.Account
             // Derive a 256-bit hash via PBKDF2 using the provided password and the per-user salt.
             // Iteration count is set in HashPassword (100k). Consider tuning based on environment.
             var hash = HashPassword(Password.Text, salt);
-            */
 
             // Ensure the XML users store exists and is initialized with a root <users> element.
             EnsureXml();
@@ -94,8 +90,9 @@ namespace CyberApp_FIA.Account
             // Placeholder for university selection; kept empty here but slot exists for future updates.
             user.AppendChild(Mk(doc, "university", ""));
 
-            // Use Argon2id for future-proofing; creates <passwordHash> and <passwordSalt>.
-            passHasher.SetPassword(user, Password.Text);
+            // Store the PBKDF2 hash and salt as Base64 strings. (Never store plaintext passwords.)
+            user.AppendChild(Mk(doc, "passwordHash", Convert.ToBase64String(hash)));
+            user.AppendChild(Mk(doc, "passwordSalt", Convert.ToBase64String(salt)));
 
             // Timestamps and consent audit data.
             user.AppendChild(Mk(doc, "createdAt", createdAt));

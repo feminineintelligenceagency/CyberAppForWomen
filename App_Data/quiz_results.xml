@@ -1,3 +1,61 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Results>
+  <UserResult name="4717efc7c89949c69d621df6afbadd54" rules="2.0" completedUtc="2026-09-23T03:50:38.3033239Z" overall="4.33" shareWithHelper="false">
+    <Domains>
+      <Domain title="Enhancing Social Media Privacy Settings" score="10" />
+      <Domain title="Phishing Awareness and Email Security" score="0" />
+      <Domain title="Privacy Settings on Popular Apps" score="6" />
+      <Domain title="Detecting Spyware Infections on Devices" score="6" />
+      <Domain title="Two-Factor Authentication Setup and Management" score="4" />
+      <Domain title="Password Management and Security" score="3" />
+      <Domain title="Managing Your Digital Footprint" score="7" />
+      <Domain title="Recognizing AI-Assisted Manipulation and Deepfakes" score="4" />
+      <Domain title="Using VPNs for Secure Browsing" score="0" />
+      <Domain title="Safe Use of Public Computers and Wi-Fi" score="0" />
+      <Domain title="Identifying Hidden Surveillance Devices (Electronic Scanning)" score="6" />
+      <Domain title="Safe Online Banking Practices" score="3" />
+      <Domain title="Recognizing Malicious Mobile Apps" score="4" />
+      <Domain title="Verifying Online Identities and Combating Catfishing" score="8" />
+      <Domain title="Securing Home Wi-Fi Networks" score="4" />
+    </Domains>
+    <TopFactors>
+      <Factor>Enhancing Social Media Privacy Settings: Open profiles, tagging, and location visibility increase exposure.</Factor>
+      <Factor>Verifying Online Identities and Combating Catfishing: Accepting unknowns without checks invites scams/abuse.</Factor>
+      <Factor>Managing Your Digital Footprint: Large, stable footprints make targeting easier.</Factor>
+    </TopFactors>
+    <QuickWins>
+      <Win>Set profiles to friends-only; disable location and public tagging.</Win>
+      <Win>Reverse-image search and cross-check handles before engaging.</Win>
+      <Win>Quarterly cleanup: prune old posts; remove data-broker listings.</Win>
+    </QuickWins>
+  </UserResult>
+  <UserResult name="2c498caa54424761a022aff40c812c70" rules="2.0" completedUtc="2026-09-23T04:23:21.3788768Z" overall="2.73" shareWithHelper="false">
+    <Domains>
+      <Domain title="Enhancing Social Media Privacy Settings" score="8" />
+      <Domain title="Phishing Awareness and Email Security" score="0" />
+      <Domain title="Privacy Settings on Popular Apps" score="5" />
+      <Domain title="Detecting Spyware Infections on Devices" score="4" />
+      <Domain title="Two-Factor Authentication Setup and Management" score="0" />
+      <Domain title="Password Management and Security" score="1" />
+      <Domain title="Managing Your Digital Footprint" score="1" />
+      <Domain title="Recognizing AI-Assisted Manipulation and Deepfakes" score="1" />
+      <Domain title="Using VPNs for Secure Browsing" score="0" />
+      <Domain title="Safe Use of Public Computers and Wi-Fi" score="0" />
+      <Domain title="Identifying Hidden Surveillance Devices (Electronic Scanning)" score="6" />
+      <Domain title="Safe Online Banking Practices" score="2" />
+      <Domain title="Recognizing Malicious Mobile Apps" score="2" />
+      <Domain title="Verifying Online Identities and Combating Catfishing" score="7" />
+      <Domain title="Securing Home Wi-Fi Networks" score="4" />
+    </Domains>
+    <TopFactors>
+      <Factor>Enhancing Social Media Privacy Settings: Open profiles, tagging, and location visibility increase exposure.</Factor>
+      <Factor>Verifying Online Identities and Combating Catfishing: Accepting unknowns without checks invites scams/abuse.</Factor>
+      <Factor>Identifying Hidden Surveillance Devices (Electronic Scanning): Never scanning leaves covert cams/mics undiscovered.</Factor>
+    </TopFactors>
+    <QuickWins>
+      <Win>Set profiles to friends-only; disable location and public tagging.</Win>
+      <Win>Reverse-image search and cross-check handles before engaging.</Win>
+      <Win>Do visual/RF/network sweeps when in new spaces.</Win>
+    </QuickWins>
+  </UserResult>
 </Results>
