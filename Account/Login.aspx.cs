@@ -11,6 +11,8 @@ namespace CyberApp_FIA.Account
     {
         private static readonly object UsersFileLock = new object();
         private const string GenericLoginError = "<span style='color:#c21d1d'>Invalid email or password.</span>";
+        private static readonly string LockoutError = "<span style='color:#c21d1d'>You have been locked out for "
+            + ((int)LoginRateLimiting.LockoutDuration.TotalMinutes) + " minutes.</span>";
         private string XmlPath => Server.MapPath("~/App_Data/users.xml");
 
         protected void BtnLogin_Click(object sender, EventArgs e)
@@ -21,7 +23,7 @@ namespace CyberApp_FIA.Account
             {
                 var doc = new XmlDocument(); doc.Load(XmlPath);
                 var userNode = doc.SelectSingleNode($"/users/user[translate(email,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='{emailLower}']");
-                if (userNode != null && LoginRateLimiting.IsLockedOut((XmlElement)userNode, DateTime.UtcNow)) { FormMessage.Text = GenericLoginError; return; }
+                if (userNode != null && LoginRateLimiting.IsLockedOut((XmlElement)userNode, DateTime.UtcNow)) { FormMessage.Text = LockoutError; return; }
                 if (userNode == null) { FormMessage.Text = GenericLoginError; return; }
                 var user = (XmlElement)userNode;
                 byte[] salt, storedHash;
@@ -29,7 +31,9 @@ namespace CyberApp_FIA.Account
                 catch { FormMessage.Text = GenericLoginError; return; }
                 if (!SecureEquals(storedHash, HashPassword(Password.Text, salt)))
                 {
-                    LoginRateLimiting.RecordFailure(doc, user, DateTime.UtcNow); doc.Save(XmlPath); FormMessage.Text = GenericLoginError; return;
+                    LoginRateLimiting.RecordFailure(doc, user, DateTime.UtcNow); doc.Save(XmlPath);
+                    FormMessage.Text = LoginRateLimiting.IsLockedOut(user, DateTime.UtcNow) ? LockoutError : GenericLoginError;
+                    return;
                 }
                 LoginRateLimiting.RecordSuccess(doc, user); doc.Save(XmlPath);
                 Session["UserId"] = user.GetAttribute("id"); Session["Role"] = user.GetAttribute("role"); Session["Email"] = emailLower; Session["University"] = user["university"]?.InnerText ?? "";
