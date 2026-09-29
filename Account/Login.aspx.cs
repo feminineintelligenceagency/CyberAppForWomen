@@ -254,12 +254,12 @@ namespace CyberApp_FIA.Account
             }
             catch
             {
-                // Swallow: user is already authenticated; upgrade retries on next login.
+                // Swallow: user is already authenticated
             }
         }
 
         /// <summary>
-        /// Generic failure message: never reveal whether the email or the password was wrong.
+        /// Generic failure message (never reveal whether the email or the password was wrong)
         /// </summary>
         private void ShowInvalidCredentials()
         {

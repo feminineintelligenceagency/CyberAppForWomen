@@ -10,8 +10,13 @@ using Konscious.Security.Cryptography;
 namespace CyberApp_FIA.Services
 {
     /// <summary>
+    /// This is the main class for password hashing and verification. It supports Argon2id and PBKDF2 (legacy). 
+    /// Used for user sign-up, password changes/resets, and login verification. New hashes use Argon2 with recommended parameters from OWASP.
+    /// Older users using PBKDF2 will be flagged for rehashing to Argon2 on their next login.
     /// 
-    /// 
+    /// Passwords are hashed with a per-user salt, and the hash and salt are stored in the XML user element. The format is as follows:
+    /// <passwordHash algo="Argon2" m="19456" t="2" p="1">?????????????????</passwordHash>
+    /// <passwordSalt>?????????????????????</passwordSalt>
     /// 
     /// <summary>
 
