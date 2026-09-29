@@ -22,7 +22,7 @@ namespace CyberApp_FIA.Helper
     ///   for every current microcourse, with rule metadata and zero progress.
     /// - Automatically updates <isEligible> and <isCertified> when the Helper meets requirements.
     /// </summary>
-    public partial class CertificationProgress : Page
+    public partial class CertificationProgress : SecurePage
     {
         private string RulesXmlPath => Server.MapPath("~/App_Data/certificationRules.xml");
         private string MicrocoursesXmlPath => Server.MapPath("~/App_Data/microcourses.xml");

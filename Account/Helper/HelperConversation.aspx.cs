@@ -14,7 +14,7 @@ namespace CyberApp_FIA.Helper
     /// Helper view of a single one-on-one conversation thread.
     /// Reads and writes to helperMessages.xml, sharing the same schema as the participant side.
     /// </summary>
-    public partial class HelperConversation : Page
+    public partial class HelperConversation : SecurePage
     {
         private string HelperMessagesXmlPath => Server.MapPath("~/App_Data/helperMessages.xml");
         private string UsersXmlPath => Server.MapPath("~/App_Data/users.xml");

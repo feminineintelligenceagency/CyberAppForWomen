@@ -16,7 +16,7 @@ namespace CyberApp_FIA.Helper
     /// resolving microcourse titles from microcourses.xml and converting
     /// stored UTC timestamps to local, human-readable strings.
     /// </summary>
-    public partial class Schedule : Page
+    public partial class Schedule : SecurePage
     {
         private string UsersXmlPath => Server.MapPath("~/App_Data/users.xml");
         private string EventSessionsXmlPath => Server.MapPath("~/App_Data/eventSessions.xml");

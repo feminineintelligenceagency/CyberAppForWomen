@@ -7,7 +7,7 @@ using CyberApp_FIA.Services;
 
 namespace CyberApp_FIA.Account.Participant
 {
-    public partial class Quiz : Page
+    public partial class Quiz : SecurePage
     {
         private QuizService _svc;
         private List<QuizService.UiQuestion> _questions;

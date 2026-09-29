@@ -8,7 +8,8 @@ using System.Xml;
 
 namespace CyberApp_FIA.Helper
 {
-    public partial class Badges : Page
+    // Base class changed from Page to SecurePage
+    public partial class Badges : SecurePage
     {
         private string HelperProgressXmlPath => Server.MapPath("~/App_Data/helperProgress.xml");
         private string BadgeDescriptionsXmlPath => Server.MapPath("~/App_Data/badgeDescriptions.xml");

@@ -12,7 +12,7 @@ using CyberApp_FIA.Services;
 
 namespace CyberApp_FIA.Participant
 {
-    public partial class Home : Page
+    public partial class Home : SecurePage
     {
         // ---------- XML file paths ----------
         private string EventsXmlPath => Server.MapPath("~/App_Data/events.xml");
@@ -1970,7 +1970,7 @@ namespace CyberApp_FIA.Participant
 
         protected void BtnLogout_Click(object sender, EventArgs e)
         {
-            Session.Clear();
+            SessionHelper.SignOut(Context);
             Response.Redirect("~/Welcome_Page.aspx");
         }
 

@@ -18,7 +18,7 @@ namespace CyberApp_FIA.Account
     ///     Teaching sessions, 1:1 help sessions, Expiry days
     /// - Persists to ~/App_Data/certificationRules.xml
     /// </summary>
-    public partial class CertificationRules : Page
+    public partial class CertificationRules : SecurePage
     {
         /// <summary>
         /// Physical path to the certification rules datastore.

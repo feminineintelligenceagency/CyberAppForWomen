@@ -6,7 +6,7 @@ using System.Xml;
 
 namespace CyberApp_FIA.Account
 {
-    public partial class UniversityAdminAddHelper : Page
+    public partial class UniversityAdminAddHelper : SecurePage
     {
         /// <summary>
         /// Physical path to the users XML datastore.

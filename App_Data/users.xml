@@ -6,45 +6,34 @@
     <email>lauren.nignon@gmail.com</email>
     <university>
     </university>
-    <passwordHash algo="Argon2" m="19456" t="2" p="1">ZmPC8YtwpVVJnEavtvDKJBXCSHWy11y+fh2V+juQRAA=</passwordHash>
-    <passwordSalt>5yNIKRIbX3ycMlgfMrlHaw==</passwordSalt>
+    <passwordHash>nH6gMG/4D4kJe4PTbWeVmvMpJyf9n50WTHO9BmiLYX4=</passwordHash>
+    <passwordSalt>J77PGCdQmtfkLna7LHl+yw==</passwordSalt>
     <createdAt>2026-05-01T04:07:33Z</createdAt>
     <consentAcceptedAt>2026-05-01T04:07:33Z</consentAcceptedAt>
     <consentIp>127.0.0.1</consentIp>
   </user>
-  <user id="2c498caa54424761a022aff40c812c70" role="Participant">
-    <firstName>test</firstName>
-    <lastName>4</lastName>
-    <email>test4@gmail.com</email>
-    <university>ASU</university>
-    <passwordHash algo="Argon2" m="19456" t="2" p="1">1QqF4MW/Izp2YL6FNWcpGqZcs1YjF3CigN9VYH83tcw=</passwordHash>
-    <passwordSalt>ipim3ZUnr8mUZJdJDPXXUA==</passwordSalt>
-    <createdAt>2026-09-23T04:22:36.0316063Z</createdAt>
-    <consentAcceptedAt>2026-09-23T04:22:36.0316063Z</consentAcceptedAt>
-    <consentIp>127.0.0.1</consentIp>
-    <lastEventId>29602fd58adf4ba688e1412a199dcea8</lastEventId>
+  <user id="81b69831bc794af189b52cc99a3c4d7f" role="SuperAdmin">
+    <firstName>Kenneth</firstName>
+    <lastName>Nguyen</lastName>
+    <email>kenny050513@gmail.com</email>
+    <university>
+    </university>
+    <passwordHash>qoxQ6hSuJUeiMM4Whim67b2p+4SnHV4Ynp6isf6f66o=</passwordHash>
+    <passwordSalt>jjgruCFPqLkNYqeUSVsRUw==</passwordSalt>
+    <createdAt>2026-09-23T10:50:38.5902150Z</createdAt>
+    <consentAcceptedAt>2026-09-23T10:50:38.5902150Z</consentAcceptedAt>
+    <consentIp>::1</consentIp>
   </user>
-  <user id="796869bad77841788faeb1c1264f128e" role="UniversityAdmin">
-    <firstName>test</firstName>
-    <lastName>uni</lastName>
-    <email>asu@asu.edu</email>
-    <university>ASU</university>
-    <passwordHash algo="Argon2" m="19456" t="2" p="1">sU9JZjNqRgJQBgufY6W0O3fQGH4mJvTJtMxqq0Dg/IY=</passwordHash>
-    <passwordSalt>PlbFgyQ9oqRgeMIhUfyGcQ==</passwordSalt>
-    <createdAt>2026-09-25T04:10:21.7772724Z</createdAt>
-    <consentAcceptedAt>2026-09-25T04:10:21.7772724Z</consentAcceptedAt>
-    <consentIp>127.0.0.1</consentIp>
-  </user>
-  <user id="49d3355448b248258c28fa3a2f9722e0" role="Participant">
-    <firstName>test</firstName>
-    <lastName>1</lastName>
-    <email>test1@gmail.com</email>
-    <university>ASU</university>
-    <passwordHash algo="Argon2" m="19456" t="2" p="1">HIxurc1L57zbwrdobTfA+52hNIjHw7LJX+vJpxMzioM=</passwordHash>
-    <passwordSalt>O5KOSPiSlDAdpYh1LT6weg==</passwordSalt>
-    <createdAt>2026-09-25T16:57:52.0485140Z</createdAt>
-    <consentAcceptedAt>2026-09-25T16:57:52.0485140Z</consentAcceptedAt>
-    <consentIp>127.0.0.1</consentIp>
-    <lastEventId>29602fd58adf4ba688e1412a199dcea8</lastEventId>
+  <user id="603f37604051464fb2caed64505dd5ec" role="Participant">
+    <firstName>Kenneth</firstName>
+    <lastName>Nguyen</lastName>
+    <email>knguy162@asu.edu</email>
+    <university>
+    </university>
+    <passwordHash>jXTZIYvNsxGGPNg2tbFdS1TuhrX+DwVpxmbSUsqXlSY=</passwordHash>
+    <passwordSalt>KZ8V06Tqt3tMCdZZL2IHSw==</passwordSalt>
+    <createdAt>2026-09-23T10:52:10.6817844Z</createdAt>
+    <consentAcceptedAt>2026-09-23T10:52:10.6817844Z</consentAcceptedAt>
+    <consentIp>::1</consentIp>
   </user>
 </users>
