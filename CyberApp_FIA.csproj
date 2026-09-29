@@ -141,6 +141,7 @@
     <Content Include="Account\Participant\Home.aspx" />
     <Content Include="Account\Participant\SelectEvent.aspx" />
     <Content Include="ContactUs.aspx" />
+    <Content Include="Global.asax" />
     <Content Include="ParticipantBadges\Participant2FABadge.png" />
     <Content Include="ParticipantBadges\ParticipantAIBadge.png" />
     <Content Include="ParticipantBadges\ParticipantBankingBadge.png" />
@@ -458,6 +459,9 @@
     </Compile>
     <Compile Include="ContactUs.aspx.designer.cs">
       <DependentUpon>ContactUs.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\SecurePage.cs">
