@@ -73,4 +73,10 @@
   <entry id="log-4ec8b0f47cea43b897fb9d35d05c8118" university="" role="SuperAdmin" type="Sign In Failed (Bad Password)" timestamp="2026-09-29T20:27:56.2516903Z" email="lauren.nignon@gmail.com" firstName="Lauren">
     <details>Incorrect password (or missing/corrupted hash data) for existing account during sign in.</details>
   </entry>
+  <entry id="log-67a267be5fc2447381f8f8d707a2d8a6" university="Arizona State University" role="Participant" type="Account Created" timestamp="2026-09-29T21:02:05.1195871Z" email="test1@gmail.com" firstName="test">
+    <details>New Participant account created (userId=e5edf7715c6241fca761519144323fd7). Consent accepted at 2026-09-29T21:02:05.0080751Z UTC from IP 127.0.0.1.</details>
+  </entry>
+  <entry id="log-0e270842f423436c89e71d2dfd6ee393" university="" role="Participant" type="Sign In" timestamp="2026-09-29T21:02:14.2330112Z" email="test1@gmail.com" firstName="test">
+    <details>Participant signed in.</details>
+  </entry>
 </auditLog>

@@ -38,4 +38,19 @@
     <consentAcceptedAt>2026-09-23T10:52:10.6817844Z</consentAcceptedAt>
     <consentIp>::1</consentIp>
   </user>
+  <user id="e5edf7715c6241fca761519144323fd7" role="Participant">
+    <firstName>test</firstName>
+    <lastName>1</lastName>
+    <email>test1@gmail.com</email>
+    <university>
+    </university>
+    <passwordHash algo="Argon2" m="19456" t="2" p="1">KcmYWLkBBu0zAhBD8GAxm6ow2oR34I9cARfy1Bh3uRA=</passwordHash>
+    <passwordSalt>D0wSkRmvs85a0DNHDpEVTA==</passwordSalt>
+    <createdAt>2026-09-29T21:02:05.0080751Z</createdAt>
+    <consentAcceptedAt>2026-09-29T21:02:05.0080751Z</consentAcceptedAt>
+    <consentIp>127.0.0.1</consentIp>
+    <failedLoginCount>0</failedLoginCount>
+    <lockoutUntilUtc>
+    </lockoutUntilUtc>
+  </user>
 </users>
