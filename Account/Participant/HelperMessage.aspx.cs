@@ -144,7 +144,7 @@ namespace CyberApp_FIA.Participant
                     conv.SetAttribute("helperId", helperId);
                     conv.SetAttribute("helperName", helperName);
                     conv.SetAttribute("helperEmail", helperEmail);
-                    conv.SetAttribute("topic", topic);
+                    conv.SetAttribute("topic", DataProtector.Encrypt(topic));   // Epic #7: encrypt topic
                     conv.SetAttribute("createdOn", nowUtc.ToString("o", CultureInfo.InvariantCulture));
                     conv.SetAttribute("lastUpdated", nowUtc.ToString("o", CultureInfo.InvariantCulture));
 
@@ -152,7 +152,7 @@ namespace CyberApp_FIA.Participant
                     msg.SetAttribute("from", "participant");
                     msg.SetAttribute("senderName", participantName);
                     msg.SetAttribute("ts", nowUtc.ToString("o", CultureInfo.InvariantCulture));
-                    msg.InnerText = body;
+                    msg.InnerText = DataProtector.Encrypt(body);   // Epic #7: encrypt message body
 
                     conv.AppendChild(msg);
                     doc.DocumentElement.AppendChild(conv);
@@ -166,7 +166,7 @@ namespace CyberApp_FIA.Participant
                     UniversityAuditLogger.AppendForCurrentUser(
                         this,
                         "Participant Helper Message (Initial)",
-                        $"Participant started a one-on-one conversation with {helperName} (topic: \"{safeTopic}\")."
+                                                $"Participant started a one-on-one conversation with {helperName}."   // Epic #7: no topic in logs
                     );
                 }
                 catch

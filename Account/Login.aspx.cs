@@ -5,6 +5,9 @@ using System.Security.Cryptography;
 using System.Web.UI;
 using System.Xml;
 using System.Xml.Linq;
+using System.Globalization;   // Epic #7 (Piece 3): needed to read the saved lockout time
+using System.Security.Cryptography;
+using CyberApp_FIA.Services;
 
 namespace CyberApp_FIA.Account
 {
@@ -16,6 +19,20 @@ namespace CyberApp_FIA.Account
             + ((int)LoginRateLimiting.LockoutDuration.TotalMinutes) + " minutes.</span>";
         private string XmlPath => Server.MapPath("~/App_Data/users.xml");
 
+        // Epic #7 (Piece 3): lock an account after this many wrong passwords in a row...
+        private const int MaxFailedAttempts = 5;
+
+        // ...for this long.
+        private static readonly TimeSpan LockoutDuration = TimeSpan.FromMinutes(15);
+
+        /// <summary>
+        /// Click handler for the Login button:
+        /// - Validates the page
+        /// - Loads users.xml
+        /// - Locates user by email (case-insensitive)
+        /// - Verifies password with PBKDF2 using the stored salt
+        /// - On success, initializes session and redirects by role
+        /// </summary>
         protected void BtnLogin_Click(object sender, EventArgs e)
         {
             if (!Page.IsValid || !File.Exists(XmlPath)) { FormMessage.Text = GenericLoginError; return; }

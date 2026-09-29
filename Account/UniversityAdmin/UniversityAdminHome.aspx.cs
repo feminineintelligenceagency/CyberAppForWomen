@@ -16,7 +16,7 @@ namespace CyberApp_FIA.Account
     /// - Provides navigation into the university-scoped audit log.
     /// - NEW: Provides navigation to the "Add Helper" page for this university.
     /// </summary>
-    public partial class UniversityAdminHome : SecurePage
+    public partial class UniversityAdminHome : Page
     {
         /// <summary>
         /// Physical path to the events XML datastore (per-app, non-public App_Data folder).
@@ -71,7 +71,7 @@ namespace CyberApp_FIA.Account
         /// </summary>
         protected void BtnLogout_Click(object sender, EventArgs e)
         {
-            SessionHelper.SignOut(Context);
+            AuthSession.SignOut(Context);   // Epic #7: fully end the session and delete session + token cookies
             Response.Redirect("~/Welcome_Page.aspx");
         }
 

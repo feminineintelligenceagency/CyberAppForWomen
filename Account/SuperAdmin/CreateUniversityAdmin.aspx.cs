@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CyberApp_FIA.Services;
+using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -7,7 +8,7 @@ using System.Xml;
 
 namespace CyberApp_FIA.Account
 {
-    public partial class CreateUniversityAdmin : SecurePage
+    public partial class CreateUniversityAdmin : Page
     {
         /// <summary>
         /// Physical path to ~/App_Data/users.xml.
@@ -39,7 +40,7 @@ namespace CyberApp_FIA.Account
 
         protected void BtnLogout_Click(object sender, EventArgs e)
         {
-            SessionHelper.SignOut(Context);
+            AuthSession.SignOut(Context);   // Epic #7: fully end the session and delete session + token cookies
             Response.Redirect("~/Welcome_Page.aspx");
         }
 

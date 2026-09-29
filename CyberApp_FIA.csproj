@@ -450,6 +450,9 @@
     <Compile Include="Account\Participant\SelectEvent.aspx.designer.cs">
       <DependentUpon>SelectEvent.aspx</DependentUpon>
     </Compile>
+    <Compile Include="App_Code\PasswordHasher.cs" />
+    <Compile Include="App_Code\Services\AuthSession.cs" />
+    <Compile Include="App_Code\Services\DataProtector.cs" />
     <Compile Include="App_Code\Services\EnrollmentSync.cs" />
     <Compile Include="App_Code\Services\QuizService.cs" />
     <Compile Include="App_Code\Services\UniversityAuditLogger.cs" />

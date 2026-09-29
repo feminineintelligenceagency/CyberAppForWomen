@@ -1,12 +1,13 @@
-﻿using System;
+﻿using CyberApp_FIA.Services;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Xml;
-using System.Globalization;
-using System.Web;
 
 
 namespace CyberApp_FIA.Account
@@ -18,7 +19,7 @@ namespace CyberApp_FIA.Account
     /// - Binds selectable certification rules from ~/App_Data/certificationRules.xml
     /// - NEW: Allows selecting existing microcourses as prerequisites
     /// </summary>
-    public partial class SuperAdminHome : SecurePage
+    public partial class SuperAdminHome : Page
     {
         // Path to microcourses datastore (XML with <microcourses><course .../></microcourses>)
         private string MicrocoursesXmlPath => Server.MapPath("~/App_Data/microcourses.xml");
@@ -55,7 +56,7 @@ namespace CyberApp_FIA.Account
 
         protected void BtnLogout_Click(object sender, EventArgs e)
         {
-            SessionHelper.SignOut(Context);
+            AuthSession.SignOut(Context);   // Epic #7: fully end the session and delete session + token cookies
             Response.Redirect("~/Welcome_Page.aspx");
         }
 

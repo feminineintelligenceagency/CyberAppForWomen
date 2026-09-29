@@ -663,7 +663,7 @@ namespace CyberApp_FIA.Helper
             noteEl.SetAttribute("tsUtc", DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture));
 
             var textEl = doc.CreateElement("text");
-            textEl.InnerText = notes ?? string.Empty;
+            textEl.InnerText = DataProtector.Encrypt(notes ?? string.Empty);   // Epic #7: encrypt help notes
             noteEl.AppendChild(textEl);
 
             root.AppendChild(noteEl);
