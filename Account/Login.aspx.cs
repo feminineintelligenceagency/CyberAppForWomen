@@ -1,9 +1,10 @@
+using CyberApp_FIA.Services;
 using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Web.UI;
 using System.Xml;
-using CyberApp_FIA.Services;
+using System.Xml.Linq;
 
 namespace CyberApp_FIA.Account
 {
@@ -19,22 +20,52 @@ namespace CyberApp_FIA.Account
         {
             if (!Page.IsValid || !File.Exists(XmlPath)) { FormMessage.Text = GenericLoginError; return; }
             var emailLower = (Email.Text ?? "").Trim().ToLowerInvariant();
+            var password = Password.Text ?? "";
             lock (UsersFileLock)
             {
                 var doc = new XmlDocument(); doc.Load(XmlPath);
                 var userNode = doc.SelectSingleNode($"/users/user[translate(email,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='{emailLower}']");
                 if (userNode != null && LoginRateLimiting.IsLockedOut((XmlElement)userNode, DateTime.UtcNow)) { FormMessage.Text = LockoutError; return; }
-                if (userNode == null) { FormMessage.Text = GenericLoginError; return; }
+                if (userNode == null) { passHasher.dummyVerify(password); FormMessage.Text = GenericLoginError; return; }
                 var user = (XmlElement)userNode;
-                byte[] salt, storedHash;
-                try { salt = Convert.FromBase64String(user["passwordSalt"]?.InnerText ?? ""); storedHash = Convert.FromBase64String(user["passwordHash"]?.InnerText ?? ""); }
-                catch { FormMessage.Text = GenericLoginError; return; }
-                if (!SecureEquals(storedHash, HashPassword(Password.Text, salt)))
+                
+                var now = DateTime.UtcNow;
+
+                if (LoginRateLimiting.IsLockedOut(user, now)) {FormMessage.Text = LockoutError; return;}
+
+                bool needsRehash;
+                // Verify the password using the passHasher utility. If verification fails, log the failed attempt and show a generic error message.
+                if (!passHasher.VerifyUser(user, Password.Text, out needsRehash))
                 {
-                    LoginRateLimiting.RecordFailure(doc, user, DateTime.UtcNow); doc.Save(XmlPath);
-                    FormMessage.Text = LoginRateLimiting.IsLockedOut(user, DateTime.UtcNow) ? LockoutError : GenericLoginError;
+                    LoginRateLimiting.RecordFailure(doc, user, now);
+                    doc.Save(XmlPath);
+
+                    var roleAttr = user.GetAttribute("role");
+                    WriteFailedSignInAudit(
+                        email: emailLower,
+                        role: string.IsNullOrWhiteSpace(roleAttr) ? "Unknown" : roleAttr,
+                        university: userNode["university"]?.InnerText ?? "",
+                        firstName: userNode["firstName"]?.InnerText ?? "",
+                        type: "Sign In Failed (Bad Password)",
+                        details: "Incorrect password (or missing/corrupted hash data) for existing account during sign in.");
+
+                    FormMessage.Text = LoginRateLimiting.IsLockedOut(user, now) ? LockoutError : GenericLoginError;
                     return;
                 }
+
+                if (needsRehash)
+                {
+                    try
+                    {
+                        passHasher.SetPassword(user, Password.Text);
+                    }
+                    catch 
+                    {
+                        // If rehashing fails, we can log the error but still allow the user to log in.
+                    }
+
+                }
+
                 LoginRateLimiting.RecordSuccess(doc, user); doc.Save(XmlPath);
                 Session["UserId"] = user.GetAttribute("id"); Session["Role"] = user.GetAttribute("role"); Session["Email"] = emailLower; Session["University"] = user["university"]?.InnerText ?? "";
                 try { UniversityAuditLogger.AppendForCurrentUser(this, "Sign In", $"{user.GetAttribute("role")} signed in."); } catch { }
@@ -48,7 +79,53 @@ namespace CyberApp_FIA.Account
             }
         }
 
-        private static byte[] HashPassword(string password, byte[] salt) { using (var p = new Rfc2898DeriveBytes(password, salt, 100000)) return p.GetBytes(32); }
-        private static bool SecureEquals(byte[] a, byte[] b) { if (a == null || b == null || a.Length != b.Length) return false; int d = 0; for (int i = 0; i < a.Length; i++) d |= a[i] ^ b[i]; return d == 0; }
+        private void WriteFailedSignInAudit(
+            string email,
+            string role,
+            string university,
+            string firstName,
+            string type,
+            string details)
+        {
+            try
+            {
+                var auditDir = Path.GetDirectoryName(Server.MapPath("~/App_Data/Audit_Log/UnvAdminAudit.xml"));
+                if (!string.IsNullOrEmpty(auditDir) && !Directory.Exists(auditDir))
+                {
+                    Directory.CreateDirectory(auditDir);
+                }
+
+                var auditDoc = new XmlDocument();
+                if (File.Exists(Server.MapPath("~/App_Data/Audit_Log/UnvAdminAudit.xml")))
+                {
+                    auditDoc.Load(Server.MapPath("~/App_Data/Audit_Log/UnvAdminAudit.xml"));
+                }
+                else
+                {
+                    auditDoc.LoadXml("<?xml version='1.0' encoding='utf-8'?><auditLog version='1'></auditLog>");
+                }
+
+                var entry = auditDoc.CreateElement("entry");
+                entry.SetAttribute("id", "log-" + Guid.NewGuid().ToString("N"));
+                entry.SetAttribute("university", university ?? "");
+                entry.SetAttribute("role", role ?? "Unknown");
+                entry.SetAttribute("type", type);
+                entry.SetAttribute("timestamp", DateTime.UtcNow.ToString("o"));
+                entry.SetAttribute("email", email ?? "");
+                entry.SetAttribute("firstName", firstName ?? "");
+
+                var detailsEl = auditDoc.CreateElement("details");
+                detailsEl.InnerText = details;
+                entry.AppendChild(detailsEl);
+
+                auditDoc.DocumentElement.AppendChild(entry);
+                auditDoc.Save(Server.MapPath("~/App_Data/Audit_Log/UnvAdminAudit.xml"));
+            }
+            catch
+            {
+                // Best-effort only.
+            }
+        }
+
     }
 }

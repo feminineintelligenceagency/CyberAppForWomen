@@ -55,4 +55,22 @@
   <entry id="log-853d2a8335a44e40af889ca1da49f2df" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-25T05:08:53.9744942Z" email="kenny050513@gmail.com" firstName="Kenneth">
     <details>SuperAdmin signed in.</details>
   </entry>
+  <entry id="log-9b03b1206c9c4d3cbd69c4cf17ae5e41" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-29T20:27:06.2042192Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-f0a7e4bd69154a48876aa258dc1c99c3" university="" role="SuperAdmin" type="Sign In Failed (Bad Password)" timestamp="2026-09-29T20:27:51.1354268Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>Incorrect password (or missing/corrupted hash data) for existing account during sign in.</details>
+  </entry>
+  <entry id="log-f215bff70dd24b51970caf4fcdb68340" university="" role="SuperAdmin" type="Sign In Failed (Bad Password)" timestamp="2026-09-29T20:27:52.3923875Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>Incorrect password (or missing/corrupted hash data) for existing account during sign in.</details>
+  </entry>
+  <entry id="log-fca64f4b13174b03aa183874883b297f" university="" role="SuperAdmin" type="Sign In Failed (Bad Password)" timestamp="2026-09-29T20:27:54.2017635Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>Incorrect password (or missing/corrupted hash data) for existing account during sign in.</details>
+  </entry>
+  <entry id="log-bb4a610d2e144d1ea1ddf685178f74b2" university="" role="SuperAdmin" type="Sign In Failed (Bad Password)" timestamp="2026-09-29T20:27:55.2513860Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>Incorrect password (or missing/corrupted hash data) for existing account during sign in.</details>
+  </entry>
+  <entry id="log-4ec8b0f47cea43b897fb9d35d05c8118" university="" role="SuperAdmin" type="Sign In Failed (Bad Password)" timestamp="2026-09-29T20:27:56.2516903Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>Incorrect password (or missing/corrupted hash data) for existing account during sign in.</details>
+  </entry>
 </auditLog>
