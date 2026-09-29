@@ -392,6 +392,7 @@
     <Compile Include="Account\Login.aspx.designer.cs">
       <DependentUpon>Login.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Account\LoginRateLimiting.cs" />
     <Compile Include="Account\SuperAdmin\SuperAdminHome.aspx.cs">
       <DependentUpon>SuperAdminHome.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
