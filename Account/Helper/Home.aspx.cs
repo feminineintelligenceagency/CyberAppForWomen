@@ -30,7 +30,7 @@ namespace CyberApp_FIA.Helper
         /// </summary>
         private void InitializeHeader()
         {
-            var roleRaw = Session["Role"] as string ?? "";
+            var roleRaw = Session["role"] as string ?? "";
             if (!string.Equals(roleRaw.Trim(), "Helper", StringComparison.OrdinalIgnoreCase))
             {
                 // If someone who is not a Helper hits this page, send them back to login.

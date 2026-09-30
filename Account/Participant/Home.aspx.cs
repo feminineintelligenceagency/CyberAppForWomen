@@ -62,7 +62,7 @@ namespace CyberApp_FIA.Participant
         {
             if (!IsPostBack)
             {
-                var role = (string)Session["Role"];
+                var role = (string)Session["role"];
                 if (!string.Equals(role, "Participant", StringComparison.OrdinalIgnoreCase))
                 {
                     Response.Redirect("~/Account/Login.aspx");

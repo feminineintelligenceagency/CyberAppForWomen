@@ -36,7 +36,7 @@ namespace CyberApp_FIA.Account
             if (!IsPostBack)
             {
                 // ---- Access gate: only University Admins allowed on this page ----
-                var role = (string)Session["Role"];
+                var role = (string)Session["role"];
                 if (!string.Equals(role, "UniversityAdmin", StringComparison.OrdinalIgnoreCase))
                 {
                     // If not authorized, bounce to Login.

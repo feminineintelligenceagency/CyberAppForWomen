@@ -35,13 +35,14 @@ namespace CyberApp_FIA.Account
             if (!IsPostBack)
             {
                 // ---- Access Gate: only SuperAdmin role ----
-                var role = (string)Session["Role"];
+                var role = (string)Session["role"];
+                
                 if (!string.Equals(role, "SuperAdmin", StringComparison.OrdinalIgnoreCase))
                 {
                     Response.Redirect("~/Account/Login.aspx");
                     return;
                 }
-
+                
                 // Friendly header text
                 WelcomeName.Text = (string)Session["Email"] ?? "Super Admin";
 

@@ -11,8 +11,9 @@
     <createdAt>2026-05-01T04:07:33Z</createdAt>
     <consentAcceptedAt>2026-05-01T04:07:33Z</consentAcceptedAt>
     <consentIp>127.0.0.1</consentIp>
-    <failedLoginCount>5</failedLoginCount>
-    <lockoutUntilUtc>2026-09-29T20:42:56.1865910Z</lockoutUntilUtc>
+    <failedLoginCount>0</failedLoginCount>
+    <lockoutUntilUtc>
+    </lockoutUntilUtc>
   </user>
   <user id="81b69831bc794af189b52cc99a3c4d7f" role="SuperAdmin">
     <firstName>Kenneth</firstName>
