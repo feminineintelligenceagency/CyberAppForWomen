@@ -6,8 +6,6 @@ using System.Web.UI;
 using System.Xml;
 using System.Xml.Linq;
 using System.Globalization;   // Epic #7 (Piece 3): needed to read the saved lockout time
-using System.Security.Cryptography;
-using CyberApp_FIA.Services;
 
 namespace CyberApp_FIA.Account
 {
@@ -85,6 +83,7 @@ namespace CyberApp_FIA.Account
 
                 LoginRateLimiting.RecordSuccess(doc, user); doc.Save(XmlPath);
                 Session["UserId"] = user.GetAttribute("id"); Session["Role"] = user.GetAttribute("role"); Session["Email"] = emailLower; Session["University"] = user["university"]?.InnerText ?? "";
+                AuthSession.SignIn(Context);
                 try { UniversityAuditLogger.AppendForCurrentUser(this, "Sign In", $"{user.GetAttribute("role")} signed in."); } catch { }
                 switch ((user.GetAttribute("role") ?? "").Trim().ToLowerInvariant())
                 {
@@ -95,6 +94,7 @@ namespace CyberApp_FIA.Account
                 }
             }
         }
+
 
         private void WriteFailedSignInAudit(
             string email,

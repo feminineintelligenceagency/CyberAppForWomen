@@ -94,4 +94,37 @@
   <entry id="log-ca02292f825e4bc593fbda357a34e6e2" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-30T04:59:44.4259597Z" email="lauren.nignon@gmail.com" firstName="Lauren">
     <details>SuperAdmin signed in.</details>
   </entry>
+  <entry id="log-b45d124b081b4c599a3e598c82f27f8a" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-30T05:12:33.4718213Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-5d04f05742d54aa2826bfb10b424998b" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-30T05:12:33.4813938Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-1dcf25d7a3a44c37bba51be628528116" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-30T05:13:56.2416038Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-e646425fd6724011a234df3160f5b73b" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-30T05:13:56.2531479Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-c368319519c8456cb73c163ade12e322" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-30T05:17:49.6921556Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-104d0cbd2adb4b998699c7ab9ca4123a" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-30T05:17:49.7021761Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-229fdcdf6f7140edbebe0ab0d3d4f60e" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-30T05:21:00.4646892Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-39dabac185bb4c56ba4977c83851f3f0" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-30T05:26:03.8779934Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-d96f3860087e422eae82e87e4c8a00ff" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-30T05:26:53.5281856Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-4e365b36364a463d90f09cb3027a9e47" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-30T05:28:14.4983889Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-f3eac16ffefd4e7ab86a1c0418c83e03" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-30T05:31:10.8687460Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
 </auditLog>
