@@ -4,6 +4,7 @@ using System.Xml;
 
 namespace CyberApp_FIA.Account
 {
+    // Epic 1 - User Story #6 (dmundra-29): Added login lockout enforcement with failed-attempt tracking and reset logic.
     internal static class LoginRateLimiting
     {
         internal const int MaxFailedAttempts = 5;

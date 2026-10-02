@@ -40,6 +40,7 @@ namespace CyberApp_FIA.Account
             {
                 var doc = new XmlDocument(); doc.Load(XmlPath);
                 var userNode = doc.SelectSingleNode($"/users/user[translate(email,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='{emailLower}']");
+                // Epic 1 - User Story #6 (dmundra-29): block sign-ins when the account is already locked out due to repeated failures.
                 if (userNode != null && LoginRateLimiting.IsLockedOut((XmlElement)userNode, DateTime.UtcNow)) { FormMessage.Text = LockoutError; return; }
                 if (userNode == null) { passHasher.dummyVerify(password); FormMessage.Text = GenericLoginError; return; }
                 var user = (XmlElement)userNode;
@@ -52,6 +53,7 @@ namespace CyberApp_FIA.Account
                 // Verify the password using the passHasher utility. If verification fails, log the failed attempt and show a generic error message.
                 if (!passHasher.VerifyUser(user, Password.Text, out needsRehash))
                 {
+                    // Epic 1 - User Story #6 (dmundra-29): increment failed-login count and lock the account after repeated invalid attempts.
                     LoginRateLimiting.RecordFailure(doc, user, now);
                     doc.Save(XmlPath);
 
