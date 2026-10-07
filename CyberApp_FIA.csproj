@@ -263,7 +263,8 @@
     <Compile Include="Account\Helper\ParticipantConversations.aspx.designer.cs">
       <DependentUpon>ParticipantConversations.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Account\Helper\passHasher.cs" />
+    <Content Include="App_Code\Services\Database.cs" />
+    <Compile Include="App_Code\Services\passHasher.cs" />
     <Compile Include="Account\Helper\ResourceViewer.aspx.cs">
       <DependentUpon>ResourceViewer.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

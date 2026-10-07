@@ -209,8 +209,6 @@ namespace CyberApp_FIA.Services
         /// </summary>
         private static byte[] HashPassword(string password, byte[] salt)
         {
-            // NOTE: In .NET Framework, Rfc2898DeriveBytes defaults to HMACSHA1.
-            // In newer .NETs, you can specify HMACSHA256 explicitly if available.
             using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 100000))
             {
                 return pbkdf2.GetBytes(32); // 256-bit hash

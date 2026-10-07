@@ -127,4 +127,7 @@
   <entry id="log-f3eac16ffefd4e7ab86a1c0418c83e03" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-30T05:31:10.8687460Z" email="lauren.nignon@gmail.com" firstName="Lauren">
     <details>SuperAdmin signed in.</details>
   </entry>
+  <entry id="log-65028d02423d4edbad223e6d8c58c70b" university="" role="Participant" type="Sign In" timestamp="2026-09-30T05:33:25.7767045Z" email="test1@gmail.com" firstName="test">
+    <details>Participant signed in.</details>
+  </entry>
 </auditLog>
