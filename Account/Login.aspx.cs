@@ -1,121 +1,173 @@
 using CyberApp_FIA.Services;
 using System;
+using System.Data.SqlClient;
 using System.IO;
-using System.Security.Cryptography;
 using System.Web.UI;
 using System.Xml;
-using System.Xml.Linq;
-using System.Globalization;   // Epic #7 (Piece 3): needed to read the saved lockout time
 
 namespace CyberApp_FIA.Account
 {
+    /// <summary>
+    /// Login page code-behind (database version).
+    /// - Looks the user up in dbo.Users / dbo.UserCredentials via UserRepository
+    /// - Verifies the password with passHasher (Argon2, or legacy PBKDF2 for old accounts)
+    /// - Upgrades legacy/outdated hashes to current Argon2 settings on successful login
+    /// - Rate limiting: MaxFailedAttempts / LockoutDuration from LoginRateLimiting, enforced atomically in the database
+    /// - Audit logging of failed and successful sign-ins
+    /// - Role-based redirect
+    /// </summary>
     public partial class Login : Page
     {
-        private static readonly object UsersFileLock = new object();
-        private const string GenericLoginError = "<span style='color:#c21d1d'>Invalid email or password.</span>";
-        private static readonly string LockoutError = "<span style='color:#c21d1d'>You have been locked out for "
-            + ((int)LoginRateLimiting.LockoutDuration.TotalMinutes) + " minutes.</span>";
-        private string XmlPath => Server.MapPath("~/App_Data/users.xml");
+        private const string GenericLoginError =
+            "<span style='color:#c21d1d'>Invalid email or password.</span>";
 
-        // Epic #7 (Piece 3): lock an account after this many wrong passwords in a row...
-        private const int MaxFailedAttempts = 5;
+        private const string ServiceUnavailableError =
+            "<span style='color:#c21d1d'>Sign-in is temporarily unavailable. Please try again in a moment.</span>";
 
-        // ...for this long.
-        private static readonly TimeSpan LockoutDuration = TimeSpan.FromMinutes(15);
+        private static readonly string LockoutError =
+            "<span style='color:#c21d1d'>Too many failed attempts. Your account is locked for "
+            + (int)LoginRateLimiting.LockoutDuration.TotalMinutes + " minutes.</span>";
 
-        /// <summary>
-        /// Click handler for the Login button:
-        /// - Validates the page
-        /// - Loads users.xml
-        /// - Locates user by email (case-insensitive)
-        /// - Verifies password with PBKDF2 using the stored salt
-        /// - On success, initializes session and redirects by role
-        /// </summary>
+        private string AuditXmlPath => Server.MapPath("~/App_Data/Audit_Log/UnvAdminAudit.xml");
+
         protected void BtnLogin_Click(object sender, EventArgs e)
         {
-            if (!Page.IsValid || !File.Exists(XmlPath)) { FormMessage.Text = GenericLoginError; return; }
+            if (!Page.IsValid) { FormMessage.Text = GenericLoginError; return; }
+
             var emailLower = (Email.Text ?? "").Trim().ToLowerInvariant();
             var password = Password.Text ?? "";
-            lock (UsersFileLock)
+            var now = DateTime.UtcNow;
+
+            // --- Look up the user ---
+            UserRepository.LoginRecord user;
+            try
             {
-                var doc = new XmlDocument(); doc.Load(XmlPath);
-                var userNode = doc.SelectSingleNode($"/users/user[translate(email,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='{emailLower}']");
-                if (userNode != null && LoginRateLimiting.IsLockedOut((XmlElement)userNode, DateTime.UtcNow)) { FormMessage.Text = LockoutError; return; }
-                if (userNode == null) { passHasher.dummyVerify(password); FormMessage.Text = GenericLoginError; return; }
-                var user = (XmlElement)userNode;
-                
-                var now = DateTime.UtcNow;
+                user = UserRepository.GetLoginByEmail(emailLower);
+            }
+            catch (SqlException)
+            {
+                // Database unreachable
+                FormMessage.Text = ServiceUnavailableError;
+                return;
+            }
 
-                if (LoginRateLimiting.IsLockedOut(user, now)) {FormMessage.Text = LockoutError; return;}
+            // --- Unknown email ---
+            if (user == null)
+            {
+                passHasher.dummyVerify(password);
 
-                bool needsRehash;
-                // Verify the password using the passHasher utility. If verification fails, log the failed attempt and show a generic error message.
-                if (!passHasher.VerifyUser(user, Password.Text, out needsRehash))
+                WriteFailedSignInAudit(emailLower, "Unknown", "", "",
+                    "Sign In Failed (Unknown Email)",
+                    "Sign-in attempt with an email address that is not registered.");
+
+                FormMessage.Text = GenericLoginError;
+                return;
+            }
+
+            //Locked out: refuse before checking the password
+            if (user.IsLockedOut(now))
+            {
+                FormMessage.Text = LockoutError;
+                return;
+            }
+
+            //Password check
+            bool needsRehash;
+            bool valid = passHasher.VerifyStored(
+                password,
+                user.Algorithm,
+                user.PasswordHash,
+                user.PasswordSalt,
+                user.Argon2MemoryKiB,
+                user.Argon2Iterations,
+                user.Argon2Parallelism,
+                out needsRehash);
+
+            if (!valid)
+            {
+                DateTime? lockedUntil = null;
+                try
                 {
-                    LoginRateLimiting.RecordFailure(doc, user, now);
-                    doc.Save(XmlPath);
-
-                    var roleAttr = user.GetAttribute("role");
-                    WriteFailedSignInAudit(
-                        email: emailLower,
-                        role: string.IsNullOrWhiteSpace(roleAttr) ? "Unknown" : roleAttr,
-                        university: userNode["university"]?.InnerText ?? "",
-                        firstName: userNode["firstName"]?.InnerText ?? "",
-                        type: "Sign In Failed (Bad Password)",
-                        details: "Incorrect password (or missing/corrupted hash data) for existing account during sign in.");
-
-                    FormMessage.Text = LoginRateLimiting.IsLockedOut(user, now) ? LockoutError : GenericLoginError;
-                    return;
+                    lockedUntil = UserRepository.RecordFailedLogin(
+                        user.UserId,
+                        LoginRateLimiting.MaxFailedAttempts,
+                        LoginRateLimiting.LockoutDuration);
                 }
+                catch (SqlException)
+                {
+                    // Still refuse the login
+                }
+
+                WriteFailedSignInAudit(emailLower, user.Role, user.University ?? "", user.FirstName ?? "",
+                    lockedUntil.HasValue ? "Account Locked (Too Many Failed Sign Ins)" : "Sign In Failed (Bad Password)",
+                    lockedUntil.HasValue
+                        ? "Account locked until " + lockedUntil.Value.ToString("o") + " UTC after repeated failed sign-ins."
+                        : "Incorrect password for existing account during sign in.");
+
+                FormMessage.Text = lockedUntil.HasValue ? LockoutError : GenericLoginError;
+                return;
+            }
+
+            // Success: clear failures, upgrade the hash if needed ---
+            try
+            {
+                UserRepository.ResetFailedLogins(user.UserId);
 
                 if (needsRehash)
                 {
-                    try
-                    {
-                        passHasher.SetPassword(user, Password.Text);
-                    }
-                    catch 
-                    {
-                        // If rehashing fails, we can log the error but still allow the user to log in.
-                    }
-
+                    UserRepository.UpdatePasswordHash(user.UserId, passHasher.HashNewPassword(password));
                 }
+            }
+            catch (SqlException)
+            {
+                // Best-effort: the user is authenticated. The reset/upgrade retries next login.
+            }
 
-                LoginRateLimiting.RecordSuccess(doc, user); doc.Save(XmlPath);
-                Session["UserId"] = user.GetAttribute("id"); Session["Role"] = user.GetAttribute("role"); Session["Email"] = emailLower; Session["University"] = user["university"]?.InnerText ?? "";
-                AuthSession.SignIn(Context);
-                try { UniversityAuditLogger.AppendForCurrentUser(this, "Sign In", $"{user.GetAttribute("role")} signed in."); } catch { }
-                switch ((user.GetAttribute("role") ?? "").Trim().ToLowerInvariant())
-                {
-                    case "superadmin": Response.Redirect("~/Account/SuperAdmin/SuperAdminHome.aspx"); break;
-                    case "universityadmin": Response.Redirect("~/Account/UniversityAdmin/UniversityAdminHome.aspx"); break;
-                    case "helper": Response.Redirect("~/Account/Helper/Home.aspx"); break;
-                    default: Response.Redirect("~/Account/Participant/SelectEvent.aspx"); break;
-                }
+            //Session
+            Session["UserId"] = user.UserId;
+            Session["Role"] = user.Role;
+            Session["Email"] = user.Email;
+            Session["University"] = user.University ?? "";
+
+            // Issue the auth token that Global.asax checks on every request.
+            AuthSession.SignIn(Context);
+
+            try { UniversityAuditLogger.AppendForCurrentUser(this, "Sign In", user.Role + " signed in."); } catch { }
+
+            Response.Redirect(GetLandingPage(user.Role));
+        }
+
+        /// <summary>Role-based landing page. Unknown roles fall back to the Participant flow.</summary>
+        private static string GetLandingPage(string role)
+        {
+            switch ((role ?? "").Trim().ToLowerInvariant())
+            {
+                case "superadmin": return "~/Account/SuperAdmin/SuperAdminHome.aspx";
+                case "universityadmin": return "~/Account/UniversityAdmin/UniversityAdminHome.aspx";
+                case "helper": return "~/Account/Helper/Home.aspx";
+                default: return "~/Account/Participant/SelectEvent.aspx";
             }
         }
 
-
-        private void WriteFailedSignInAudit(
-            string email,
-            string role,
-            string university,
-            string firstName,
-            string type,
-            string details)
+        /// <summary>
+        /// Appends a failed sign-in entry to the University Admin audit log (still XML for now;
+        /// moves to dbo.AuditLog when we convert the audit logger). Best-effort only.
+        /// </summary>
+        private void WriteFailedSignInAudit(string email, string role, string university,
+                                            string firstName, string type, string details)
         {
             try
             {
-                var auditDir = Path.GetDirectoryName(Server.MapPath("~/App_Data/Audit_Log/UnvAdminAudit.xml"));
+                var auditDir = Path.GetDirectoryName(AuditXmlPath);
                 if (!string.IsNullOrEmpty(auditDir) && !Directory.Exists(auditDir))
                 {
                     Directory.CreateDirectory(auditDir);
                 }
 
                 var auditDoc = new XmlDocument();
-                if (File.Exists(Server.MapPath("~/App_Data/Audit_Log/UnvAdminAudit.xml")))
+                if (File.Exists(AuditXmlPath))
                 {
-                    auditDoc.Load(Server.MapPath("~/App_Data/Audit_Log/UnvAdminAudit.xml"));
+                    auditDoc.Load(AuditXmlPath);
                 }
                 else
                 {
@@ -125,7 +177,7 @@ namespace CyberApp_FIA.Account
                 var entry = auditDoc.CreateElement("entry");
                 entry.SetAttribute("id", "log-" + Guid.NewGuid().ToString("N"));
                 entry.SetAttribute("university", university ?? "");
-                entry.SetAttribute("role", role ?? "Unknown");
+                entry.SetAttribute("role", string.IsNullOrWhiteSpace(role) ? "Unknown" : role);
                 entry.SetAttribute("type", type);
                 entry.SetAttribute("timestamp", DateTime.UtcNow.ToString("o"));
                 entry.SetAttribute("email", email ?? "");
@@ -136,7 +188,7 @@ namespace CyberApp_FIA.Account
                 entry.AppendChild(detailsEl);
 
                 auditDoc.DocumentElement.AppendChild(entry);
-                auditDoc.Save(Server.MapPath("~/App_Data/Audit_Log/UnvAdminAudit.xml"));
+                auditDoc.Save(AuditXmlPath);
             }
             catch
             {

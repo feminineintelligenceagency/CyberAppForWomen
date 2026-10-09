@@ -263,7 +263,7 @@
     <Compile Include="Account\Helper\ParticipantConversations.aspx.designer.cs">
       <DependentUpon>ParticipantConversations.aspx</DependentUpon>
     </Compile>
-    <Content Include="App_Code\Services\Database.cs" />
+    <Compile Include="App_Code\Services\Database.cs" />
     <Compile Include="App_Code\Services\passHasher.cs" />
     <Compile Include="Account\Helper\ResourceViewer.aspx.cs">
       <DependentUpon>ResourceViewer.aspx</DependentUpon>
@@ -451,12 +451,12 @@
     <Compile Include="Account\Participant\SelectEvent.aspx.designer.cs">
       <DependentUpon>SelectEvent.aspx</DependentUpon>
     </Compile>
-    <Compile Include="App_Code\PasswordHasher.cs" />
     <Compile Include="App_Code\Services\AuthSession.cs" />
     <Compile Include="App_Code\Services\DataProtector.cs" />
     <Compile Include="App_Code\Services\EnrollmentSync.cs" />
     <Compile Include="App_Code\Services\QuizService.cs" />
     <Compile Include="App_Code\Services\UniversityAuditLogger.cs" />
+    <Compile Include="App_Code\Services\UserRepository.cs" />
     <Compile Include="ContactUs.aspx.cs">
       <DependentUpon>ContactUs.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -497,7 +497,9 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="UserRepository\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

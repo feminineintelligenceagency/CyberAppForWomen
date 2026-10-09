@@ -130,4 +130,13 @@
   <entry id="log-65028d02423d4edbad223e6d8c58c70b" university="" role="Participant" type="Sign In" timestamp="2026-09-30T05:33:25.7767045Z" email="test1@gmail.com" firstName="test">
     <details>Participant signed in.</details>
   </entry>
+  <entry id="log-4eaa3d6442fc408cb64e0f38983a9c26" university="" role="SuperAdmin" type="Sign In" timestamp="2026-10-07T03:50:08.9359812Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-9ee33de89d654001b5651bfac23af945" university="" role="SuperAdmin" type="Sign In" timestamp="2026-10-07T04:02:20.3494651Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-24bca41c11444bc0b62d05d5c047c39c" university="" role="SuperAdmin" type="Sign In" timestamp="2026-10-07T04:27:45.2987718Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
 </auditLog>
