@@ -846,6 +846,11 @@
               Change event
             </a>
 
+              <a class="pill pill-link"
+                   href="<%: ResolveUrl("~/Account/Security/Enable2FA.aspx") %>">
+                  Security
+               </a>
+
             <asp:LinkButton ID="BtnLogout"
                             runat="server"
                             CssClass="pill pill-pink pill-push"

@@ -81,7 +81,34 @@ namespace CyberApp_FIA.Account
 
                 }
 
-                LoginRateLimiting.RecordSuccess(doc, user); doc.Save(XmlPath);
+                LoginRateLimiting.RecordSuccess(doc, user);
+                doc.Save(XmlPath);
+
+                // MFA: Check whether this account has TOTP-based two-factor authentication enabled.
+                bool mfaEnabled =
+                    string.Equals(
+                        user["mfaEnabled"]?.InnerText,
+                        "true",
+                        StringComparison.OrdinalIgnoreCase);
+
+                if (mfaEnabled)
+                {
+                    // The password has been verified but the user isnt fully authenticated yet
+                    // Store only the user ID temporarily so Verify2FA.aspx knows which account
+                    // should complete the second authentication step.
+                    Session["PendingMfaUserId"] = user.GetAttribute("id");
+
+                    // Do not create the normal authenticated session until MFA succeeds.
+                    Response.Redirect("~/Account/Verify2FA.aspx");
+                    return;
+                }
+
+                // Accounts without MFA enabled continue through the existing login flow
+                Session["UserId"] = user.GetAttribute("id");
+                Session["Role"] = user.GetAttribute("role");
+                Session["Email"] = emailLower;
+                Session["University"] = user["university"]?.InnerText ?? "";
+
                 Session["UserId"] = user.GetAttribute("id"); Session["Role"] = user.GetAttribute("role"); Session["Email"] = emailLower; Session["University"] = user["university"]?.InnerText ?? "";
                 AuthSession.SignIn(Context);
                 try { UniversityAuditLogger.AppendForCurrentUser(this, "Sign In", $"{user.GetAttribute("role")} signed in."); } catch { }
