@@ -111,6 +111,7 @@
     <Content Include="Account\Participant\ParticipantScoreWidget.ascx" />
     <Content Include="Account\Participant\Quiz.aspx" />
     <Content Include="Account\Participant\Replacements.aspx" />
+    <Content Include="Account\Participant\Settings.aspx" />
     <Content Include="Account\Participant\SwapSession.aspx" />
     <Content Include="Account\Security\Enable2FA.aspx" />
     <Content Include="Account\ResetPassword.aspx" />
@@ -350,6 +351,13 @@
     <Compile Include="Account\Participant\Replacements.aspx.designer.cs">
       <DependentUpon>Replacements.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Account\Participant\Settings.aspx.cs">
+      <DependentUpon>Settings.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\Participant\Settings.aspx.designer.cs">
+      <DependentUpon>Settings.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Account\Participant\SwapSession.aspx.cs">
       <DependentUpon>SwapSession.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -486,8 +494,10 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="App_Code\PasswordHasher.cs" />
+    <Compile Include="App_Code\Services\AccountDeletionService.cs" />
     <Compile Include="App_Code\Services\AuthSession.cs" />
     <Compile Include="App_Code\Services\DataProtector.cs" />
+    <Compile Include="App_Code\Services\EmailSender.cs" />
     <Compile Include="App_Code\Services\EnrollmentSync.cs" />
     <Compile Include="App_Code\Services\QuizService.cs" />
     <Compile Include="App_Code\Services\UniversityAuditLogger.cs" />

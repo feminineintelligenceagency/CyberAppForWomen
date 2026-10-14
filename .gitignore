@@ -363,3 +363,6 @@ MigrationBackup/
 FodyWeavers.xsd
 /smtp.config
 /App_Data/passwordResets.xml
+
+# Sprint 2: local secrets (email account settings) - never commit
+Secrets.config
