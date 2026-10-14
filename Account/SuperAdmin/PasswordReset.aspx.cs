@@ -38,6 +38,7 @@ namespace CyberApp_FIA.Account.SuperAdmin
             CreatePasswordHash(NewPassword.Text ?? "", out hash, out salt);
             SetOrCreateChildText(doc, user, "passwordHash", hash);
             SetOrCreateChildText(doc, user, "passwordSalt", salt);
+            SetOrCreateChildText(doc, user, "passwordChangedUtc", DateTime.UtcNow.ToString("o"));   // Sprint 2: sign the user out everywhere
             LoginRateLimiting.ClearLockout(doc, user);
             doc.Save(UsersXmlPath);
 
