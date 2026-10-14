@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+# Sprint 2: local secrets (email account settings) - never commit
+Secrets.config

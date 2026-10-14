@@ -846,9 +846,13 @@
               Change event
             </a>
 
+            <a class="pill pill-link pill-push" href="<%: ResolveUrl("~/Account/Participant/Settings.aspx") %>">
+              Settings
+            </a>
+
             <asp:LinkButton ID="BtnLogout"
                             runat="server"
-                            CssClass="pill pill-pink pill-push"
+                            CssClass="pill pill-pink"
                             OnClick="BtnLogout_Click"
                             CausesValidation="false">
               Sign out
