@@ -20,6 +20,7 @@ namespace CyberApp_FIA.Account.SuperAdmin
             if (!IsPostBack) WelcomeName.Text = (string)Session["Email"] ?? "Super Admin";
         }
 
+        // Epic 1 - User Story #6 (dmundra-29): allow a super admin to reset a user's password, hash it, and clear any existing lockout state.
         protected void BtnResetPassword_Click(object sender, EventArgs e)
         {
             Page.Validate("ResetPassword");
