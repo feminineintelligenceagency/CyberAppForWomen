@@ -193,6 +193,10 @@
             PostBackUrl="~/Account/CreateAccountPage.aspx" />
         </div>
 
+          <!-- Sprint 2: self-service password reset -->
+        <div class="foot">
+          <asp:HyperLink runat="server" NavigateUrl="~/Account/ForgotPassword.aspx" Text="Forgot password?" />
+        </div>
         <!-- General message area for success/errors; viewstate off to avoid stale text -->
         <asp:Label ID="FormMessage" runat="server" EnableViewState="false" />
 

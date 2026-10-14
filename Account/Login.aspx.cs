@@ -23,6 +23,20 @@ namespace CyberApp_FIA.Account
         // ...for this long.
         private static readonly TimeSpan LockoutDuration = TimeSpan.FromMinutes(15);
 
+
+        /// <summary>
+        /// Sprint 1 (session timeout): when SecurePage sends the user here with ?expired=1,
+        /// end the old session on the server and show a message. (Restored after the Sprint 1 merge.)
+        /// </summary>
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!IsPostBack && Request.QueryString["expired"] == "1")
+            {
+                AuthSession.SignOut(Context);
+                FormMessage.Text = "<span style='color:#c21d1d'>Your session has ended. Please log in again.</span>";
+            }
+        }
+
         /// <summary>
         /// Click handler for the Login button:
         /// - Validates the page
@@ -85,6 +99,7 @@ namespace CyberApp_FIA.Account
 
                 LoginRateLimiting.RecordSuccess(doc, user); doc.Save(XmlPath);
                 Session["UserId"] = user.GetAttribute("id"); Session["Role"] = user.GetAttribute("role"); Session["Email"] = emailLower; Session["University"] = user["university"]?.InnerText ?? "";
+                Session["PasswordStamp"] = user["passwordChangedUtc"]?.InnerText ?? "";   // Sprint 2: password reset ends other sessions
                 AuthSession.SignIn(Context);
                 try { UniversityAuditLogger.AppendForCurrentUser(this, "Sign In", $"{user.GetAttribute("role")} signed in."); } catch { }
                 switch ((user.GetAttribute("role") ?? "").Trim().ToLowerInvariant())
