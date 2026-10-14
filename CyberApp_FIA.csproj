@@ -95,6 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AboutUs.aspx" />
+    <Content Include="Account\ForgotPassword.aspx" />
     <Content Include="Account\Helper\Badges.aspx" />
     <Content Include="Account\Helper\CertificationProgress.aspx" />
     <Content Include="Account\Helper\HelperConversation.aspx" />
@@ -112,6 +113,7 @@
     <Content Include="Account\Participant\Replacements.aspx" />
     <Content Include="Account\Participant\SwapSession.aspx" />
     <Content Include="Account\Security\Enable2FA.aspx" />
+    <Content Include="Account\ResetPassword.aspx" />
     <Content Include="Account\SuperAdmin\CertificationRules.aspx" />
     <Content Include="Account\CreateAccountPage.aspx" />
     <Content Include="Account\SuperAdmin\CreateUniversityAdmin.aspx" />
@@ -232,6 +234,13 @@
     <Compile Include="AboutUs.aspx.designer.cs">
       <DependentUpon>AboutUs.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Account\ForgotPassword.aspx.cs">
+      <DependentUpon>ForgotPassword.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\ForgotPassword.aspx.designer.cs">
+      <DependentUpon>ForgotPassword.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Account\Helper\Badges.aspx.cs">
       <DependentUpon>Badges.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -351,6 +360,13 @@
     <Compile Include="Account\Security\Enable2FA.aspx.cs">
       <DependentUpon>Enable2FA.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\ResetPassword.aspx.cs">
+      <DependentUpon>ResetPassword.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\ResetPassword.aspx.designer.cs">
+      <DependentUpon>ResetPassword.aspx</DependentUpon>
     </Compile>
     <Compile Include="Account\SuperAdmin\CertificationRules.aspx.cs">
       <DependentUpon>CertificationRules.aspx</DependentUpon>
@@ -486,6 +502,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Security\EmailService.cs" />
+    <Compile Include="Security\PasswordResetService.cs" />
     <Compile Include="Security\SecurePage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -508,6 +526,7 @@
     <None Include="Properties\PublishProfiles\fiacyberapp-001-site1 - Web Deploy1.pubxml" />
     <None Include="Properties\PublishProfiles\fiacyberapp-001-site1 - Web Deploy2.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <Content Include="smtp.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

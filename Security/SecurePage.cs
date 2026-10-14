@@ -1,9 +1,20 @@
 ﻿using System;
+using System.IO;
 using System.Web;
 using System.Web.UI;
+using System.Xml;
+using CyberApp_FIA.Services;   // AuthSession (Epic #7)
 
 namespace CyberApp_FIA
 {
+    /// <summary>
+    /// Base class for every page that requires a logged-in user.
+    /// - Checks the session on EVERY request (including postbacks).
+    /// - Signs the user out if their password was changed after they logged in
+    ///   (or if their account no longer exists).
+    /// - Stops the browser from caching logged-in pages.
+    /// - Adds a client-side timer that leaves the page when the session times out.
+    /// </summary>
     public class SecurePage : System.Web.UI.Page
     {
         protected override void OnInit(EventArgs e)
@@ -12,8 +23,17 @@ namespace CyberApp_FIA
             Response.Cache.SetNoStore();
             Response.Cache.SetExpires(DateTime.UtcNow.AddMinutes(-1));
 
-            if (string.IsNullOrWhiteSpace(Session["UserId"] as string))
+            var userId = Session["UserId"] as string;
+            if (string.IsNullOrWhiteSpace(userId))
             {
+                Response.Redirect("~/Account/Login.aspx?expired=1");
+                return;
+            }
+
+            // Password changed since this session logged in? End this session.
+            if (!PasswordStampMatches(userId))
+            {
+                AuthSession.SignOut(Context);   // ends session + deletes session and AuthToken cookies
                 Response.Redirect("~/Account/Login.aspx?expired=1");
                 return;
             }
@@ -35,6 +55,39 @@ namespace CyberApp_FIA
             ClientScript.RegisterStartupScript(typeof(SecurePage), "idleTimeout", script, true);
 
             base.OnInit(e);
+        }
+
+        /// <summary>
+        /// Compares the user's passwordChangedUtc in users.xml with the value saved in the
+        /// session at login. If they're different, the password was changed after this login.
+        /// </summary>
+        private bool PasswordStampMatches(string userId)
+        {
+            try
+            {
+                var path = Server.MapPath("~/App_Data/users.xml");
+                if (!File.Exists(path)) return false;
+
+                var doc = new XmlDocument();
+                doc.Load(path);
+
+                foreach (XmlElement user in doc.SelectNodes("/users/user"))
+                {
+                    if (user.GetAttribute("id") != userId) continue;
+
+                    var current = user["passwordChangedUtc"]?.InnerText ?? "";
+                    var atLogin = Session["PasswordStamp"] as string ?? "";
+                    return string.Equals(current, atLogin, StringComparison.Ordinal);
+                }
+
+                return false; // account no longer exists
+            }
+            catch
+            {
+                // If users.xml can't be read for a moment (e.g. it's being saved),
+                // don't kick everyone out. The next request checks again.
+                return true;
+            }
         }
     }
 }
