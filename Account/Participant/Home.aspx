@@ -78,6 +78,117 @@
       font-size:.95rem; margin-bottom:12px;
     }
 
+    .security-panel{
+      background:linear-gradient(180deg,#ffffff,#f9fbff);
+      border:1px solid var(--card-border);
+      border-radius:20px;
+      box-shadow:0 12px 28px rgba(42,153,219,.08);
+      padding:16px 18px;
+    }
+
+    .security-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:10px;
+    }
+
+    .security-meta{
+      color:var(--muted);
+      font-size:.9rem;
+    }
+
+    .security-status{
+      margin-bottom:12px;
+      padding:8px 12px;
+      border-radius:12px;
+      background:linear-gradient(180deg,#f3f8ff,#ffffff);
+      border:1px solid #d9e9f6;
+      color:#0f3d5e;
+      font-size:.9rem;
+    }
+
+    .security-list{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .security-item{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      border:1px solid #e7eef8;
+      border-radius:14px;
+      background:#fff;
+      padding:12px 14px;
+    }
+
+    .security-device{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+      flex:1;
+    }
+
+    .session-dot{
+      width:11px;
+      height:11px;
+      border-radius:50%;
+      background:linear-gradient(135deg,var(--fia-pink),var(--fia-blue));
+      box-shadow:0 0 0 4px rgba(42,153,219,.12);
+      flex-shrink:0;
+    }
+
+    .session-title{
+      font-family:Poppins;
+      font-weight:600;
+      font-size:.95rem;
+      color:var(--ink);
+      margin:0 0 4px 0;
+    }
+
+    .session-meta{
+      color:var(--muted);
+      font-size:.82rem;
+      line-height:1.45;
+    }
+
+    .security-item-actions{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex-shrink:0;
+    }
+
+    .session-chip{
+      display:inline-flex;
+      align-items:center;
+      padding:6px 10px;
+      border-radius:999px;
+      background:linear-gradient(180deg,#f5fbff,#eef8ff);
+      border:1px solid rgba(42,153,219,.25);
+      color:var(--fia-blue);
+      font-size:.8rem;
+      font-weight:700;
+    }
+
+    @media (max-width: 640px){
+      .security-header,
+      .security-item{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+
+      .security-item-actions{
+        width:100%;
+        justify-content:space-between;
+      }
+    }
+
     /* ---------- Sections / titles / dividers ---------- */
     .section{ margin:28px 0; }
     .section-title{
@@ -882,6 +993,48 @@
     </div>
   </div>
 </asp:PlaceHolder>
+
+      <asp:PlaceHolder ID="SessionSecurityPanel" runat="server" Visible="false">
+        <div class="section">
+          <div class="security-panel">
+            <div class="security-header">
+              <div>
+                <div class="section-title" style="margin:0 0 4px 0;">Security &amp; active sessions</div>
+                <div class="security-meta">Manage the devices currently signed in to your FIA account.</div>
+              </div>
+              <asp:Button ID="SignOutOtherSessionsBtn" runat="server" CssClass="btn btn-primary" Text="Sign out other devices" OnClick="SignOutOtherSessionsBtn_Click" />
+            </div>
+            <div class="security-status">
+              <asp:Literal ID="SessionSecurityStatus" runat="server" />
+            </div>
+            <asp:Repeater ID="ActiveSessionsRepeater" runat="server" OnItemCommand="ActiveSessionsRepeater_ItemCommand">
+              <HeaderTemplate>
+                <div class="security-list">
+              </HeaderTemplate>
+              <ItemTemplate>
+                <div class="security-item">
+                  <div class="security-device">
+                    <span class="session-dot"></span>
+                    <div>
+                      <div class="session-title"><%# Eval("TitleText") %></div>
+                      <div class="session-meta">Created <%# Eval("CreatedLocal", "{0:MMM d, yyyy • h:mm tt}") %> · Last activity <%# Eval("LastActiveLocal", "{0:MMM d, yyyy • h:mm tt}") %></div>
+                    </div>
+                  </div>
+                  <div class="security-item-actions">
+                    <asp:PlaceHolder runat="server" Visible='<%# !(bool)Eval("IsCurrent") %>'>
+                      <asp:Button runat="server" CssClass="btn btn-ghost" Text="Sign out" CommandName="signout" CommandArgument='<%# Eval("SessionId") %>' />
+                    </asp:PlaceHolder>
+                    <span class="session-chip"><%# Eval("CurrentLabel") %></span>
+                  </div>
+                </div>
+              </ItemTemplate>
+              <FooterTemplate>
+                </div>
+              </FooterTemplate>
+            </asp:Repeater>
+          </div>
+        </div>
+      </asp:PlaceHolder>
 
       <!-- Privacy note -->
       <div class="note">

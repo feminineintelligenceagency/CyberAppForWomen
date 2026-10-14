@@ -96,6 +96,7 @@ namespace CyberApp_FIA.Participant
                 }
 
                 LoadEventHeader(eventId);
+                LoadSessionSecurity();
 
                 // NEW: show one-time notice if an admin deleted a session this participant was in
                 LoadSessionDeletionNotice(CurrentUserId());
@@ -128,6 +129,95 @@ namespace CyberApp_FIA.Participant
         }
 
         private string CurrentUserId() => Session["UserId"] as string;
+
+        private void LoadSessionSecurity()
+        {
+            SessionSecurityPanel.Visible = true;
+
+            try
+            {
+                var sessions = AuthSession.GetActiveSessions(Context);
+                var items = sessions
+                    .Select(s => new
+                    {
+                        SessionId = s.SessionId,
+                        DeviceType = string.IsNullOrWhiteSpace(s.DeviceType) ? "Device" : s.DeviceType,
+                        CreatedLocal = s.CreatedAtUtc.LocalDateTime,
+                        LastActiveLocal = s.LastActiveUtc.LocalDateTime,
+                        IsCurrent = s.IsCurrent,
+                        CurrentLabel = s.IsCurrent ? "This device" : "Other device",
+                        TitleText = s.IsCurrent ? (string.IsNullOrWhiteSpace(s.DeviceType) ? "Device • This device" : s.DeviceType + " • This device") : (string.IsNullOrWhiteSpace(s.DeviceType) ? "Device" : s.DeviceType)
+                    })
+                    .OrderByDescending(s => s.LastActiveLocal)
+                    .ToList();
+
+                if (items.Count == 0)
+                {
+                    ActiveSessionsRepeater.DataSource = null;
+                    ActiveSessionsRepeater.DataBind();
+                    SessionSecurityStatus.Text = "No active FIA sessions were found.";
+                    SignOutOtherSessionsBtn.Visible = false;
+                    return;
+                }
+
+                var otherCount = items.Count(i => !i.IsCurrent);
+                SessionSecurityStatus.Text = otherCount > 0
+                    ? "You have " + otherCount + " other active device" + (otherCount == 1 ? "" : "s") + " signed in."
+                    : "This is the only active FIA session currently on record.";
+                SignOutOtherSessionsBtn.Visible = otherCount > 0;
+
+                ActiveSessionsRepeater.DataSource = items;
+                ActiveSessionsRepeater.DataBind();
+            }
+            catch (Exception ex)
+            {
+                Trace.Warn("Session monitoring", "Unable to load active sessions.", ex);
+                SessionSecurityStatus.Text = "We couldn't load your active sessions. Please try again.";
+                SignOutOtherSessionsBtn.Visible = false;
+            }
+        }
+
+        protected void SignOutOtherSessionsBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                AuthSession.SignOutOtherSessions(Context);
+                LoadSessionSecurity();
+            }
+            catch (Exception ex)
+            {
+                Trace.Warn("Session monitoring", "Unable to sign out other sessions.", ex);
+                SessionSecurityStatus.Text = "We couldn't sign out other devices. Please try again.";
+            }
+        }
+
+        protected void ActiveSessionsRepeater_ItemCommand(object source, RepeaterCommandEventArgs e)
+        {
+            if (!string.Equals(e.CommandName, "signout", StringComparison.OrdinalIgnoreCase))
+                return;
+
+            var sessionId = e.CommandArgument as string;
+            if (string.IsNullOrWhiteSpace(sessionId))
+                return;
+
+            try
+            {
+                if (AuthSession.SignOutSession(Context, sessionId))
+                {
+                    Response.Redirect(Request.RawUrl, false);
+                    Context.ApplicationInstance.CompleteRequest();
+                    return;
+                }
+
+                LoadSessionSecurity();
+                SessionSecurityStatus.Text = "That session is no longer active.";
+            }
+            catch (Exception ex)
+            {
+                Trace.Warn("Session monitoring", "Unable to sign out the selected session.", ex);
+                SessionSecurityStatus.Text = "We couldn't sign out that device. Please try again.";
+            }
+        }
 
         private void LoadEventHeader(string eventId)
         {
