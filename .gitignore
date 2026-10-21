@@ -366,3 +366,6 @@ FodyWeavers.xsd
 
 # Sprint 2: local secrets (email account settings) - never commit
 Secrets.config
+Secrets.config
+smtp.config
+App_Data/authSessions.xml
