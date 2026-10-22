@@ -193,4 +193,7 @@
   <entry id="log-00b16612c7de44d09c58eb06015fcbd2" university="Arizona State Univserity" role="Participant" type="Participant Pre-Event Quiz Completion" timestamp="2026-10-14T17:30:06.9316392Z" email="test2@gmail.com" firstName="">
     <details>Participant completed the pre-event cybersecurity quiz.</details>
   </entry>
+  <entry id="log-2f930ce34fd14400be514bd7dcf206b9" university="" role="SuperAdmin" type="Sign In" timestamp="2026-10-22T23:24:15.9711414Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
 </auditLog>

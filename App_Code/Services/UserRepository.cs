@@ -6,7 +6,7 @@ namespace CyberApp_FIA.Services
 {
     /// <summary>
     /// Everything sign-up and login need from the Users and UserCredentials tables.
-    /// Pages call these methods, they never write SQL themselves.
+    /// Pages call these methods, they never write SQL directly.
     /// </summary>
     public static class UserRepository
     {
@@ -150,9 +150,9 @@ namespace CyberApp_FIA.Services
         }
 
         /// <summary>
-        /// Records a failed login in a single atomic UPDATE, so simultaneous attempts
-        /// can't be undercounted. When the count reaches <paramref name="maxAttempts"/>,
-        /// the account is locked for <paramref name="lockoutDuration"/>. A failure after an
+        /// Records a failed login in a single UPDATE, so simultaneous attempts can't be undercounted.
+        /// When the count reaches <paramref maxAttempts/>,
+        /// the account is locked for <paramref lockoutDuration/>. A failure after an
         /// earlier lockout has expired starts counting from 1 again.
         /// Returns the lockout end time if the account is now locked, otherwise null.
         /// </summary>
@@ -181,7 +181,9 @@ namespace CyberApp_FIA.Services
             return until > DateTime.UtcNow ? until : (DateTime?)null;
         }
 
-        /// <summary>Clears the failure counter and any lockout after a successful login.</summary>
+        /// <summary> 
+        /// Clears the failure counter and any lockout after a successful login
+        /// </summary>
         public static void ResetFailedLogins(string userId)
         {
             Database.ExecuteNonQuery(@"

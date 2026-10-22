@@ -8,11 +8,11 @@ using System.Xml;
 namespace CyberApp_FIA.Account
 {
     /// <summary>
-    /// Login page code-behind (database version).
+    /// Login page code-behind
     /// - Looks the user up in dbo.Users / dbo.UserCredentials via UserRepository
     /// - Verifies the password with passHasher (Argon2, or legacy PBKDF2 for old accounts)
     /// - Upgrades legacy/outdated hashes to current Argon2 settings on successful login
-    /// - Rate limiting: MaxFailedAttempts / LockoutDuration from LoginRateLimiting, enforced atomically in the database
+    /// - Rate limiting: MaxFailedAttempts / LockoutDuration from LoginRateLimiting, enforced in the database
     /// - Audit logging of failed and successful sign-ins
     /// - Role-based redirect
     /// </summary>
@@ -38,7 +38,7 @@ namespace CyberApp_FIA.Account
             var password = Password.Text ?? "";
             var now = DateTime.UtcNow;
 
-            // --- Look up the user ---
+            //Look up the user 
             UserRepository.LoginRecord user;
             try
             {
@@ -51,7 +51,7 @@ namespace CyberApp_FIA.Account
                 return;
             }
 
-            // --- Unknown email ---
+            // Unknown email 
             if (user == null)
             {
                 passHasher.dummyVerify(password);
@@ -64,7 +64,7 @@ namespace CyberApp_FIA.Account
                 return;
             }
 
-            //Locked out: refuse before checking the password
+            //refuse before checking the password if user is locked out
             if (user.IsLockedOut(now))
             {
                 FormMessage.Text = LockoutError;
@@ -137,7 +137,9 @@ namespace CyberApp_FIA.Account
             Response.Redirect(GetLandingPage(user.Role));
         }
 
-        /// <summary>Role-based landing page. Unknown roles fall back to the Participant flow.</summary>
+        /// <summary>
+        /// Role-based landing page. Unknown roles fall back to the Participant flow.
+        /// </summary>
         private static string GetLandingPage(string role)
         {
             switch ((role ?? "").Trim().ToLowerInvariant())
