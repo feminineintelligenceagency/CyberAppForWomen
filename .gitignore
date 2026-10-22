@@ -369,3 +369,4 @@ Secrets.config
 Secrets.config
 smtp.config
 App_Data/authSessions.xml
+/App_Data/notifications.xml
