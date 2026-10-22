@@ -1,40 +1,36 @@
-﻿using System;
-using System.IO;
-using System.Security.Cryptography;
+﻿using CyberApp_FIA.Services;
+using System;
+using System.Data.SqlClient;
 using System.Web.UI;
-using System.Xml;
 
 namespace CyberApp_FIA.Account
 {
+    /// <summary>
+    /// University Admin page for creating Helper accounts (database version).
+    /// - Only University Admins can view the page or submit the form
+    /// - The Helper is always linked to the signed-in admin's OWN university,
+    ///   looked up on the server (never taken from the form)
+    /// - Hashes the password with Argon2 (passHasher.HashNewPassword)
+    /// - Creates the user and credentials in one transaction (UserRepository.CreateUser)
+    /// </summary>
     public partial class UniversityAdminAddHelper : SecurePage
     {
-        /// <summary>
-        /// Physical path to the users XML datastore.
-        /// </summary>
-        private string UsersXmlPath => Server.MapPath("~/App_Data/users.xml");
-
         protected void Page_Load(object sender, EventArgs e)
         {
+            // Access gate on EVERY request, including button postbacks.
+            if (!IsUniversityAdmin())
+            {
+                Response.Redirect("~/Account/Login.aspx");
+                return;
+            }
+
             if (!IsPostBack)
             {
-                // Access gate: must be UniversityAdmin
-                var role = (string)Session["Role"];
-                if (!string.Equals(role, "UniversityAdmin", StringComparison.OrdinalIgnoreCase))
-                {
-                    Response.Redirect("~/Account/Login.aspx");
-                    return;
-                }
+                var uni = GetAdminUniversity();
+                UniversityDisplay.Text = Server.HtmlEncode(string.IsNullOrWhiteSpace(uni) ? "(not set)" : uni);
 
-                var email = (string)Session["Email"] ?? string.Empty;
-
-                // Prefer university from session, else lookup via users.xml
-                var uni = (string)Session["University"];
-                if (string.IsNullOrWhiteSpace(uni))
-                {
-                    uni = LookupUniversityByEmail(email);
-                }
-
-                UniversityDisplay.Text = string.IsNullOrWhiteSpace(uni) ? "(not set)" : uni;
+                // Kept only so the existing markup still works. The value is NOT trusted
+                // when creating the Helper, because anything in the page can be edited in the browser.
                 UniversityValue.Value = uni ?? string.Empty;
             }
         }
@@ -45,75 +41,85 @@ namespace CyberApp_FIA.Account
         }
 
         /// <summary>
-        /// Handles creation of a new Helper user scoped to this University Admin's university.
+        /// Creates a new Helper linked to this University Admin's university.
         /// </summary>
         protected void BtnCreateHelper_Click(object sender, EventArgs e)
         {
+            if (!IsUniversityAdmin())
+            {
+                Response.Redirect("~/Account/Login.aspx");
+                return;
+            }
+
             if (!Page.IsValid) return;
 
-            var uni = (UniversityValue.Value ?? "").Trim();
-            var emailRaw = (NewHelperEmail.Text ?? "").Trim();
+            var email = (NewHelperEmail.Text ?? "").Trim().ToLowerInvariant();
             var firstName = (NewHelperFirstName.Text ?? "").Trim();
             var lastName = (NewHelperLastName.Text ?? "").Trim();
-            var password = (NewHelperPassword.Text ?? "").Trim();
 
-            if (string.IsNullOrEmpty(uni))
+            // Don't trim passwords: login checks the password exactly as typed, so trimming
+            // here would make passwords with leading/trailing spaces impossible to use.
+            var password = NewHelperPassword.Text ?? "";
+
+            if (email.Length == 0 || firstName.Length == 0 || lastName.Length == 0 || password.Length == 0)
             {
-                HelperFormMessage.Text = "<span style='color:#b91c1c'>Your university is not set. Please contact a Super Admin.</span>";
+                ShowError("All fields are required.");
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(emailRaw) ||
-                string.IsNullOrWhiteSpace(firstName) ||
-                string.IsNullOrWhiteSpace(lastName) ||
-                string.IsNullOrWhiteSpace(password))
+            UserRepository.NewUser newUser;
+            string uni;
+            try
             {
-                HelperFormMessage.Text = "<span style='color:#b91c1c'>All fields are required.</span>";
+                // Always use the admin's university from the server, never the hidden field.
+                uni = GetAdminUniversity();
+                if (string.IsNullOrWhiteSpace(uni))
+                {
+                    ShowError("Your university is not set. Please contact a Super Admin.");
+                    return;
+                }
+
+                if (UserRepository.EmailExists(email))
+                {
+                    ShowError("A user with this email already exists.");
+                    return;
+                }
+
+                newUser = new UserRepository.NewUser
+                {
+                    UserId = Guid.NewGuid().ToString("N"),
+                    Email = email,
+                    FirstName = firstName,
+                    LastName = lastName,
+                    Role = "Helper",
+                    University = uni,
+                    // The Helper hasn't accepted the consent form themselves yet,
+                    // so these stay empty rather than recording the admin's acceptance.
+                    ConsentAcceptedAtUtc = null,
+                    ConsentIp = null
+                };
+
+                if (!UserRepository.CreateUser(newUser, passHasher.HashNewPassword(password)))
+                {
+                    ShowError("A user with this email already exists.");
+                    return;
+                }
+            }
+            catch (SqlException)
+            {
+                ShowError("We couldn't create the account right now. Please try again in a moment.");
                 return;
             }
 
-            // Normalize email to lowercase for storage and comparison (matches CreateAccount/Login behavior).
-            var emailLower = emailRaw.ToLowerInvariant();
-
-            EnsureUsersXml();
-
-            var doc = new XmlDocument();
-            doc.Load(UsersXmlPath);
-
-            // Check for duplicate email (case-insensitive)
-            var existing = doc.SelectSingleNode(
-                $"/users/user[translate(email,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='{emailLower}']");
-            if (existing != null)
+            // Record who created the Helper (best-effort; never blocks creation).
+            try
             {
-                HelperFormMessage.Text = "<span style='color:#b91c1c'>A user with this email already exists.</span>";
-                return;
+                UniversityAuditLogger.AppendForCurrentUser(
+                    this,
+                    "Helper Created",
+                    $"University Admin {Session["Email"]} created Helper {email} (userId={newUser.UserId}) for {uni}.");
             }
-
-            // Hash and salt the password using the same PBKDF2 pattern as CreateAccount/Login.
-            HashPassword(password, out var hashB64, out var saltB64);
-
-            var root = doc.DocumentElement ?? doc.AppendChild(doc.CreateElement("users"));
-
-            var userEl = doc.CreateElement("user");
-            userEl.SetAttribute("id", Guid.NewGuid().ToString("N"));
-            userEl.SetAttribute("role", "Helper");
-
-            // Children: firstName, lastName, email (lowercased), university, passwordHash, passwordSalt, createdAt, consentAcceptedAt, consentIp
-            userEl.AppendChild(Mk(doc, "firstName", firstName));
-            userEl.AppendChild(Mk(doc, "lastName", lastName));
-            userEl.AppendChild(Mk(doc, "email", emailLower));
-            userEl.AppendChild(Mk(doc, "university", uni));
-            userEl.AppendChild(Mk(doc, "passwordHash", hashB64));
-            userEl.AppendChild(Mk(doc, "passwordSalt", saltB64));
-
-            var nowIso = DateTime.UtcNow.ToString("o");
-            userEl.AppendChild(Mk(doc, "createdAt", nowIso));
-            userEl.AppendChild(Mk(doc, "consentAcceptedAt", nowIso));
-            var ip = Request.UserHostAddress ?? "";
-            userEl.AppendChild(Mk(doc, "consentIp", ip));
-
-            root.AppendChild(userEl);
-            doc.Save(UsersXmlPath);
+            catch { }
 
             HelperFormMessage.Text = "<span style='color:#0a7a3c'>Helper account created and linked to your university.</span>";
 
@@ -126,83 +132,31 @@ namespace CyberApp_FIA.Account
 
         // ---------- Helpers ----------
 
-        private void EnsureUsersXml()
+        private bool IsUniversityAdmin()
         {
-            if (File.Exists(UsersXmlPath)) return;
-            Directory.CreateDirectory(Path.GetDirectoryName(UsersXmlPath) ?? "");
-            var init = "<?xml version='1.0' encoding='utf-8'?><users version='1'></users>";
-            File.WriteAllText(UsersXmlPath, init);
-        }
-
-        private static XmlElement Mk(XmlDocument d, string name, string value)
-        {
-            var el = d.CreateElement(name);
-            el.InnerText = value ?? "";
-            return el;
+            var role = (Session["Role"] as string ?? "").Trim();
+            return string.Equals(role, "UniversityAdmin", StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
-        /// Looks up a user's university by email in users.xml (case-insensitive).
+        /// The signed-in admin's university: from the session (set at login from the database),
+        /// falling back to a database lookup by email.
         /// </summary>
-        private string LookupUniversityByEmail(string email)
+        private string GetAdminUniversity()
         {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(email) || !File.Exists(UsersXmlPath)) return "";
-                var doc = new XmlDocument();
-                doc.Load(UsersXmlPath);
-                var emailLower = email.ToLowerInvariant();
+            var uni = (Session["University"] as string ?? "").Trim();
+            if (uni.Length > 0) return uni;
 
-                var node = doc.SelectSingleNode(
-                    $"/users/user[translate(email,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='{emailLower}']");
-                return node?["university"]?.InnerText ?? "";
-            }
-            catch
-            {
-                return "";
-            }
+            var email = Session["Email"] as string;
+            if (string.IsNullOrWhiteSpace(email)) return "";
+
+            var admin = UserRepository.GetLoginByEmail(email);
+            return (admin?.University ?? "").Trim();
         }
 
-        /// <summary>
-        /// Generates a salted PBKDF2 hash using the same parameters as CreateAccountPage/Login:
-        /// - 16-byte random salt
-        /// - 100,000 iterations
-        /// - 32-byte (256-bit) derived key
-        /// Returns both hash and salt as Base64 strings.
-        /// </summary>
-        private static void HashPassword(string password, out string hash, out string salt)
+        private void ShowError(string message)
         {
-            var saltBytes = GenerateSalt(16);
-            var hashBytes = HashPasswordCore(password, saltBytes);
-
-            salt = Convert.ToBase64String(saltBytes);
-            hash = Convert.ToBase64String(hashBytes);
-        }
-
-        /// <summary>
-        /// Generates a cryptographically strong random salt of the requested byte length.
-        /// Mirrors CreateAccountPage.GenerateSalt.
-        /// </summary>
-        private static byte[] GenerateSalt(int size)
-        {
-            var salt = new byte[size];
-            using (var rng = new RNGCryptoServiceProvider())
-            {
-                rng.GetBytes(salt);
-            }
-            return salt;
-        }
-
-        /// <summary>
-        /// Derives a password hash using PBKDF2 (Rfc2898DeriveBytes) with 100,000 iterations.
-        /// Mirrors CreateAccountPage.HashPassword and Login.HashPassword.
-        /// </summary>
-        private static byte[] HashPasswordCore(string password, byte[] salt)
-        {
-            using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 100000))
-            {
-                return pbkdf2.GetBytes(32); // 256-bit hash
-            }
+            HelperFormMessage.Text = "<span style='color:#b91c1c'>" + Server.HtmlEncode(message) + "</span>";
         }
     }
 }

@@ -1,44 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
-using System.Xml.Linq;
 
 namespace CyberApp_FIA.Services
 {
+    /// <summary>
+    /// Risk-assessment quiz (database version).
+    ///
+    /// Reads questions/domains from QuizQuestions, QuizOptions, QuizOptionWeights, QuizDomains,
+    /// and stores progress/results in QuizProgress, QuizProgressAnswers, QuizResults,
+    /// QuizResultDomainScores, QuizResultItems.
+    ///
+    /// "username" everywhere is the user's 32-character UserId (Session["UserId"]),
+    /// which is what the XML files already stored.
+    ///
+    /// PRIVACY: answers and results describe a participant's personal safety situation.
+    /// Only call these methods with the signed-in user's own id, or for a helper only
+    /// when that participant's result has ShareWithHelper = true.
+    /// </summary>
     public class QuizService
     {
-        private readonly string _appData;
-        private readonly string _questionsPath;
-        private readonly string _rulesPath;
-        private readonly string _progressPath;
-        private readonly string _resultsPath;
+        // Kept so existing pages that call new QuizService(Server) still compile.
+        public QuizService(HttpServerUtility server) { }
 
-        public QuizService(HttpServerUtility server)
-        {
-            _appData = server.MapPath("~/App_Data/");
-            _questionsPath = Path.Combine(_appData, "quiz_questions.xml");
-            _rulesPath = Path.Combine(_appData, "quiz_rules.xml");
-            _progressPath = Path.Combine(_appData, "quiz_progress.xml");
-            _resultsPath = Path.Combine(_appData, "quiz_results.xml");
-        }
-
-        // ---------- Public DTOs ----------
+        // ---------- Public DTOs (unchanged) ----------
         public class ScoreResult
         {
             public string Username { get; set; }
             public string RulesetVersion { get; set; }
             public DateTime CompletedUtc { get; set; }
-            public double OverallScore { get; set; } // v1: 0–100, v2: 0–10
+            public double OverallScore { get; set; } // 0–10
             public Dictionary<string, double> DomainScores { get; set; } = new Dictionary<string, double>();
             public List<string> TopFactors { get; set; } = new List<string>();
             public List<string> QuickWins { get; set; } = new List<string>();
             public bool ShareWithHelper { get; set; }
         }
 
-        // For binding questions in the UI (works for both v1 and v2)
         public class UiQuestion
         {
             public string Id { get; set; }
@@ -49,502 +49,400 @@ namespace CyberApp_FIA.Services
             public string D { get; set; }
         }
 
-        // ---------- Legacy (v1) DTOs (internal) ----------
-        private class V1Question
+        // ---------- Internal models ----------
+        private class Domain
         {
-            public string Id;
-            public string Domain;
-            public int Weight;
-            public string Text;
-            public string A;
-            public string B;
-            public string C;
-            public string D;
-            public string Correct;
-            public string Explanation;
-            public string QuickWin;
-        }
-
-        // ---------- V2 DTOs (internal) ----------
-        private class V2Domain
-        {
-            public string Id;
+            public string Key;
             public string Title;
             public string QuickWin;
             public string Factor;
         }
 
-        private class V2Option
+        private class Option
         {
-            public string Label;
+            public string Label = "";
             public List<(string module, int weight)> Maps = new List<(string, int)>();
         }
 
-        private class V2Question
+        private class Question
         {
             public string Id;
             public string Text;
-            public Dictionary<string, V2Option> Options = new Dictionary<string, V2Option>(); // "A","B","C","D"
+            public Dictionary<string, Option> Options = new Dictionary<string, Option>(StringComparer.OrdinalIgnoreCase);
         }
 
-        // ---------- Version helpers ----------
+        // =====================================================================
+        // Ruleset / questions
+        // =====================================================================
+
+        /// <summary>The newest ruleset version (e.g. "2.0").</summary>
         public string CurrentRulesetVersion()
         {
-            var x = XDocument.Load(_rulesPath);
-            return x.Root.Element("Ruleset")?.Attribute("version")?.Value ?? "1.0";
+            var v = Database.ExecuteScalar(@"
+                    SELECT TOP 1 Version FROM dbo.QuizRulesets
+                     ORDER BY CASE WHEN CreatedAtUtc IS NULL THEN 1 ELSE 0 END, CreatedAtUtc DESC, Version DESC;");
+            return v as string ?? "2.0";
         }
 
-        private bool IsV2Active()
-        {
-            var q = XDocument.Load(_questionsPath);
-            var v = q.Root.Attribute("rulesetVersion")?.Value ?? "1.0";
-            return VersionTryParse(v) >= VersionTryParse("2.0");
-        }
-
-        private static Version VersionTryParse(string v)
-        {
-            try { return new Version(v); } catch { return new Version(1, 0); }
-        }
-
-        // ---------- UI Question Loader (works for both v1 and v2) ----------
+        /// <summary>Questions with their A–D labels, in display order.</summary>
         public List<UiQuestion> LoadQuestionsForUi(out string rulesetVersion)
         {
-            if (IsV2Active())
+            rulesetVersion = CurrentRulesetVersion();
+            return LoadQuestions().Select(q => new UiQuestion
             {
-                var (ver, v2Qs, _) = LoadV2Questions();
-                rulesetVersion = ver;
-                return v2Qs.Select(q => new UiQuestion
-                {
-                    Id = q.Id,
-                    Text = q.Text,
-                    A = q.Options["A"].Label,
-                    B = q.Options["B"].Label,
-                    C = q.Options["C"].Label,
-                    D = q.Options["D"].Label
-                }).ToList();
-            }
-            else
-            {
-                var (ver, v1Qs) = LoadV1Questions();
-                rulesetVersion = ver;
-                return v1Qs.Select(q => new UiQuestion
-                {
-                    Id = q.Id,
-                    Text = q.Text,
-                    A = q.A,
-                    B = q.B,
-                    C = q.C,
-                    D = q.D
-                }).ToList();
-            }
-        }
-
-        // ---------- v1 loaders ----------
-        private (string rulesetVersion, List<V1Question>) LoadV1Questions()
-        {
-            var x = XDocument.Load(_questionsPath);
-            var ver = x.Root.Attribute("rulesetVersion")?.Value ?? "1.0";
-            var list = x.Root.Elements("Question").Select(q => new V1Question
-            {
-                Id = (string)q.Attribute("id"),
-                Domain = (string)q.Attribute("domain"),
-                Weight = int.Parse((string)q.Attribute("weight") ?? "1", CultureInfo.InvariantCulture),
-                Text = (string)q.Element("Text"),
-                A = (string)q.Element("A"),
-                B = (string)q.Element("B"),
-                C = (string)q.Element("C"),
-                D = (string)q.Element("D"),
-                Correct = ((string)q.Element("Correct") ?? "A").Trim(),
-                Explanation = (string)q.Element("Explanation") ?? "",
-                QuickWin = (string)q.Element("QuickWin") ?? ""
+                Id = q.Id,
+                Text = q.Text,
+                A = Label(q, "A"),
+                B = Label(q, "B"),
+                C = Label(q, "C"),
+                D = Label(q, "D")
             }).ToList();
-            return (ver, list);
         }
 
-        private Dictionary<string, int> V1DomainWeights()
+        private static string Label(Question q, string key)
         {
-            var map = new Dictionary<string, int>();
-            var x = XDocument.Load(_rulesPath);
-            foreach (var d in x.Root.Element("Ruleset").Elements("Domain"))
-            {
-                var wAttr = d.Attribute("weight")?.Value;
-                int w = 1;
-                if (!string.IsNullOrEmpty(wAttr))
-                    w = int.Parse(wAttr, CultureInfo.InvariantCulture);
-                map[(string)d.Attribute("id")] = w;
-            }
-            return map;
+            return q.Options.TryGetValue(key, out var o) ? o.Label : "";
         }
 
-        private Dictionary<string, string> V1DomainTitles()
+        private static Dictionary<string, Domain> LoadDomains()
         {
-            var map = new Dictionary<string, string>();
-            var x = XDocument.Load(_rulesPath);
-            foreach (var d in x.Root.Element("Ruleset").Elements("Domain"))
-                map[(string)d.Attribute("id")] = (string)d.Attribute("title") ?? (string)d.Attribute("id");
-            return map;
-        }
-
-        // ---------- v2 loaders ----------
-        private (string rulesetVersion, List<V2Question> questions, Dictionary<string, V2Domain> domains) LoadV2Questions()
-        {
-            var ruleDoc = XDocument.Load(_rulesPath);
-            var rs = ruleDoc.Root.Element("Ruleset");
-            var rulesVersion = (string)rs.Attribute("version") ?? "2.0";
-
-            var domains = rs.Elements("Domain")
-                .Select(d => new V2Domain
+            return Database.Query(
+                "SELECT DomainKey, Title, QuickWin, Factor FROM dbo.QuizDomains;",
+                r => new Domain
                 {
-                    Id = (string)d.Attribute("id"),
-                    Title = (string)d.Attribute("title") ?? (string)d.Attribute("id"),
-                    QuickWin = (string)d.Attribute("quickWin") ?? "",
-                    Factor = (string)d.Attribute("factor") ?? ""
+                    Key = r.GetString(0),
+                    Title = r.GetString(1),
+                    QuickWin = Database.GetStringOrNull(r, "QuickWin") ?? "",
+                    Factor = Database.GetStringOrNull(r, "Factor") ?? ""
                 })
-                .ToDictionary(x => x.Id, x => x);
-
-            var qdoc = XDocument.Load(_questionsPath);
-            var v2Qs = new List<V2Question>();
-            foreach (var qn in qdoc.Root.Elements("Question"))
-            {
-                var q = new V2Question { Id = (string)qn.Attribute("id"), Text = (string)qn.Element("Text") };
-                foreach (var key in new[] { "A", "B", "C", "D" })
-                {
-                    var on = qn.Element(key);
-                    var label = (on?.Nodes().OfType<XText>().FirstOrDefault()?.Value ?? "").Trim();
-                    var opt = new V2Option { Label = label };
-                    foreach (var map in on?.Elements("Map") ?? Enumerable.Empty<XElement>())
-                    {
-                        var mod = (string)map.Attribute("module");
-                        var wt = int.Parse(((string)map.Attribute("weight")) ?? "0", CultureInfo.InvariantCulture);
-                        opt.Maps.Add((mod, wt));
-                    }
-                    q.Options[key] = opt;
-                }
-                v2Qs.Add(q);
-            }
-
-            return (rulesVersion, v2Qs, domains);
+                .ToDictionary(d => d.Key, d => d, StringComparer.OrdinalIgnoreCase);
         }
 
-        // ---------- Progress storage ----------
-        private XDocument EnsureProgressDoc()
+        private static List<Question> LoadQuestions()
         {
-            if (!File.Exists(_progressPath))
+            var questions = Database.Query(
+                "SELECT QuestionId, QuestionText FROM dbo.QuizQuestions WHERE IsActive = 1 ORDER BY SortOrder;",
+                r => new Question { Id = r.GetString(0), Text = r.GetString(1) });
+
+            var byId = questions.ToDictionary(q => q.Id, q => q, StringComparer.OrdinalIgnoreCase);
+
+            foreach (var row in Database.Query(
+                "SELECT QuestionId, OptionKey, OptionText FROM dbo.QuizOptions;",
+                r => new { Q = r.GetString(0), K = r.GetString(1), T = r.GetString(2) }))
             {
-                var newDoc = new XDocument(new XElement("Progress"));
-                newDoc.Save(_progressPath);
-                return newDoc;
+                if (byId.TryGetValue(row.Q, out var q)) q.Options[row.K] = new Option { Label = row.T };
             }
-            return XDocument.Load(_progressPath);
+
+            foreach (var row in Database.Query(
+                "SELECT QuestionId, OptionKey, DomainKey, Weight FROM dbo.QuizOptionWeights;",
+                r => new { Q = r.GetString(0), K = r.GetString(1), D = r.GetString(2), W = r.GetInt32(3) }))
+            {
+                if (byId.TryGetValue(row.Q, out var q) && q.Options.TryGetValue(row.K, out var o))
+                    o.Maps.Add((row.D, row.W));
+            }
+
+            return questions;
         }
 
-        private XDocument EnsureResultsDoc()
-        {
-            if (!File.Exists(_resultsPath))
-            {
-                var newDoc = new XDocument(new XElement("Results"));
-                newDoc.Save(_resultsPath);
-                return newDoc;
-            }
-            return XDocument.Load(_resultsPath);
-        }
+        // =====================================================================
+        // Progress
+        // =====================================================================
 
+        /// <summary>
+        /// Saves (or changes) one answer and the user's position in the quiz.
+        /// If the user's saved progress is for an older ruleset, it is reset first.
+        /// </summary>
         public void SaveAnswer(string username, string questionId, string selectedOption, int index, int total, string rulesetVersion)
         {
-            var doc = EnsureProgressDoc();
-            var user = doc.Root.Elements("User").FirstOrDefault(u => (string)u.Attribute("name") == username && (string)u.Attribute("rules") == rulesetVersion);
-            if (user == null)
-            {
-                user = new XElement("User",
-                    new XAttribute("name", username),
-                    new XAttribute("rules", rulesetVersion),
-                    new XAttribute("lastIndex", index),
-                    new XAttribute("completed", "false"));
-                doc.Root.Add(user);
-            }
-            else
-            {
-                user.SetAttributeValue("lastIndex", index);
-            }
+            var userId = NormalizeUserId(username);
+            var choice = (selectedOption ?? "").Trim().ToUpperInvariant();
+            var version = string.IsNullOrWhiteSpace(rulesetVersion) ? CurrentRulesetVersion() : rulesetVersion.Trim();
 
-            var answers = user.Element("Answers");
-            if (answers == null)
+            Database.InTransaction((conn, tx) =>
             {
-                answers = new XElement("Answers");
-                user.Add(answers);
-            }
+                EnsureRuleset(conn, tx, version);
 
-            var existing = answers.Elements("Answer").FirstOrDefault(a => (string)a.Attribute("qid") == questionId);
-            if (existing == null)
-            {
-                existing = new XElement("Answer",
-                    new XAttribute("qid", questionId),
-                    new XAttribute("choice", selectedOption));
-                answers.Add(existing);
-            }
-            else
-            {
-                existing.SetAttributeValue("choice", selectedOption);
-            }
+                // Lock this user's progress row for the rest of the transaction so two
+                // quick clicks can't create duplicate rows.
+                Database.ExecuteNonQuery(conn, tx, @"
+                    DECLARE @Existing VARCHAR(10) =
+                        (SELECT RulesetVersion FROM dbo.QuizProgress WITH (UPDLOCK, HOLDLOCK) WHERE UserId = @U);
 
-            user.SetAttributeValue("total", total);
-            doc.Save(_progressPath);
+                    IF @Existing IS NULL
+                        INSERT INTO dbo.QuizProgress (UserId, RulesetVersion, LastIndex, TotalQuestions, IsCompleted, UpdatedAtUtc)
+                        VALUES (@U, @V, @I, @T, 0, SYSUTCDATETIME());
+                    ELSE IF @Existing <> @V
+                    BEGIN
+                        -- Different ruleset: start over.
+                        DELETE FROM dbo.QuizProgressAnswers WHERE UserId = @U;
+                        UPDATE dbo.QuizProgress
+                           SET RulesetVersion = @V, LastIndex = @I, TotalQuestions = @T, IsCompleted = 0, UpdatedAtUtc = SYSUTCDATETIME()
+                         WHERE UserId = @U;
+                    END
+                    ELSE
+                        UPDATE dbo.QuizProgress
+                           SET LastIndex = @I, TotalQuestions = @T, UpdatedAtUtc = SYSUTCDATETIME()
+                         WHERE UserId = @U;
+
+                    UPDATE dbo.QuizProgressAnswers SET Choice = @C WHERE UserId = @U AND QuestionId = @Q;
+                    IF @@ROWCOUNT = 0
+                        INSERT INTO dbo.QuizProgressAnswers (UserId, QuestionId, Choice) VALUES (@U, @Q, @C);",
+                    UserIdParam(userId),
+                    Database.Param("@V", SqlDbType.VarChar, 10, version),
+                    Database.Param("@I", SqlDbType.Int, Math.Max(0, index)),
+                    Database.Param("@T", SqlDbType.Int, Math.Max(0, total)),
+                    Database.Param("@Q", SqlDbType.VarChar, 20, (questionId ?? "").Trim()),
+                    Database.Param("@C", SqlDbType.Char, 1, choice));
+            });
         }
 
+        /// <summary>Saved position, answers and completion flag for this ruleset (empty if none).</summary>
         public (int lastIndex, Dictionary<string, string> selections, bool completed) LoadProgress(string username, string rulesetVersion)
         {
-            var doc = EnsureProgressDoc();
-            var user = doc.Root.Elements("User").FirstOrDefault(u => (string)u.Attribute("name") == username && (string)u.Attribute("rules") == rulesetVersion);
-            if (user == null) return (0, new Dictionary<string, string>(), false);
-            var idx = int.Parse((string)user.Attribute("lastIndex") ?? "0", CultureInfo.InvariantCulture);
-            var completed = string.Equals((string)user.Attribute("completed"), "true", StringComparison.OrdinalIgnoreCase);
-            var map = new Dictionary<string, string>();
-            var answers = user.Element("Answers");
-            if (answers != null)
+            var userId = NormalizeUserId(username);
+            var selections = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+            var progress = Database.QuerySingle(@"
+SELECT LastIndex, IsCompleted FROM dbo.QuizProgress WHERE UserId = @U AND RulesetVersion = @V;",
+                r => new { LastIndex = r.GetInt32(0), Completed = r.GetBoolean(1) },
+                UserIdParam(userId),
+                Database.Param("@V", SqlDbType.VarChar, 10, rulesetVersion));
+
+            if (progress == null) return (0, selections, false);
+
+            foreach (var a in Database.Query(
+                "SELECT QuestionId, Choice FROM dbo.QuizProgressAnswers WHERE UserId = @U;",
+                r => new { Q = r.GetString(0), C = r.GetString(1) },
+                UserIdParam(userId)))
             {
-                foreach (var a in answers.Elements("Answer"))
-                    map[(string)a.Attribute("qid")] = (string)a.Attribute("choice");
+                selections[a.Q] = a.C;
             }
-            return (idx, map, completed);
+
+            return (progress.LastIndex, selections, progress.Completed);
         }
 
         public void MarkCompleted(string username, string rulesetVersion)
         {
-            var doc = EnsureProgressDoc();
-            var user = doc.Root.Elements("User").FirstOrDefault(u => (string)u.Attribute("name") == username && (string)u.Attribute("rules") == rulesetVersion);
-            if (user != null)
-            {
-                user.SetAttributeValue("completed", "true");
-                doc.Save(_progressPath);
-            }
+            Database.ExecuteNonQuery(@"
+UPDATE dbo.QuizProgress SET IsCompleted = 1, UpdatedAtUtc = SYSUTCDATETIME()
+ WHERE UserId = @U AND RulesetVersion = @V;",
+                UserIdParam(NormalizeUserId(username)),
+                Database.Param("@V", SqlDbType.VarChar, 10, rulesetVersion));
         }
 
         public bool IsCompleted(string username, string rulesetVersion)
         {
-            var doc = EnsureProgressDoc();
-            var user = doc.Root.Elements("User").FirstOrDefault(u => (string)u.Attribute("name") == username && (string)u.Attribute("rules") == rulesetVersion);
-            return user != null && string.Equals((string)user.Attribute("completed"), "true", StringComparison.OrdinalIgnoreCase);
+            var v = Database.ExecuteScalar(@"
+SELECT CASE WHEN EXISTS (SELECT 1 FROM dbo.QuizProgress
+                          WHERE UserId = @U AND RulesetVersion = @V AND IsCompleted = 1)
+            THEN 1 ELSE 0 END;",
+                UserIdParam(NormalizeUserId(username)),
+                Database.Param("@V", SqlDbType.VarChar, 10, rulesetVersion));
+            return Convert.ToInt32(v) == 1;
         }
 
-        // ---------- Compute & Save (version-aware) ----------
+        // =====================================================================
+        // Scoring and results
+        // =====================================================================
+
+        /// <summary>
+        /// Scores the answers (same rules as before: sum option weights per domain,
+        /// clamp 0–10, overall = average), saves the result and marks the quiz complete.
+        /// </summary>
         public ScoreResult ComputeAndSaveResult(string username, Dictionary<string, string> selections)
         {
-            return IsV2Active()
-                ? ComputeAndSaveResultV2(username, selections)
-                : ComputeAndSaveResultV1(username, selections);
-        }
+            var userId = NormalizeUserId(username);
+            selections = selections ?? new Dictionary<string, string>();
 
-        // ----- v1 legacy (0–100, knowledge-based) -----
-        private ScoreResult ComputeAndSaveResultV1(string username, Dictionary<string, string> selections)
-        {
-            var (rulesetVersion, questions) = LoadV1Questions();
-            var weights = V1DomainWeights();
-            var titles = V1DomainTitles();
+            var version = CurrentRulesetVersion();
+            var domains = LoadDomains();
+            var questions = LoadQuestions();
 
-            var domainTotals = new Dictionary<string, int>();
-            var domainEarned = new Dictionary<string, int>();
-            var domainQ = new Dictionary<string, List<V1Question>>();
-
+            // Accumulate domain scores from each selected option's weights.
+            var scores = domains.Keys.ToDictionary(k => k, k => 0.0, StringComparer.OrdinalIgnoreCase);
             foreach (var q in questions)
             {
-                if (!domainTotals.ContainsKey(q.Domain)) domainTotals[q.Domain] = 0;
-                if (!domainEarned.ContainsKey(q.Domain)) domainEarned[q.Domain] = 0;
-                if (!domainQ.ContainsKey(q.Domain)) domainQ[q.Domain] = new List<V1Question>();
-                domainTotals[q.Domain] += q.Weight;
-                domainQ[q.Domain].Add(q);
-
-                if (selections.TryGetValue(q.Id, out var pick) && string.Equals(pick, q.Correct, StringComparison.OrdinalIgnoreCase))
-                {
-                    domainEarned[q.Domain] += q.Weight;
-                }
-            }
-
-            double weightSum = Math.Max(1, weights.Values.Sum());
-            double overall = 0;
-            var domainScores = new Dictionary<string, double>();
-
-            foreach (var d in domainTotals.Keys)
-            {
-                var frac = domainTotals[d] == 0 ? 0 : (double)domainEarned[d] / domainTotals[d];
-                var score = Math.Round(frac * 100.0, 1);
-                var title = titles.ContainsKey(d) ? titles[d] : d;
-                domainScores[title] = score;
-
-                var dw = weights.ContainsKey(d) ? weights[d] : 1;
-                overall += (frac * dw);
-            }
-            overall = Math.Round((overall / weightSum) * 100.0, 1);
-
-            var lowest = domainTotals.Keys
-                .Select(d => new { Domain = d, Score = domainTotals[d] == 0 ? 0 : (double)domainEarned[d] / domainTotals[d] })
-                .OrderBy(x => x.Score)
-                .Take(3).ToList();
-
-            var factors = new List<string>();
-            var quickWins = new List<string>();
-            foreach (var item in lowest)
-            {
-                var nice = titles.ContainsKey(item.Domain) ? titles[item.Domain] : item.Domain;
-                var missed = domainQ[item.Domain].FirstOrDefault(q =>
-                    !selections.TryGetValue(q.Id, out var pick) || !string.Equals(pick, q.Correct, StringComparison.OrdinalIgnoreCase));
-                if (missed != null)
-                {
-                    if (!string.IsNullOrWhiteSpace(missed.Explanation))
-                        factors.Add($"{nice}: {missed.Explanation}");
-                    if (!string.IsNullOrWhiteSpace(missed.QuickWin))
-                        quickWins.Add(missed.QuickWin);
-                }
-            }
-            quickWins = quickWins.Distinct().Take(2).ToList();
-
-            var result = new ScoreResult
-            {
-                Username = username,
-                RulesetVersion = rulesetVersion,
-                CompletedUtc = DateTime.UtcNow,
-                OverallScore = overall,
-                DomainScores = domainScores,
-                TopFactors = factors,
-                QuickWins = quickWins,
-                ShareWithHelper = false
-            };
-
-            SaveResult(result);
-            MarkCompleted(username, rulesetVersion);
-            return result;
-        }
-
-        // ----- v2 life-context mapping (0–10 per module) -----
-        private ScoreResult ComputeAndSaveResultV2(string username, Dictionary<string, string> selections)
-        {
-            var (rulesVersion, v2Qs, domains) = LoadV2Questions();
-
-            // accumulate module scores from selected option → Map(module, weight)
-            var scores = domains.Keys.ToDictionary(k => k, k => 0.0);
-            foreach (var q in v2Qs)
-            {
-                if (!selections.TryGetValue(q.Id, out var pick)) continue;
-                if (!q.Options.TryGetValue(pick, out var opt)) continue;
+                if (!selections.TryGetValue(q.Id, out var pick) || pick == null) continue;
+                if (!q.Options.TryGetValue(pick.Trim(), out var opt)) continue;
                 foreach (var (module, weight) in opt.Maps)
                 {
-                    if (!scores.ContainsKey(module)) continue;
-                    scores[module] += weight;
+                    if (scores.ContainsKey(module)) scores[module] += weight;
                 }
             }
 
-            // clamp to 0..10
+            // Clamp to 0..10
             foreach (var k in scores.Keys.ToList())
             {
-                if (scores[k] < 0) scores[k] = 0;
-                if (scores[k] > 10) scores[k] = 10;
+                scores[k] = Math.Max(0, Math.Min(10, scores[k]));
             }
 
-            // overall = mean of modules (0..10)
             var overall = scores.Values.Any() ? scores.Values.Average() : 0.0;
 
-            // Top 3 (highest-need modules → we surface their factor & quick win)
-            var ordered = scores.OrderByDescending(kv => kv.Value)
-                                .ThenBy(kv => domains[kv.Key].Title)
-                                .Take(3).ToList();
-            var factors = ordered.Select(kv => $"{domains[kv.Key].Title}: {domains[kv.Key].Factor}").ToList();
-            var wins = ordered.Select(kv => domains[kv.Key].QuickWin)
-                              .Where(s => !string.IsNullOrWhiteSpace(s))
-                              .Distinct()
-                              .Take(3).ToList();
+            // Top 3 highest-risk domains -> their factor and quick win
+            var top = scores.OrderByDescending(kv => kv.Value)
+                            .ThenBy(kv => domains[kv.Key].Title)
+                            .Take(3).ToList();
 
-            // Title → score
-            var titled = scores.ToDictionary(k => domains[k.Key].Title, v => Math.Round(v.Value, 2));
+            var factors = top.Select(kv => $"{domains[kv.Key].Title}: {domains[kv.Key].Factor}").ToList();
+            var wins = top.Select(kv => domains[kv.Key].QuickWin)
+                          .Where(s => !string.IsNullOrWhiteSpace(s))
+                          .Distinct()
+                          .Take(3).ToList();
 
             var result = new ScoreResult
             {
-                Username = username,
-                RulesetVersion = rulesVersion,
+                Username = userId,
+                RulesetVersion = version,
                 CompletedUtc = DateTime.UtcNow,
                 OverallScore = Math.Round(overall, 2),
-                DomainScores = titled,
+                DomainScores = scores.ToDictionary(kv => domains[kv.Key].Title, kv => Math.Round(kv.Value, 2)),
                 TopFactors = factors,
                 QuickWins = wins,
                 ShareWithHelper = false
             };
 
-            SaveResult(result);
-            MarkCompleted(username, rulesVersion);
+            // Save the result and mark progress complete together.
+            Database.InTransaction((conn, tx) =>
+            {
+                EnsureRuleset(conn, tx, version);
+
+                var resultId = Convert.ToInt32(Database.ExecuteScalar(conn, tx, @"
+INSERT INTO dbo.QuizResults (UserId, RulesetVersion, CompletedAtUtc, OverallScore, ShareWithHelper)
+OUTPUT inserted.ResultId
+VALUES (@U, @V, @C, @O, @S);",
+                    UserIdParam(userId),
+                    Database.Param("@V", SqlDbType.VarChar, 10, version),
+                    Database.Param("@C", SqlDbType.DateTime2, result.CompletedUtc),
+                    Database.Param("@O", SqlDbType.Decimal, (decimal)result.OverallScore),
+                    Database.Param("@S", SqlDbType.Bit, result.ShareWithHelper)));
+
+                foreach (var kv in scores)
+                {
+                    Database.ExecuteNonQuery(conn, tx,
+                        "INSERT INTO dbo.QuizResultDomainScores (ResultId, DomainKey, Score) VALUES (@R, @D, @Sc);",
+                        Database.Param("@R", SqlDbType.Int, resultId),
+                        Database.Param("@D", SqlDbType.VarChar, 50, kv.Key),
+                        Database.Param("@Sc", SqlDbType.Decimal, (decimal)Math.Round(kv.Value, 2)));
+                }
+
+                InsertItems(conn, tx, resultId, "Factor", factors);
+                InsertItems(conn, tx, resultId, "QuickWin", wins);
+
+                Database.ExecuteNonQuery(conn, tx, @"
+UPDATE dbo.QuizProgress SET IsCompleted = 1, UpdatedAtUtc = SYSUTCDATETIME()
+ WHERE UserId = @U AND RulesetVersion = @V;",
+                    UserIdParam(userId),
+                    Database.Param("@V", SqlDbType.VarChar, 10, version));
+            });
+
             return result;
         }
 
-        // ---------- Results storage ----------
-        private void SaveResult(ScoreResult r)
-        {
-            var doc = EnsureResultsDoc();
-
-            var user = new XElement("UserResult",
-                new XAttribute("name", r.Username),
-                new XAttribute("rules", r.RulesetVersion),
-                new XAttribute("completedUtc", r.CompletedUtc.ToString("o")),
-                new XAttribute("overall", r.OverallScore.ToString(CultureInfo.InvariantCulture)),
-                new XAttribute("shareWithHelper", r.ShareWithHelper ? "true" : "false"));
-
-            var domains = new XElement("Domains",
-                r.DomainScores.Select(kv => new XElement("Domain",
-                    new XAttribute("title", kv.Key),
-                    new XAttribute("score", kv.Value.ToString(CultureInfo.InvariantCulture)))));
-
-            var factors = new XElement("TopFactors",
-                r.TopFactors.Select(f => new XElement("Factor", f)));
-
-            var wins = new XElement("QuickWins",
-                r.QuickWins.Select(w => new XElement("Win", w)));
-
-            user.Add(domains);
-            user.Add(factors);
-            user.Add(wins);
-
-            // keep history; append
-            doc.Root.Add(user);
-            doc.Save(_resultsPath);
-        }
-
+        /// <summary>The user's most recent result, or null if they haven't finished the quiz.</summary>
         public ScoreResult LoadLatestResult(string username)
         {
-            var doc = EnsureResultsDoc();
-            var latest = doc.Root.Elements("UserResult")
-                .Where(e => (string)e.Attribute("name") == username)
-                .OrderByDescending(e => (string)e.Attribute("completedUtc"))
-                .FirstOrDefault();
+            var userId = NormalizeUserId(username);
 
-            if (latest == null) return null;
+            var header = Database.QuerySingle(@"
+SELECT TOP 1 ResultId, RulesetVersion, CompletedAtUtc, OverallScore, ShareWithHelper
+  FROM dbo.QuizResults
+ WHERE UserId = @U
+ ORDER BY CompletedAtUtc DESC;",
+                r => new
+                {
+                    Id = r.GetInt32(0),
+                    Version = r.GetString(1),
+                    Completed = DateTime.SpecifyKind(r.GetDateTime(2), DateTimeKind.Utc),
+                    Overall = (double)r.GetDecimal(3),
+                    Share = r.GetBoolean(4)
+                },
+                UserIdParam(userId));
 
-            var r = new ScoreResult
+            if (header == null) return null;
+
+            var result = new ScoreResult
             {
-                Username = username,
-                RulesetVersion = (string)latest.Attribute("rules"),
-                CompletedUtc = DateTime.Parse((string)latest.Attribute("completedUtc"), null, DateTimeStyles.RoundtripKind),
-                OverallScore = double.Parse((string)latest.Attribute("overall"), CultureInfo.InvariantCulture),
-                ShareWithHelper = string.Equals((string)latest.Attribute("shareWithHelper"), "true", StringComparison.OrdinalIgnoreCase)
+                Username = userId,
+                RulesetVersion = header.Version,
+                CompletedUtc = header.Completed,
+                OverallScore = header.Overall,
+                ShareWithHelper = header.Share
             };
 
-            var domains = latest.Element("Domains");
-            if (domains != null)
+            foreach (var d in Database.Query(@"
+SELECT d.Title, s.Score
+  FROM dbo.QuizResultDomainScores s
+  JOIN dbo.QuizDomains d ON d.DomainKey = s.DomainKey
+ WHERE s.ResultId = @R
+ ORDER BY d.Title;",
+                r => new { Title = r.GetString(0), Score = (double)r.GetDecimal(1) },
+                Database.Param("@R", SqlDbType.Int, header.Id)))
             {
-                foreach (var d in domains.Elements("Domain"))
-                {
-                    r.DomainScores[(string)d.Attribute("title")] = double.Parse((string)d.Attribute("score"), CultureInfo.InvariantCulture);
-                }
+                result.DomainScores[d.Title] = d.Score;
             }
-            var tf = latest.Element("TopFactors");
-            if (tf != null) r.TopFactors = tf.Elements("Factor").Select(x => x.Value).ToList();
-            var qw = latest.Element("QuickWins");
-            if (qw != null) r.QuickWins = qw.Elements("Win").Select(x => x.Value).ToList();
 
-            return r;
+            foreach (var item in Database.Query(@"
+SELECT ItemType, ItemText FROM dbo.QuizResultItems WHERE ResultId = @R ORDER BY ItemType, SortOrder;",
+                r => new { Type = r.GetString(0), Text = r.GetString(1) },
+                Database.Param("@R", SqlDbType.Int, header.Id)))
+            {
+                if (item.Type == "Factor") result.TopFactors.Add(item.Text);
+                else result.QuickWins.Add(item.Text);
+            }
+
+            return result;
         }
 
+        /// <summary>Lets the participant share (or stop sharing) all their results with helpers.</summary>
         public void SetShareWithHelper(string username, bool share)
         {
-            var doc = EnsureResultsDoc();
-            var items = doc.Root.Elements("UserResult").Where(e => (string)e.Attribute("name") == username);
-            foreach (var e in items) e.SetAttributeValue("shareWithHelper", share ? "true" : "false");
-            doc.Save(_resultsPath);
+            Database.ExecuteNonQuery(
+                "UPDATE dbo.QuizResults SET ShareWithHelper = @S WHERE UserId = @U;",
+                Database.Param("@S", SqlDbType.Bit, share),
+                UserIdParam(NormalizeUserId(username)));
+        }
+
+        // =====================================================================
+        // Helpers
+        // =====================================================================
+
+        private static void InsertItems(SqlConnection conn, SqlTransaction tx, int resultId, string type, List<string> items)
+        {
+            int order = 0;
+            foreach (var text in items)
+            {
+                if (string.IsNullOrWhiteSpace(text)) continue;
+                order++;
+                var t = text.Trim();
+                if (t.Length > 500) t = t.Substring(0, 500);
+                Database.ExecuteNonQuery(conn, tx,
+                    "INSERT INTO dbo.QuizResultItems (ResultId, ItemType, SortOrder, ItemText) VALUES (@R, @T, @O, @X);",
+                    Database.Param("@R", SqlDbType.Int, resultId),
+                    Database.Param("@T", SqlDbType.VarChar, 10, type),
+                    Database.Param("@O", SqlDbType.Int, order),
+                    Database.Param("@X", SqlDbType.NVarChar, 500, t));
+            }
+        }
+
+        // Progress and results reference QuizRulesets, so make sure the version row exists.
+        private static void EnsureRuleset(SqlConnection conn, SqlTransaction tx, string version)
+        {
+            Database.ExecuteNonQuery(conn, tx, @"
+IF NOT EXISTS (SELECT 1 FROM dbo.QuizRulesets WHERE Version = @V)
+    INSERT INTO dbo.QuizRulesets (Version, CreatedAtUtc) VALUES (@V, NULL);",
+                Database.Param("@V", SqlDbType.VarChar, 10, version));
+        }
+
+        private static string NormalizeUserId(string username)
+        {
+            var id = (username ?? "").Trim().ToLowerInvariant();
+            if (id.Length == 0) throw new ArgumentException("A signed-in user id is required.", nameof(username));
+            return id;
+        }
+
+        private static SqlParameter UserIdParam(string userId)
+        {
+            return Database.Param("@U", SqlDbType.Char, 32, userId);
         }
     }
 }

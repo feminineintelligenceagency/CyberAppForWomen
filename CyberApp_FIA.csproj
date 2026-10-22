@@ -483,6 +483,7 @@
   <ItemGroup>
     <Content Include="Account\Participant\Calendar.ashx" />
     <None Include="packages.config" />
+    <None Include="Properties\PublishProfiles\CyberAppFIA20261020224625 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\fiacyberapp-001-site1 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\fiacyberapp-001-site1 - FTP1.pubxml" />
     <None Include="Properties\PublishProfiles\fiacyberapp-001-site1 - FTP2.pubxml" />

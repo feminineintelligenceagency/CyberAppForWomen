@@ -1,34 +1,31 @@
 ﻿using CyberApp_FIA.Services;
 using System;
-using System.IO;
-using System.Security.Cryptography;
-using System.Text;
+using System.Data.SqlClient;
 using System.Web.UI;
-using System.Xml;
 
 namespace CyberApp_FIA.Account
 {
+    /// <summary>
+    /// SuperAdmin page for creating University Admin accounts (database version).
+    /// - Only SuperAdmins can view the page or submit the form
+    /// - Hashes the password with Argon2 (passHasher.HashNewPassword)
+    /// - Creates the user and credentials in one transaction (UserRepository.CreateUser)
+    /// - Writes an audit entry recording which SuperAdmin created the account
+    /// </summary>
     public partial class CreateUniversityAdmin : Page
     {
-        /// <summary>
-        /// Physical path to ~/App_Data/users.xml.
-        /// </summary>
-        private string XmlPath => Server.MapPath("~/App_Data/users.xml");
-
         protected void Page_Load(object sender, EventArgs e)
         {
+            // Access gate on EVERY request, including button postbacks, not just the first load.
+            if (!IsSuperAdmin())
+            {
+                Response.Redirect("~/Account/Login.aspx");
+                return;
+            }
+
             if (!IsPostBack)
             {
-                // ---- Access Gate: only SuperAdmin role ----
-                var role = (string)Session["Role"];
-                if (!string.Equals(role, "SuperAdmin", StringComparison.OrdinalIgnoreCase))
-                {
-                    Response.Redirect("~/Account/Login.aspx");
-                    return;
-                }
-
-                WelcomeName.Text = (string)Session["Email"] ?? "Super Admin";
-                EnsureXml();
+                WelcomeName.Text = Server.HtmlEncode(Session["Email"] as string ?? "Super Admin");
             }
         }
 
@@ -46,76 +43,75 @@ namespace CyberApp_FIA.Account
 
         protected void BtnCreate_Click(object sender, EventArgs e)
         {
+            // Defense in depth: re-check the role right where the account is created.
+            if (!IsSuperAdmin())
+            {
+                Response.Redirect("~/Account/Login.aspx");
+                return;
+            }
+
             // Run ASP.NET validators (RequiredFieldValidator, etc.)
             if (!Page.IsValid) return;
 
             var firstName = (FirstName.Text ?? string.Empty).Trim();
             var lastName = (LastName.Text ?? string.Empty).Trim();
-            var emailRaw = (Email.Text ?? string.Empty).Trim();
+            var email = (Email.Text ?? string.Empty).Trim().ToLowerInvariant();
             var university = (University.Text ?? string.Empty).Trim();
             var password = Password.Text ?? string.Empty;
 
-            if (string.IsNullOrWhiteSpace(firstName) ||
-                string.IsNullOrWhiteSpace(lastName) ||
-                string.IsNullOrWhiteSpace(emailRaw) ||
-                string.IsNullOrWhiteSpace(university) ||
-                string.IsNullOrWhiteSpace(password))
+            if (firstName.Length == 0 || lastName.Length == 0 || email.Length == 0 ||
+                university.Length == 0 || password.Length == 0)
             {
-                FormMessage.Text = "<span style='color:#c21d1d'>All fields are required.</span>";
+                ShowError("All fields are required.");
                 return;
             }
 
-            // Lowercase invariant email for storage and comparisons, matching CreateAccountPage.
-            var email = emailRaw.ToLowerInvariant();
-
-            EnsureXml();
-
-            // Enforce unique email across all roles.
-            if (EmailExists(email))
+            UserRepository.NewUser newUser;
+            try
             {
-                FormMessage.Text = "<span style='color:#c21d1d'>That email is already registered.</span>";
+                // Quick check first so we don't spend Argon2 time on a duplicate.
+                if (UserRepository.EmailExists(email))
+                {
+                    ShowError("That email is already registered.");
+                    return;
+                }
+
+                newUser = new UserRepository.NewUser
+                {
+                    UserId = Guid.NewGuid().ToString("N"),
+                    Email = email,
+                    FirstName = firstName,
+                    LastName = lastName,
+                    Role = "UniversityAdmin",
+                    University = university,
+                    // The admin didn't accept the participant consent form themselves,
+                    // so these stay empty rather than recording the SuperAdmin's acceptance.
+                    ConsentAcceptedAtUtc = null,
+                    ConsentIp = null
+                };
+
+                if (!UserRepository.CreateUser(newUser, passHasher.HashNewPassword(password)))
+                {
+                    // Someone registered the same email between the check and the insert.
+                    ShowError("That email is already registered.");
+                    return;
+                }
+            }
+            catch (SqlException)
+            {
+                ShowError("We couldn't create the account right now. Please try again in a moment.");
                 return;
             }
 
-            // --- Prepare metadata ---
-            var id = Guid.NewGuid().ToString("N");
-            var createdAt = DateTime.UtcNow.ToString("o");
-            var consentAt = createdAt; // For admin-created accounts we still track acceptance time.
-            var consentIp = Request.UserHostAddress ?? string.Empty;
-
-            // --- Derive PBKDF2 password hash (same as CreateAccountPage) ---
-            var salt = GenerateSalt(16);                // 16-byte salt
-            var hash = HashPassword(password, salt);    // 32-byte derived key
-
-            var doc = new XmlDocument();
-            doc.Load(XmlPath);
-
-            var root = doc.DocumentElement;
-            if (root == null)
+            // Record who created the admin account (best-effort; never blocks creation).
+            try
             {
-                root = doc.CreateElement("users");
-                root.SetAttribute("version", "1");
-                doc.AppendChild(root);
+                UniversityAuditLogger.AppendForCurrentUser(
+                    this,
+                    "University Admin Created",
+                    $"SuperAdmin {Session["Email"]} created University Admin {email} (userId={newUser.UserId}) for {university}.");
             }
-
-            var user = doc.CreateElement("user");
-            user.SetAttribute("id", id);
-            user.SetAttribute("role", "UniversityAdmin");
-
-            user.AppendChild(Mk(doc, "firstName", firstName));
-            user.AppendChild(Mk(doc, "lastName", lastName));
-            user.AppendChild(Mk(doc, "email", email));           // stored lowercase
-            user.AppendChild(Mk(doc, "university", university));
-
-            user.AppendChild(Mk(doc, "passwordHash", Convert.ToBase64String(hash)));
-            user.AppendChild(Mk(doc, "passwordSalt", Convert.ToBase64String(salt)));
-
-            user.AppendChild(Mk(doc, "createdAt", createdAt));
-            user.AppendChild(Mk(doc, "consentAcceptedAt", consentAt));
-            user.AppendChild(Mk(doc, "consentIp", consentIp));
-
-            root.AppendChild(user);
-            doc.Save(XmlPath);
+            catch { }
 
             FormMessage.Text = "<span style='color:#0a7a3c'>University Admin account created.</span>";
             ClearForm();
@@ -125,70 +121,15 @@ namespace CyberApp_FIA.Account
         // Helpers
         // -------------------------
 
-        /// <summary>
-        /// Ensures users.xml exists with a versioned &lt;users&gt; root, matching CreateAccountPage.
-        /// </summary>
-        private void EnsureXml()
+        private bool IsSuperAdmin()
         {
-            if (File.Exists(XmlPath)) return;
-
-            var dir = Path.GetDirectoryName(XmlPath);
-            if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
-            {
-                Directory.CreateDirectory(dir);
-            }
-
-            var init = "<?xml version='1.0' encoding='utf-8'?><users version='1'></users>";
-            File.WriteAllText(XmlPath, init, Encoding.UTF8);
+            var role = (Session["Role"] as string ?? "").Trim();
+            return string.Equals(role, "SuperAdmin", StringComparison.OrdinalIgnoreCase);
         }
 
-        /// <summary>
-        /// Checks if an email already exists (case-insensitive) in users.xml, like CreateAccountPage.
-        /// </summary>
-        private bool EmailExists(string emailLower)
+        private void ShowError(string message)
         {
-            var doc = new XmlDocument();
-            doc.Load(XmlPath);
-
-            var node = doc.SelectSingleNode(
-                $"/users/user[translate(email,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='{emailLower}']"
-            );
-            return node != null;
-        }
-
-        /// <summary>
-        /// Utility: element with inner text.
-        /// </summary>
-        private static XmlElement Mk(XmlDocument d, string name, string val)
-        {
-            var el = d.CreateElement(name);
-            el.InnerText = val ?? string.Empty;
-            return el;
-        }
-
-        /// <summary>
-        /// Generates a cryptographically strong random salt, same approach as CreateAccountPage.
-        /// </summary>
-        private static byte[] GenerateSalt(int size)
-        {
-            var salt = new byte[size];
-            using (var rng = new RNGCryptoServiceProvider())
-            {
-                rng.GetBytes(salt);
-            }
-            return salt;
-        }
-
-        /// <summary>
-        /// Derives a PBKDF2 password hash using the same pattern as CreateAccountPage:
-        /// 100,000 iterations, 32-byte derived key.
-        /// </summary>
-        private static byte[] HashPassword(string password, byte[] salt)
-        {
-            using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 100000))
-            {
-                return pbkdf2.GetBytes(32);
-            }
+            FormMessage.Text = "<span style='color:#c21d1d'>" + Server.HtmlEncode(message) + "</span>";
         }
 
         private void ClearForm()
@@ -201,4 +142,3 @@ namespace CyberApp_FIA.Account
         }
     }
 }
-
