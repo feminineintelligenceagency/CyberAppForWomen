@@ -69,4 +69,38 @@
     <lockoutUntilUtc>
     </lockoutUntilUtc>
   </user>
+  <user id="e7fcbaafcf99409d80705904f512c818" role="Participant" assignedHelperId="fe3dfc264b7347b29de294fe77fe6575">
+    <firstName>test</firstName>
+    <lastName>2</lastName>
+    <email>test2@gmail.com</email>
+    <university>Arizona State Univserity</university>
+    <passwordHash algo="Argon2" m="19456" t="2" p="1">1Sy/+B6zgRKKhyu6ARGEm6nuN3m1/WEiiefWAmvah8s=</passwordHash>
+    <passwordSalt>yGGpOBiFlA+1t5GXV69XHQ==</passwordSalt>
+    <createdAt>2026-10-14T17:03:05.4986744Z</createdAt>
+    <consentAcceptedAt>2026-10-14T17:03:05.4986744Z</consentAcceptedAt>
+    <consentIp>127.0.0.1</consentIp>
+    <lastEventId>8df4fe6be24049fda42008aaa646d048</lastEventId>
+  </user>
+  <user id="9e0ddf666e31459bbe9ed993b9fccde0" role="UniversityAdmin">
+    <firstName>asu</firstName>
+    <lastName>asu</lastName>
+    <email>asu@asu.edu</email>
+    <university>Arizona State Univserity</university>
+    <passwordHash>KZ8o7xsRiDCdKegtZlhBn+H/R8NJx4Hq44kOwE5gF6E=</passwordHash>
+    <passwordSalt>lbLZ8t9unTTL1h4QIddVBg==</passwordSalt>
+    <createdAt>2026-10-14T17:08:18.8599921Z</createdAt>
+    <consentAcceptedAt>2026-10-14T17:08:18.8599921Z</consentAcceptedAt>
+    <consentIp>127.0.0.1</consentIp>
+  </user>
+  <user id="fe3dfc264b7347b29de294fe77fe6575" role="Helper">
+    <firstName>qwe</firstName>
+    <lastName>qwe</lastName>
+    <email>helper@asu.edu</email>
+    <university>Arizona State Univserity</university>
+    <passwordHash>YPL0Oa6gbPEVz7mLev1kZhntnZ3tU8uQhv9MnWTQ3ng=</passwordHash>
+    <passwordSalt>eX7os63GCbzi44rEmJcTRA==</passwordSalt>
+    <createdAt>2026-10-14T17:14:07.4520841Z</createdAt>
+    <consentAcceptedAt>2026-10-14T17:14:07.4520841Z</consentAcceptedAt>
+    <consentIp>127.0.0.1</consentIp>
+  </user>
 </users>

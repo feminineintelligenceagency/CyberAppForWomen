@@ -284,7 +284,8 @@
     <Compile Include="Account\Helper\ParticipantConversations.aspx.designer.cs">
       <DependentUpon>ParticipantConversations.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Account\Helper\passHasher.cs" />
+    <Compile Include="App_Code\Services\Database.cs" />
+    <Compile Include="App_Code\Services\passHasher.cs" />
     <Compile Include="Account\Helper\ResourceViewer.aspx.cs">
       <DependentUpon>ResourceViewer.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -494,7 +495,7 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="App_Code\PasswordHasher.cs" />
-    <Compile Include="App_Code\Services\AccountDeletionService.cs" />
+    <Compile Include="App_Code\Services\AccountDeletionSersvice.cs" />
     <Compile Include="App_Code\Services\AuthSession.cs" />
     <Compile Include="App_Code\Services\AuthSessionInfo.cs" />
     <Compile Include="App_Code\Services\AuthSessionStore.cs" />
@@ -503,6 +504,7 @@
     <Compile Include="App_Code\Services\EnrollmentSync.cs" />
     <Compile Include="App_Code\Services\QuizService.cs" />
     <Compile Include="App_Code\Services\UniversityAuditLogger.cs" />
+    <Compile Include="App_Code\Services\UserRepository.cs" />
     <Compile Include="ContactUs.aspx.cs">
       <DependentUpon>ContactUs.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -531,6 +533,7 @@
   <ItemGroup>
     <Content Include="Account\Participant\Calendar.ashx" />
     <None Include="packages.config" />
+    <None Include="Properties\PublishProfiles\CyberAppFIA20261020224625 - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\fiacyberapp-001-site1 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\fiacyberapp-001-site1 - FTP1.pubxml" />
     <None Include="Properties\PublishProfiles\fiacyberapp-001-site1 - FTP2.pubxml" />
@@ -546,7 +549,9 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="UserRepository\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

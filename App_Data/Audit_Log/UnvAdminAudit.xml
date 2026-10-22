@@ -127,13 +127,70 @@
   <entry id="log-f3eac16ffefd4e7ab86a1c0418c83e03" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-30T05:31:10.8687460Z" email="lauren.nignon@gmail.com" firstName="Lauren">
     <details>SuperAdmin signed in.</details>
   </entry>
-  <entry id="log-1819af17000a4fc8a5ce05937181bda6" university="Arizona State University" role="Participant" type="Account Created" timestamp="2026-10-14T09:07:58.8059739Z" email="kevinn0427@gmail.com" firstName="kevin">
-    <details>New Participant account created (userId=a064308603504a54b7dbb67c313d02db). Consent accepted at 2026-10-14T09:07:58.6711252Z UTC from IP ::1.</details>
-  </entry>
-  <entry id="log-3a08d03e1b0b4662a3a53feea094e9b6" university="" role="Participant" type="Sign In" timestamp="2026-10-14T09:08:06.8247728Z" email="kevinn0427@gmail.com" firstName="kevin">
+  <entry id="log-65028d02423d4edbad223e6d8c58c70b" university="" role="Participant" type="Sign In" timestamp="2026-09-30T05:33:25.7767045Z" email="test1@gmail.com" firstName="test">
     <details>Participant signed in.</details>
   </entry>
-  <entry id="log-4a3f3f4c1dba4a4ca941a52ef33dab3d" university="" role="SuperAdmin" type="Sign In" timestamp="2026-10-14T09:09:56.8520320Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+  <entry id="log-4eaa3d6442fc408cb64e0f38983a9c26" university="" role="SuperAdmin" type="Sign In" timestamp="2026-10-07T03:50:08.9359812Z" email="lauren.nignon@gmail.com" firstName="Lauren">
     <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-9ee33de89d654001b5651bfac23af945" university="" role="SuperAdmin" type="Sign In" timestamp="2026-10-07T04:02:20.3494651Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-24bca41c11444bc0b62d05d5c047c39c" university="" role="SuperAdmin" type="Sign In" timestamp="2026-10-07T04:27:45.2987718Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-cda372c9d5c2446cb209c30e51258ead" university="Arizona State University" role="Participant" type="Account Created" timestamp="2026-10-14T17:03:05.6363427Z" email="test2@gmail.com" firstName="test">
+    <details>New Participant account created (userId=e7fcbaafcf99409d80705904f512c818). Consent accepted at 2026-10-14T17:03:05.4986744Z UTC from IP 127.0.0.1.</details>
+  </entry>
+  <entry id="log-e72f78b679aa4dc7b35e5a0ad0e53469" university="" role="Unknown" type="Sign In Failed (Unknown Email)" timestamp="2026-10-14T17:03:14.6079561Z" email="test2@gmail.com" firstName="">
+    <details>Sign-in attempt with an email address that is not registered.</details>
+  </entry>
+  <entry id="log-979abcf6a0034b189dee1a4bef01e88c" university="" role="Unknown" type="Sign In Failed (Unknown Email)" timestamp="2026-10-14T17:03:17.7254513Z" email="test2@gmail.com" firstName="">
+    <details>Sign-in attempt with an email address that is not registered.</details>
+  </entry>
+  <entry id="log-58fc41243bcf453baeda43dbf9493b85" university="" role="Participant" type="Sign In" timestamp="2026-10-14T17:03:44.4658564Z" email="test1@gmail.com" firstName="test">
+    <details>Participant signed in.</details>
+  </entry>
+  <entry id="log-d0df723b785e4e97bea30be7a3eb42f3" university="Arizona State University" role="Participant" type="Account Created" timestamp="2026-10-14T17:07:12.5859933Z" email="test2@gmail.com" firstName="test">
+    <details>New Participant account created (userId=a7d928eed72f499c9a45f68b08f764b3). Consent accepted at 2026-10-14T17:07:12.4363174Z UTC from IP 127.0.0.1.</details>
+  </entry>
+  <entry id="log-57c2ac2f8d134f238794ae121ca56ec6" university="" role="Participant" type="Sign In" timestamp="2026-10-14T17:07:20.9007137Z" email="test2@gmail.com" firstName="">
+    <details>Participant signed in.</details>
+  </entry>
+  <entry id="log-7300da50be3247159e98be967f30d134" university="" role="SuperAdmin" type="Sign In" timestamp="2026-10-14T17:07:41.8984503Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-c4c90afbd8b24e0a809aac1496d65713" university="" role="Unknown" type="Sign In Failed (Unknown Email)" timestamp="2026-10-14T17:08:28.4292091Z" email="asu@asu.edu" firstName="">
+    <details>Sign-in attempt with an email address that is not registered.</details>
+  </entry>
+  <entry id="log-49dcfa9ea6a4492abab1e41ed5ca827e" university="" role="Unknown" type="Sign In Failed (Unknown Email)" timestamp="2026-10-14T17:08:33.2180305Z" email="asu@asu.edu" firstName="">
+    <details>Sign-in attempt with an email address that is not registered.</details>
+  </entry>
+  <entry id="log-9bc0645effd64a589dca2cb59fb4d48f" university="" role="SuperAdmin" type="Sign In" timestamp="2026-10-14T17:12:33.4882387Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-4f906a791e9d4eaab4b0884780017b35" university="" role="SuperAdmin" type="University Admin Created" timestamp="2026-10-14T17:12:52.1805352Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin lauren.nignon@gmail.com created University Admin asu@asu.edu (userId=db9680c055e147749ddef293185362f5) for Arizona State Univserity.</details>
+  </entry>
+  <entry id="log-86269f804d7745d4aab4fa21b3f9bd66" university="Arizona State Univserity" role="UniversityAdmin" type="Sign In" timestamp="2026-10-14T17:13:01.0291518Z" email="asu@asu.edu" firstName="">
+    <details>UniversityAdmin signed in.</details>
+  </entry>
+  <entry id="log-4806f54eb3df4b1194910bff9fc78600" university="" role="Unknown" type="Sign In Failed (Unknown Email)" timestamp="2026-10-14T17:14:19.1664755Z" email="helper@asu.edu" firstName="">
+    <details>Sign-in attempt with an email address that is not registered.</details>
+  </entry>
+  <entry id="log-31fefde068524dfa87609d298345d9d9" university="Arizona State Univserity" role="UniversityAdmin" type="Sign In" timestamp="2026-10-14T17:18:01.7504720Z" email="asu@asu.edu" firstName="">
+    <details>UniversityAdmin signed in.</details>
+  </entry>
+  <entry id="log-0909cf5f31d644fdbeccc20bcc598cad" university="Arizona State Univserity" role="UniversityAdmin" type="Helper Created" timestamp="2026-10-14T17:18:18.4455513Z" email="asu@asu.edu" firstName="">
+    <details>University Admin asu@asu.edu created Helper test@helper.com (userId=735375e879004c49a8668d862ecf69ec) for Arizona State Univserity.</details>
+  </entry>
+  <entry id="log-bedd9df3027d4e83849d81b2076b3a27" university="Arizona State Univserity" role="Helper" type="Sign In" timestamp="2026-10-14T17:18:28.5993595Z" email="test@helper.com" firstName="">
+    <details>Helper signed in.</details>
+  </entry>
+  <entry id="log-31b761820a0a459b9d28080c746db133" university="" role="Participant" type="Sign In" timestamp="2026-10-14T17:29:22.1993046Z" email="test2@gmail.com" firstName="">
+    <details>Participant signed in.</details>
+  </entry>
+  <entry id="log-00b16612c7de44d09c58eb06015fcbd2" university="Arizona State Univserity" role="Participant" type="Participant Pre-Event Quiz Completion" timestamp="2026-10-14T17:30:06.9316392Z" email="test2@gmail.com" firstName="">
+    <details>Participant completed the pre-event cybersecurity quiz.</details>
   </entry>
 </auditLog>

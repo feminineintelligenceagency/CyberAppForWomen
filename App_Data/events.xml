@@ -8,4 +8,12 @@
     <description>this is a test event</description>
     <courses />
   </event>
+  <event id="8df4fe6be24049fda42008aaa646d048" status="Draft" createdAt="2026-10-14T17:13:27.7749035Z" createdBy="asu@asu.edu">
+    <university>Arizona State Univserity</university>
+    <name>test</name>
+    <startDate>2026-10-14T17:13:00.0000000Z</startDate>
+    <endDate>2026-10-31T05:13:00.0000000Z</endDate>
+    <description>test event</description>
+    <courses />
+  </event>
 </events>

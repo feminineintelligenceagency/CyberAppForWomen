@@ -209,8 +209,6 @@ namespace CyberApp_FIA.Services
         /// </summary>
         private static byte[] HashPassword(string password, byte[] salt)
         {
-            // NOTE: In .NET Framework, Rfc2898DeriveBytes defaults to HMACSHA1.
-            // In newer .NETs, you can specify HMACSHA256 explicitly if available.
             using (var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 100000))
             {
                 return pbkdf2.GetBytes(32); // 256-bit hash
@@ -229,6 +227,50 @@ namespace CyberApp_FIA.Services
                 diff |= a[i] ^ b[i];
             }
             return diff == 0;
+        }
+
+        /// <summary>Result of hashing a new password</summary>
+        public sealed class PasswordHashResult
+        {
+            public byte[] Hash { get; set; }
+            public byte[] Salt { get; set; }
+            public string Algorithm { get; set; }
+            public int MemoryKiB { get; set; }
+            public int Iterations { get; set; }
+            public int Parallelism { get; set; }
+        }
+
+        /// <summary>Hashes a new password with the current Argon2 settings.</summary>
+        public static PasswordHashResult HashNewPassword(string password)
+        {
+            var salt = GenerateSalt(Argon2SaltSize);
+            return new PasswordHashResult
+            {
+                Hash = HashArgon2Password(password, salt),
+                Salt = salt,
+                Algorithm = Argon2ID,
+                MemoryKiB = Argon2MemSize,
+                Iterations = Argon2Iterations,
+                Parallelism = Argon2DegreeOfParallelism
+            };
+        }
+
+        /// <summary>
+        /// Verifies a password against hash/salt bytes read from the database.
+        /// Same rules as VerifyUser: legacy PBKDF2 and outdated Argon2 settings set doRehash.
+        /// </summary>
+        public static bool VerifyStored(string password, string algo, byte[] hash, byte[] salt,
+                                        int? memory, int? iterations, int? parallelism, out bool doRehash)
+        {
+            doRehash = false;
+            if (hash == null || salt == null || hash.Length == 0 || salt.Length == 0) return false;
+
+            return Verify(password, algo,
+                          Convert.ToBase64String(hash), Convert.ToBase64String(salt),
+                          memory ?? Argon2MemSize,
+                          iterations ?? Argon2Iterations,
+                          parallelism ?? Argon2DegreeOfParallelism,
+                          out doRehash);
         }
     }
 }
