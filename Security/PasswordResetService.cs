@@ -1,13 +1,15 @@
-﻿using System;
+﻿using CyberApp_FIA.Account;    // LoginRateLimiting (dmundra)
+using CyberApp_FIA.Services;   // passHasher (Alex's Argon2)
+using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web;
 using System.Xml;
-using CyberApp_FIA.Account;    // LoginRateLimiting (dmundra)
-using CyberApp_FIA.Services;   // passHasher (Alex's Argon2)
 
 namespace CyberApp_FIA
 {
@@ -25,8 +27,8 @@ namespace CyberApp_FIA
         private static readonly object ResetsLock = new object();
         private static readonly object UsersLock = new object();
 
-        private static string ResetsPath => HttpContext.Current.Server.MapPath("~/App_Data/passwordResets.xml");
-        private static string UsersPath => HttpContext.Current.Server.MapPath("~/App_Data/users.xml");
+        //private static string ResetsPath => HttpContext.Current.Server.MapPath("~/App_Data/passwordResets.xml");
+        //private static string UsersPath => HttpContext.Current.Server.MapPath("~/App_Data/users.xml");
 
         // ===================== Public methods =====================
 
@@ -34,17 +36,10 @@ namespace CyberApp_FIA
         /// Finds a user by email (case-insensitive). Loops instead of building an XPath
         /// string from user input, so a typed email can't break the query.
         /// </summary>
-        public static XmlElement FindUserByEmail(XmlDocument doc, string email)
+        public static UserRepository.LoginRecord FindUserByEmail(string email)
         {
-            if (string.IsNullOrWhiteSpace(email)) return null;
-
-            foreach (XmlElement user in doc.SelectNodes("/users/user"))
-            {
-                var stored = user["email"]?.InnerText?.Trim();
-                if (string.Equals(stored, email.Trim(), StringComparison.OrdinalIgnoreCase))
-                    return user;
-            }
-            return null;
+            if (string.IsNullOrWhiteSpace(email)) { return null; }
+            return UserRepository.GetLoginByEmail(email);
         }
 
         /// <summary>
@@ -59,38 +54,26 @@ namespace CyberApp_FIA
             }
             var token = HttpServerUtility.UrlTokenEncode(bytes); // URL-safe
 
-            lock (ResetsLock)
+            Database.InTransaction((conn, tx) =>
             {
-                var doc = LoadResets();
-                var root = doc.DocumentElement;
-                var now = DateTime.UtcNow;
+                // Clean up tokens that expired more than a day ago
+                Database.ExecuteNonQuery(conn, tx,
+                    "DELETE FROM dbo.PasswordResetTokens WHERE ExpiresAtUtc < DATEADD(DAY, -1, SYSUTCDATETIME());");
 
-                // Copy to a list first so we can safely remove nodes while looping
-                var existing = new List<XmlElement>();
-                foreach (XmlElement r in root.SelectNodes("reset")) existing.Add(r);
+                // Cancel this user's older unused links
+                Database.ExecuteNonQuery(conn, tx, @"
+                        UPDATE dbo.PasswordResetTokens SET UsedAtUtc = SYSUTCDATETIME()
+                         WHERE UserId = @U AND UsedAtUtc IS NULL;",
+                    UserIdParam(userId));
 
-                foreach (var r in existing)
-                {
-                    if (IsExpired(r, now))
-                    {
-                        root.RemoveChild(r); // clean up old entries
-                    }
-                    else if (r.GetAttribute("userId") == userId)
-                    {
-                        r.SetAttribute("used", "true"); // cancel older unused links for this user
-                    }
-                }
+                Database.ExecuteNonQuery(conn, tx, @"
+                        INSERT INTO dbo.PasswordResetTokens (TokenHash, UserId, CreatedAtUtc, ExpiresAtUtc)
+                        VALUES (@H, @U, SYSUTCDATETIME(), DATEADD(SECOND, @Life, SYSUTCDATETIME()));",
+                    Database.Param("@H", SqlDbType.Binary, 32, HashToken(token)),
+                    UserIdParam(userId),
+                    Database.Param("@Life", SqlDbType.Int, (int)TokenLifetime.TotalSeconds));
+            });
 
-                var el = doc.CreateElement("reset");
-                el.SetAttribute("tokenHash", HashToken(token));
-                el.SetAttribute("userId", userId);
-                el.SetAttribute("createdUtc", now.ToString("o"));
-                el.SetAttribute("expiresUtc", now.Add(TokenLifetime).ToString("o"));
-                el.SetAttribute("used", "false");
-                root.AppendChild(el);
-
-                doc.Save(ResetsPath);
-            }
 
             return token;
         }
@@ -102,12 +85,11 @@ namespace CyberApp_FIA
         {
             if (string.IsNullOrWhiteSpace(token)) return null;
 
-            lock (ResetsLock)
-            {
-                var doc = LoadResets();
-                var reset = FindValidReset(doc, token, DateTime.UtcNow);
-                return reset?.GetAttribute("userId");
-            }
+            return Database.ExecuteScalar(@"
+                SELECT UserId FROM dbo.PasswordResetTokens
+                 WHERE TokenHash = @H AND UsedAtUtc IS NULL AND ExpiresAtUtc > SYSUTCDATETIME();",
+                Database.Param("@H", SqlDbType.Binary, 32, HashToken(token))) as string;
+
         }
 
         /// <summary>
@@ -119,75 +101,58 @@ namespace CyberApp_FIA
         {
             if (string.IsNullOrWhiteSpace(token)) return false;
 
-            lock (ResetsLock)
+            // Hash outside the transaction: Argon2 is deliberately slow, and holding row
+            // locks while it runs would block other requests.
+            var hashed = passHasher.HashNewPassword(newPassword);
+            var tokenHash = HashToken(token);
+
+            return Database.InTransaction((conn, tx) =>
             {
-                var resets = LoadResets();
-                var now = DateTime.UtcNow;
-                var reset = FindValidReset(resets, token, now);
-                if (reset == null) return false;
+                // Mark the token used and get its user in ONE atomic statement, so two
+                // simultaneous submits of the same link can't both succeed.
+                var userId = Database.ExecuteScalar(conn, tx, @"
+                    UPDATE dbo.PasswordResetTokens
+                       SET UsedAtUtc = SYSUTCDATETIME()
+                    OUTPUT inserted.UserId
+                     WHERE TokenHash = @H AND UsedAtUtc IS NULL AND ExpiresAtUtc > SYSUTCDATETIME();",
+                    Database.Param("@H", SqlDbType.Binary, 32, tokenHash)) as string;
 
-                var userId = reset.GetAttribute("userId");
+                if (userId == null) return false;
 
-                // Mark used FIRST, so the link can never work twice even if something fails below
-                reset.SetAttribute("used", "true");
-                reset.SetAttribute("usedUtc", now.ToString("o"));
-                resets.Save(ResetsPath);
+                // New password (Argon2), unlock (dmundra's lockout), new password stamp.
+                var rows = Database.ExecuteNonQuery(conn, tx, @"
+                    UPDATE dbo.UserCredentials
+                       SET PasswordHash = @Hash, PasswordSalt = @Salt, Algorithm = @Algo,
+                           Argon2MemoryKiB = @M, Argon2Iterations = @T, Argon2Parallelism = @P,
+                           PasswordUpdatedAtUtc = SYSUTCDATETIME(),
+                           FailedLoginCount = 0, LockoutUntilUtc = NULL
+                     WHERE UserId = @U;",
+                    Database.Param("@Hash", SqlDbType.VarBinary, 64, hashed.Hash),
+                    Database.Param("@Salt", SqlDbType.VarBinary, 64, hashed.Salt),
+                    Database.Param("@Algo", SqlDbType.VarChar, 20, hashed.Algorithm),
+                    Database.Param("@M", SqlDbType.Int, hashed.MemoryKiB),
+                    Database.Param("@T", SqlDbType.Int, hashed.Iterations),
+                    Database.Param("@P", SqlDbType.Int, hashed.Parallelism),
+                    UserIdParam(userId));
 
-                lock (UsersLock)
+                if (rows != 1)
                 {
-                    if (!File.Exists(UsersPath)) return false;
-
-                    var users = new XmlDocument { PreserveWhitespace = true };
-                    users.Load(UsersPath);
-
-                    var user = FindUserById(users, userId);
-                    if (user == null) return false;
-
-                    // Save the new password with Alex's Argon2 hasher (same one Login checks)
-                    passHasher.SetPassword(user, newPassword);
-
-                    // If the account was locked from too many wrong passwords, unlock it (dmundra's lockout)
-                    LoginRateLimiting.ClearLockout(users, user);
-
-                    // Stamp the change so SecurePage signs out every other session
-                    SetOrCreateChild(users, user, "passwordChangedUtc", now.ToString("o"));
-
-                    users.Save(UsersPath);
+                    // Account no longer exists. The token stays used (harmless), nothing else changes.
+                    return false;
                 }
-            }
 
-            return true;
+                // Any other outstanding links for this user stop working too.
+                Database.ExecuteNonQuery(conn, tx, @"
+                    UPDATE dbo.PasswordResetTokens SET UsedAtUtc = SYSUTCDATETIME()
+                     WHERE UserId = @U AND UsedAtUtc IS NULL;",
+                    UserIdParam(userId));
+
+                return true;
+            });
+
         }
 
         // ===================== Helpers =====================
-
-        private static XmlDocument LoadResets()
-        {
-            var doc = new XmlDocument();
-            if (File.Exists(ResetsPath))
-            {
-                doc.Load(ResetsPath);
-            }
-            else
-            {
-                doc.LoadXml("<?xml version='1.0' encoding='utf-8'?><passwordResets version='1'></passwordResets>");
-            }
-            return doc;
-        }
-
-        private static XmlElement FindValidReset(XmlDocument doc, string token, DateTime now)
-        {
-            var tokenHash = HashToken(token);
-
-            foreach (XmlElement r in doc.DocumentElement.SelectNodes("reset"))
-            {
-                if (r.GetAttribute("tokenHash") != tokenHash) continue;
-                if (r.GetAttribute("used") == "true") return null;
-                if (IsExpired(r, now)) return null;
-                return r;
-            }
-            return null;
-        }
 
         private static bool IsExpired(XmlElement reset, DateTime now)
         {
@@ -199,22 +164,17 @@ namespace CyberApp_FIA
             return now > expires.ToUniversalTime();
         }
 
-        private static string HashToken(string token)
+        private static byte[] HashToken(string token)
         {
             using (var sha = SHA256.Create())
             {
-                var bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(token));
-                return BitConverter.ToString(bytes).Replace("-", "");
+                return sha.ComputeHash(Encoding.UTF8.GetBytes(token ?? ""));
             }
         }
 
-        private static XmlElement FindUserById(XmlDocument doc, string userId)
+        private static SqlParameter UserIdParam(string userId)
         {
-            foreach (XmlElement user in doc.SelectNodes("/users/user"))
-            {
-                if (user.GetAttribute("id") == userId) return user;
-            }
-            return null;
+            return Database.Param("@U", SqlDbType.Char, 32, (userId ?? "").Trim().ToLowerInvariant());
         }
 
         private static void SetOrCreateChild(XmlDocument doc, XmlElement parent, string name, string value)

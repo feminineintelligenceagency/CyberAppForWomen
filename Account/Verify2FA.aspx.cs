@@ -118,13 +118,13 @@ namespace CyberApp_FIA.Account
             if (digits.Length != 6) return false;
 
             var secret = UserRepository.UnprotectMfaSecret(user.MfaSecretProtected);
-            if (secret == null) return false;   // can't decrypt here; a backup code still works
+            if (secret == null) return false;   
 
             var totp = new Totp(Base32Encoding.ToBytes(secret));
             if (!totp.VerifyTotp(digits, out long timeStep, new VerificationWindow(previous: 1, future: 1)))
                 return false;
 
-            // Same code (or an older one) already used? Reject it.
+            // Same code already used: Reject it
             return UserRepository.TryAcceptTotpTimeStep(user.UserId, timeStep);
         }
 

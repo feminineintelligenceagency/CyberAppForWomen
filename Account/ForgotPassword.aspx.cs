@@ -4,6 +4,7 @@ using System.IO;
 using System.Web;
 using System.Web.UI;
 using System.Xml;
+using static QRCoder.PayloadGenerator;
 
 namespace CyberApp_FIA.Account
 {
@@ -15,8 +16,6 @@ namespace CyberApp_FIA.Account
     /// </summary>
     public partial class ForgotPassword : Page
     {
-        private string UsersXmlPath => Server.MapPath("~/App_Data/users.xml");
-
         protected void BtnSend_Click(object sender, EventArgs e)
         {
             if (!Page.IsValid) return;
@@ -25,33 +24,27 @@ namespace CyberApp_FIA.Account
 
             try
             {
-                if (File.Exists(UsersXmlPath))
+                var user = PasswordResetService.FindUserByEmail(typedEmail);
+                if (user != null)
                 {
-                    var doc = new XmlDocument();
-                    doc.Load(UsersXmlPath);
+                    var userId = user.UserId;
+                    var registeredEmail = (user.Email ?? "").Trim();
 
-                    var user = PasswordResetService.FindUserByEmail(doc, typedEmail);
-                    if (user != null)
+                    if (!string.IsNullOrWhiteSpace(userId) && !string.IsNullOrWhiteSpace(registeredEmail))
                     {
-                        var userId = user.GetAttribute("id");
-                        var registeredEmail = user["email"]?.InnerText?.Trim();
+                        var token = PasswordResetService.CreateToken(userId);
 
-                        if (!string.IsNullOrWhiteSpace(userId) && !string.IsNullOrWhiteSpace(registeredEmail))
-                        {
-                            var token = PasswordResetService.CreateToken(userId);
+                        var link = Request.Url.GetLeftPart(UriPartial.Authority)
+                                   + ResolveUrl("~/Account/ResetPassword.aspx")
+                                   + "?token=" + HttpUtility.UrlEncode(token);
 
-                            var link = Request.Url.GetLeftPart(UriPartial.Authority)
-                                       + ResolveUrl("~/Account/ResetPassword.aspx")
-                                       + "?token=" + HttpUtility.UrlEncode(token);
+                        var body =
+                            "We received a request to reset your password." + Environment.NewLine + Environment.NewLine +
+                            "Use this link within " + (int)PasswordResetService.TokenLifetime.TotalMinutes + " minutes. It only works once:" + Environment.NewLine +
+                            link + Environment.NewLine + Environment.NewLine +
+                            "If you didn't ask for this, you can ignore this email. Your password won't change.";
 
-                            var body =
-                                "We received a request to reset your password." + Environment.NewLine + Environment.NewLine +
-                                "Use this link within " + (int)PasswordResetService.TokenLifetime.TotalMinutes + " minutes. It only works once:" + Environment.NewLine +
-                                link + Environment.NewLine + Environment.NewLine +
-                                "If you didn't ask for this, you can ignore this email. Your password won't change.";
-
-                            EmailService.Send(registeredEmail, "Password reset request", body);
-                        }
+                        EmailService.Send(registeredEmail, "Password reset request", body);
                     }
                 }
             }
@@ -66,7 +59,8 @@ namespace CyberApp_FIA.Account
             FormPanel.Visible = false;
             FormMessage.Text =
                 "If an account exists for that email, we've sent a link to reset your password. " +
-                "The link expires in 30 minutes.";
+                "The link expires in " + (int)PasswordResetService.TokenLifetime.TotalMinutes + " minutes.";
         }
     }
+
 }

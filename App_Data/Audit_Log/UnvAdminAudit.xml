@@ -259,4 +259,25 @@
   <entry id="log-23cf7a42350f436992f76b6d11440cb4" university="Arizona State Univserity" role="Helper" type="Sign In" timestamp="2026-10-23T03:44:49.9083353Z" email="helper1@gmail.com" firstName="">
     <details>Helper signed in.</details>
   </entry>
+  <entry id="log-9b319edac8c246cfb23c9fb17db6525a" university="" role="Participant" type="Sign In" timestamp="2026-10-23T03:47:27.8832016Z" email="test2@gmail.com" firstName="">
+    <details>Participant signed in.</details>
+  </entry>
+  <entry id="log-9bdfabedfa5e48a5b6459f54d285a9db" university="" role="Participant" type="Sign In" timestamp="2026-10-23T03:49:42.0447991Z" email="test2@gmail.com" firstName="">
+    <details>Participant signed in.</details>
+  </entry>
+  <entry id="log-4d53cd4463364235bc6bc440cbfcd92f" university="Arizona State Univserity" role="Participant" type="MFA Enabled" timestamp="2026-10-23T03:50:23.0955872Z" email="test2@gmail.com" firstName="">
+    <details>Two-factor authentication was enabled.</details>
+  </entry>
+  <entry id="log-ec471123c17f4fda82e00733b729028b" university="" role="Participant" type="Sign In" timestamp="2026-10-23T03:50:52.1677934Z" email="test2@gmail.com" firstName="">
+    <details>Participant signed in (two-factor).</details>
+  </entry>
+  <entry id="log-b7171e0a4645477797b462816d54b872" university="Arizona State University" role="Participant" type="Account Created" timestamp="2026-10-23T04:09:00.8556047Z" email="jodiy51703@37xiao.com" firstName="test">
+    <details>New Participant account created (userId=ddd04b1ae67848ab9f8d7d08e8f2dca1). Consent accepted at 2026-10-23T04:09:00.6801322Z UTC from IP 127.0.0.1.</details>
+  </entry>
+  <entry id="log-cd86f7caa29240ee9ff4aa76c089a5ba" university="" role="Unknown" type="Sign In Failed (Unknown Email)" timestamp="2026-10-23T04:54:29.7861421Z" email="test@gmail.com" firstName="">
+    <details>Sign-in attempt with an email address that is not registered.</details>
+  </entry>
+  <entry id="log-4343c8976b4b4a0f8fe2a4cbcb271797" university="" role="Participant" type="Sign In" timestamp="2026-10-23T04:54:45.2238616Z" email="test2@gmail.com" firstName="">
+    <details>Participant signed in (two-factor).</details>
+  </entry>
 </auditLog>
