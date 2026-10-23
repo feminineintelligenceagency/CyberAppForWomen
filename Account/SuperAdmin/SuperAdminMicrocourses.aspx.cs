@@ -300,6 +300,11 @@ namespace CyberApp_FIA.Account
                 return;
             }
 
+            bool wasPublished = string.Equals(
+                course.GetAttribute("status"),
+                "Published",
+                StringComparison.OrdinalIgnoreCase);
+
             // Update fields (create child elements as needed)
             SetOrCreateElement(course, "title", TxtTitle.Text.Trim());
             SetOrCreateElement(course, "summary", TxtSummary.Text.Trim());
@@ -380,6 +385,7 @@ namespace CyberApp_FIA.Account
 
             // Save back to disk
             doc.Save(MicrocoursesXmlPath);
+            CertificationNotifications.ModulePublished(Context, course, wasPublished);
 
             // AUDIT: SuperAdmin edited a microcourse
             try
