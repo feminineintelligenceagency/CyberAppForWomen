@@ -1702,6 +1702,10 @@ namespace CyberApp_FIA.Helper
 
             SaveHelperProgressDoc(doc);
 
+            CertificationNotifications.SessionRequirementCompleted(
+                Context, helperId, courseNode,
+                "teachingSessions", previousCourseTeaching);
+
             return true;
         }
 

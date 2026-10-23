@@ -498,6 +498,7 @@
     <Compile Include="App_Code\Services\AuthSession.cs" />
     <Compile Include="App_Code\Services\AuthSessionInfo.cs" />
     <Compile Include="App_Code\Services\AuthSessionStore.cs" />
+    <Compile Include="Services\CertificationNotifications.cs" />
     <Compile Include="Services\NotificationInfo.cs" />
     <Compile Include="App_Code\Services\DataProtector.cs" />
     <Compile Include="App_Code\Services\EmailSender.cs" />

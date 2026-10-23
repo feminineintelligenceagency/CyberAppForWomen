@@ -1199,6 +1199,11 @@ namespace CyberApp_FIA.Helper
                 return n;
             }
 
+
+            bool wasConfirmed = string.Equals(
+                courseEl["resourcesConfirmed"]?.InnerText,
+                "true",
+                StringComparison.OrdinalIgnoreCase);
             // Mark quiz as passed at least at the minimum score.
             var quizScoreNode = courseEl["quizScore"] ?? doc.CreateElement("quizScore");
             quizScoreNode.InnerText = passScore.ToString();
@@ -1282,6 +1287,19 @@ namespace CyberApp_FIA.Helper
             }
 
             doc.Save(HelperProgressXmlPath);
+
+            // Notify only on the first confirmation, after progress is saved.
+            if (!wasConfirmed && !isResubmission)
+            {
+                NotificationService.Create(
+                    Context,
+                    helperId,
+                    NotificationService.Certification,
+                    "Certification step completed",
+                    $"You confirmed the resources and quiz for \"{courseTitle}\". Admin review is pending.",
+                    "~/Account/Helper/CertificationProgress.aspx",
+                    $"certification:{courseId}:resources-quiz-completed");
+            }
         }
 
 

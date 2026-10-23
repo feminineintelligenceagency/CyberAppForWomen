@@ -528,6 +528,9 @@ namespace CyberApp_FIA.Helper
 
             SaveHelperProgressDoc(doc);
 
+            CertificationNotifications.SessionRequirementCompleted(
+                Context, helperId, courseNode, "helpSessions", prevCourseHelp);
+
             // Build snapshot helperId|courseId|prevCourseHelp|prevTotalHelp|ticks
             var ticks = DateTime.UtcNow.Ticks;
             snapshot = string.Join("|",
