@@ -196,4 +196,7 @@
   <entry id="log-2f930ce34fd14400be514bd7dcf206b9" university="" role="SuperAdmin" type="Sign In" timestamp="2026-10-22T23:24:15.9711414Z" email="lauren.nignon@gmail.com" firstName="Lauren">
     <details>SuperAdmin signed in.</details>
   </entry>
+  <entry id="log-6246c0c7d3f94404b77eb192fe5784cb" university="" role="SuperAdmin" type="Sign In Failed (Bad Password)" timestamp="2026-10-23T00:01:54.2420951Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>Incorrect password for existing account during sign in.</details>
+  </entry>
 </auditLog>

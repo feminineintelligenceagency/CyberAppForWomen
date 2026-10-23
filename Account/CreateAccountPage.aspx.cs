@@ -9,7 +9,7 @@ using System.Xml;
 namespace CyberApp_FIA.Account
 {
     /// <summary>
-    /// Sign-up page code-behind (database version).
+    /// Sign-up page code
     /// - Validates input and consent
     /// - Only allows self-registration as Participant or Helper
     /// - Hashes the password with Argon2 (passHasher.HashNewPassword)
@@ -20,9 +20,7 @@ namespace CyberApp_FIA.Account
     {
         private string AuditXmlPath => Server.MapPath("~/App_Data/Audit_Log/UnvAdminAudit.xml");
 
-        // Roles a visitor may choose for themselves. Admin roles must be granted by an
-        // existing admin, never picked on the public sign-up form (the form value can be
-        // edited in the browser, so it can't be trusted).
+        // Roles a visitor may choose for themselves. Admin roles must be granted by an existing admin
         private static readonly string[] SelfRegistrationRoles = { "Participant", "Helper" };
 
         protected void BtnSignUp_Click(object sender, EventArgs e)
@@ -30,7 +28,7 @@ namespace CyberApp_FIA.Account
             // Honor ASP.NET validators (required fields, email format, consent, etc.).
             if (!Page.IsValid) return;
 
-            // Defense in depth: re-check consent server-side.
+            // re-check consent server-side.
             if (!Consent.Checked)
             {
                 ShowError("Please accept the consent.");
@@ -67,7 +65,7 @@ namespace CyberApp_FIA.Account
                     FirstName = firstName,
                     LastName = lastName,
                     Role = role,
-                    University = null,              // not collected at sign-up yet
+                    University = null,           
                     ConsentAcceptedAtUtc = now,
                     ConsentIp = consentIp
                 };
@@ -84,22 +82,18 @@ namespace CyberApp_FIA.Account
             }
             catch (SqlException)
             {
-                // Database unreachable or rejected the data. Don't show raw SQL errors.
+                // Database unreachable or rejected the data
                 ShowError("We couldn't create your account right now. Please try again in a moment.");
                 return;
             }
 
-            // Redirect outside the try block (Response.Redirect ends the request).
+            // Redirect outside the try block.
             Response.Redirect("~/Account/Login.aspx");
         }
 
         /// <summary>CustomValidator server-side hook for the consent checkbox.</summary>
         protected void ConsentValidator_ServerValidate(object source, System.Web.UI.WebControls.ServerValidateEventArgs args)
             => args.IsValid = Consent.Checked;
-
-        // -------------------------
-        // Helpers
-        // -------------------------
 
         /// <summary>
         /// Returns the canonical spelling of an allowed self-registration role,

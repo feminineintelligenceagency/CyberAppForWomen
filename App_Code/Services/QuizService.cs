@@ -8,25 +8,19 @@ using System.Web;
 namespace CyberApp_FIA.Services
 {
     /// <summary>
-    /// Risk-assessment quiz (database version).
+    /// Risk-assessment quiz
     ///
     /// Reads questions/domains from QuizQuestions, QuizOptions, QuizOptionWeights, QuizDomains,
     /// and stores progress/results in QuizProgress, QuizProgressAnswers, QuizResults,
     /// QuizResultDomainScores, QuizResultItems.
     ///
-    /// "username" everywhere is the user's 32-character UserId (Session["UserId"]),
-    /// which is what the XML files already stored.
     ///
-    /// PRIVACY: answers and results describe a participant's personal safety situation.
-    /// Only call these methods with the signed-in user's own id, or for a helper only
-    /// when that participant's result has ShareWithHelper = true.
+    /// answers and results describe a participant's personal safety situation.
     /// </summary>
     public class QuizService
     {
-        // Kept so existing pages that call new QuizService(Server) still compile.
         public QuizService(HttpServerUtility server) { }
 
-        // ---------- Public DTOs (unchanged) ----------
         public class ScoreResult
         {
             public string Username { get; set; }
@@ -49,7 +43,7 @@ namespace CyberApp_FIA.Services
             public string D { get; set; }
         }
 
-        // ---------- Internal models ----------
+        // Models for database tables
         private class Domain
         {
             public string Key;
@@ -71,11 +65,9 @@ namespace CyberApp_FIA.Services
             public Dictionary<string, Option> Options = new Dictionary<string, Option>(StringComparer.OrdinalIgnoreCase);
         }
 
-        // =====================================================================
-        // Ruleset / questions
-        // =====================================================================
-
-        /// <summary>The newest ruleset version (e.g. "2.0").</summary>
+        /// <summary>
+        /// The newest ruleset version
+        /// </summary>
         public string CurrentRulesetVersion()
         {
             var v = Database.ExecuteScalar(@"
@@ -84,7 +76,9 @@ namespace CyberApp_FIA.Services
             return v as string ?? "2.0";
         }
 
-        /// <summary>Questions with their A–D labels, in display order.</summary>
+        /// <summary>
+        /// Questions with their A–D labels, in display order
+        /// .</summary>
         public List<UiQuestion> LoadQuestionsForUi(out string rulesetVersion)
         {
             rulesetVersion = CurrentRulesetVersion();
@@ -144,10 +138,6 @@ namespace CyberApp_FIA.Services
             return questions;
         }
 
-        // =====================================================================
-        // Progress
-        // =====================================================================
-
         /// <summary>
         /// Saves (or changes) one answer and the user's position in the quiz.
         /// If the user's saved progress is for an older ruleset, it is reset first.
@@ -203,7 +193,7 @@ namespace CyberApp_FIA.Services
             var selections = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
             var progress = Database.QuerySingle(@"
-SELECT LastIndex, IsCompleted FROM dbo.QuizProgress WHERE UserId = @U AND RulesetVersion = @V;",
+                SELECT LastIndex, IsCompleted FROM dbo.QuizProgress WHERE UserId = @U AND RulesetVersion = @V;",
                 r => new { LastIndex = r.GetInt32(0), Completed = r.GetBoolean(1) },
                 UserIdParam(userId),
                 Database.Param("@V", SqlDbType.VarChar, 10, rulesetVersion));
@@ -224,8 +214,8 @@ SELECT LastIndex, IsCompleted FROM dbo.QuizProgress WHERE UserId = @U AND Rulese
         public void MarkCompleted(string username, string rulesetVersion)
         {
             Database.ExecuteNonQuery(@"
-UPDATE dbo.QuizProgress SET IsCompleted = 1, UpdatedAtUtc = SYSUTCDATETIME()
- WHERE UserId = @U AND RulesetVersion = @V;",
+                   UPDATE dbo.QuizProgress SET IsCompleted = 1, UpdatedAtUtc = SYSUTCDATETIME()
+                   WHERE UserId = @U AND RulesetVersion = @V;",
                 UserIdParam(NormalizeUserId(username)),
                 Database.Param("@V", SqlDbType.VarChar, 10, rulesetVersion));
         }
@@ -233,17 +223,13 @@ UPDATE dbo.QuizProgress SET IsCompleted = 1, UpdatedAtUtc = SYSUTCDATETIME()
         public bool IsCompleted(string username, string rulesetVersion)
         {
             var v = Database.ExecuteScalar(@"
-SELECT CASE WHEN EXISTS (SELECT 1 FROM dbo.QuizProgress
+                    SELECT CASE WHEN EXISTS (SELECT 1 FROM dbo.QuizProgress
                           WHERE UserId = @U AND RulesetVersion = @V AND IsCompleted = 1)
-            THEN 1 ELSE 0 END;",
+                    THEN 1 ELSE 0 END;",
                 UserIdParam(NormalizeUserId(username)),
                 Database.Param("@V", SqlDbType.VarChar, 10, rulesetVersion));
             return Convert.ToInt32(v) == 1;
         }
-
-        // =====================================================================
-        // Scoring and results
-        // =====================================================================
 
         /// <summary>
         /// Scores the answers (same rules as before: sum option weights per domain,
@@ -307,9 +293,9 @@ SELECT CASE WHEN EXISTS (SELECT 1 FROM dbo.QuizProgress
                 EnsureRuleset(conn, tx, version);
 
                 var resultId = Convert.ToInt32(Database.ExecuteScalar(conn, tx, @"
-INSERT INTO dbo.QuizResults (UserId, RulesetVersion, CompletedAtUtc, OverallScore, ShareWithHelper)
-OUTPUT inserted.ResultId
-VALUES (@U, @V, @C, @O, @S);",
+                        INSERT INTO dbo.QuizResults (UserId, RulesetVersion, CompletedAtUtc, OverallScore, ShareWithHelper)
+                        OUTPUT inserted.ResultId
+                        VALUES (@U, @V, @C, @O, @S);",
                     UserIdParam(userId),
                     Database.Param("@V", SqlDbType.VarChar, 10, version),
                     Database.Param("@C", SqlDbType.DateTime2, result.CompletedUtc),
@@ -329,8 +315,8 @@ VALUES (@U, @V, @C, @O, @S);",
                 InsertItems(conn, tx, resultId, "QuickWin", wins);
 
                 Database.ExecuteNonQuery(conn, tx, @"
-UPDATE dbo.QuizProgress SET IsCompleted = 1, UpdatedAtUtc = SYSUTCDATETIME()
- WHERE UserId = @U AND RulesetVersion = @V;",
+                        UPDATE dbo.QuizProgress SET IsCompleted = 1, UpdatedAtUtc = SYSUTCDATETIME()
+                         WHERE UserId = @U AND RulesetVersion = @V;",
                     UserIdParam(userId),
                     Database.Param("@V", SqlDbType.VarChar, 10, version));
             });
@@ -344,10 +330,10 @@ UPDATE dbo.QuizProgress SET IsCompleted = 1, UpdatedAtUtc = SYSUTCDATETIME()
             var userId = NormalizeUserId(username);
 
             var header = Database.QuerySingle(@"
-SELECT TOP 1 ResultId, RulesetVersion, CompletedAtUtc, OverallScore, ShareWithHelper
-  FROM dbo.QuizResults
- WHERE UserId = @U
- ORDER BY CompletedAtUtc DESC;",
+                    SELECT TOP 1 ResultId, RulesetVersion, CompletedAtUtc, OverallScore, ShareWithHelper
+                      FROM dbo.QuizResults
+                     WHERE UserId = @U
+                     ORDER BY CompletedAtUtc DESC;",
                 r => new
                 {
                     Id = r.GetInt32(0),
@@ -370,11 +356,11 @@ SELECT TOP 1 ResultId, RulesetVersion, CompletedAtUtc, OverallScore, ShareWithHe
             };
 
             foreach (var d in Database.Query(@"
-SELECT d.Title, s.Score
-  FROM dbo.QuizResultDomainScores s
-  JOIN dbo.QuizDomains d ON d.DomainKey = s.DomainKey
- WHERE s.ResultId = @R
- ORDER BY d.Title;",
+                SELECT d.Title, s.Score
+                  FROM dbo.QuizResultDomainScores s
+                  JOIN dbo.QuizDomains d ON d.DomainKey = s.DomainKey
+                 WHERE s.ResultId = @R
+                 ORDER BY d.Title;",
                 r => new { Title = r.GetString(0), Score = (double)r.GetDecimal(1) },
                 Database.Param("@R", SqlDbType.Int, header.Id)))
             {
@@ -382,7 +368,7 @@ SELECT d.Title, s.Score
             }
 
             foreach (var item in Database.Query(@"
-SELECT ItemType, ItemText FROM dbo.QuizResultItems WHERE ResultId = @R ORDER BY ItemType, SortOrder;",
+                    SELECT ItemType, ItemText FROM dbo.QuizResultItems WHERE ResultId = @R ORDER BY ItemType, SortOrder;",
                 r => new { Type = r.GetString(0), Text = r.GetString(1) },
                 Database.Param("@R", SqlDbType.Int, header.Id)))
             {
@@ -402,9 +388,6 @@ SELECT ItemType, ItemText FROM dbo.QuizResultItems WHERE ResultId = @R ORDER BY 
                 UserIdParam(NormalizeUserId(username)));
         }
 
-        // =====================================================================
-        // Helpers
-        // =====================================================================
 
         private static void InsertItems(SqlConnection conn, SqlTransaction tx, int resultId, string type, List<string> items)
         {
@@ -428,8 +411,8 @@ SELECT ItemType, ItemText FROM dbo.QuizResultItems WHERE ResultId = @R ORDER BY 
         private static void EnsureRuleset(SqlConnection conn, SqlTransaction tx, string version)
         {
             Database.ExecuteNonQuery(conn, tx, @"
-IF NOT EXISTS (SELECT 1 FROM dbo.QuizRulesets WHERE Version = @V)
-    INSERT INTO dbo.QuizRulesets (Version, CreatedAtUtc) VALUES (@V, NULL);",
+                IF NOT EXISTS (SELECT 1 FROM dbo.QuizRulesets WHERE Version = @V)
+                    INSERT INTO dbo.QuizRulesets (Version, CreatedAtUtc) VALUES (@V, NULL);",
                 Database.Param("@V", SqlDbType.VarChar, 10, version));
         }
 

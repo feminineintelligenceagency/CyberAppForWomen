@@ -6,10 +6,9 @@ using System.Web.UI;
 namespace CyberApp_FIA.Account
 {
     /// <summary>
-    /// University Admin page for creating Helper accounts (database version).
+    /// University Admin page for creating Helper accounts
     /// - Only University Admins can view the page or submit the form
-    /// - The Helper is always linked to the signed-in admin's OWN university,
-    ///   looked up on the server (never taken from the form)
+    /// - The Helper is always linked to the signed-in admin's own university, looked up on the server 
     /// - Hashes the password with Argon2 (passHasher.HashNewPassword)
     /// - Creates the user and credentials in one transaction (UserRepository.CreateUser)
     /// </summary>
@@ -56,9 +55,6 @@ namespace CyberApp_FIA.Account
             var email = (NewHelperEmail.Text ?? "").Trim().ToLowerInvariant();
             var firstName = (NewHelperFirstName.Text ?? "").Trim();
             var lastName = (NewHelperLastName.Text ?? "").Trim();
-
-            // Don't trim passwords: login checks the password exactly as typed, so trimming
-            // here would make passwords with leading/trailing spaces impossible to use.
             var password = NewHelperPassword.Text ?? "";
 
             if (email.Length == 0 || firstName.Length == 0 || lastName.Length == 0 || password.Length == 0)
@@ -71,7 +67,7 @@ namespace CyberApp_FIA.Account
             string uni;
             try
             {
-                // Always use the admin's university from the server, never the hidden field.
+                // Always use the admin's university from the server
                 uni = GetAdminUniversity();
                 if (string.IsNullOrWhiteSpace(uni))
                 {
@@ -129,8 +125,6 @@ namespace CyberApp_FIA.Account
             NewHelperLastName.Text = "";
             NewHelperPassword.Text = "";
         }
-
-        // ---------- Helpers ----------
 
         private bool IsUniversityAdmin()
         {

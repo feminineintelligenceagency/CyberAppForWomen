@@ -6,7 +6,7 @@ using System.Web.UI;
 namespace CyberApp_FIA.Account
 {
     /// <summary>
-    /// SuperAdmin page for creating University Admin accounts (database version).
+    /// SuperAdmin page for creating University Admin accounts
     /// - Only SuperAdmins can view the page or submit the form
     /// - Hashes the password with Argon2 (passHasher.HashNewPassword)
     /// - Creates the user and credentials in one transaction (UserRepository.CreateUser)
@@ -116,10 +116,6 @@ namespace CyberApp_FIA.Account
             FormMessage.Text = "<span style='color:#0a7a3c'>University Admin account created.</span>";
             ClearForm();
         }
-
-        // -------------------------
-        // Helpers
-        // -------------------------
 
         private bool IsSuperAdmin()
         {
