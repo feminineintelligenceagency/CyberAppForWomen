@@ -199,4 +199,13 @@
   <entry id="log-6246c0c7d3f94404b77eb192fe5784cb" university="" role="SuperAdmin" type="Sign In Failed (Bad Password)" timestamp="2026-10-23T00:01:54.2420951Z" email="lauren.nignon@gmail.com" firstName="Lauren">
     <details>Incorrect password for existing account during sign in.</details>
   </entry>
+  <entry id="log-4a08035de556405fb01d49c916a0ebe6" university="" role="SuperAdmin" type="Sign In" timestamp="2026-10-23T00:35:19.8604445Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-2e6cdf1c2660486289a6b4a9dbc6208c" university="Arizona State Univserity" role="UniversityAdmin" type="Sign In" timestamp="2026-10-23T00:35:37.6621033Z" email="asu@asu.edu" firstName="">
+    <details>UniversityAdmin signed in.</details>
+  </entry>
+  <entry id="log-0f301b7280844809ac3a8cdf9078cdcd" university="" role="Participant" type="Sign In" timestamp="2026-10-23T00:35:56.6449192Z" email="test2@gmail.com" firstName="">
+    <details>Participant signed in.</details>
+  </entry>
 </auditLog>

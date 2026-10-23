@@ -30,6 +30,19 @@ namespace CyberApp_FIA.Account
 
         private string AuditXmlPath => Server.MapPath("~/App_Data/Audit_Log/UnvAdminAudit.xml");
 
+        /// <summary>
+        /// when SecurePage sends the user here with ?expired=1, end the old session on the server and show a message.
+        /// </summary>
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!IsPostBack && Request.QueryString["expired"] == "1")
+            {
+                AuthSession.SignOut(Context);
+                FormMessage.Text = "<span style='color:#c21d1d'>Your session has ended. Please log in again.</span>";
+            }
+        }
+
+
         protected void BtnLogin_Click(object sender, EventArgs e)
         {
             if (!Page.IsValid) { FormMessage.Text = GenericLoginError; return; }
@@ -115,7 +128,7 @@ namespace CyberApp_FIA.Account
 
                 if (needsRehash)
                 {
-                    UserRepository.UpdatePasswordHash(user.UserId, passHasher.HashNewPassword(password));
+                    UserRepository.UpdatePasswordHash(user.UserId, passHasher.HashNewPassword(password), passwordChanged: false);
                 }
             }
             catch (SqlException)
@@ -123,11 +136,23 @@ namespace CyberApp_FIA.Account
                 // Best-effort: the user is authenticated. The reset/upgrade retries next login.
             }
 
+            // 2FA check 
+            if (user.MfaEnabled)
+            {
+                // Store only the user id so Verify2FA.aspx knows which account is finishing
+                // sign-in. The normal authenticated session is NOT created until the code is verified.
+                Session["PendingMfaUserId"] = user.UserId;
+                Response.Redirect("~/Account/Verify2FA.aspx");
+                return;
+            }
+
+
             //Session
             Session["UserId"] = user.UserId;
             Session["Role"] = user.Role;
             Session["Email"] = user.Email;
             Session["University"] = user.University ?? "";
+            Session["PasswordStamp"] = user.PasswordStamp;
 
             // Issue the auth token that Global.asax checks on every request.
             AuthSession.SignIn(Context);

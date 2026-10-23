@@ -29,6 +29,10 @@ namespace CyberApp_FIA.Services
             public int FailedLoginCount { get; set; }
             public DateTime? LockoutUntilUtc { get; set; }
 
+            public bool MfaEnabled { get; set; }
+            public DateTime? PasswordUpdatedAtUtc { get; set; }
+            public string PasswordStamp => FormatStamp(PasswordUpdatedAtUtc);
+
             public bool IsLockedOut(DateTime nowUtc)
             {
                 return LockoutUntilUtc.HasValue && LockoutUntilUtc.Value > nowUtc;
@@ -77,7 +81,10 @@ namespace CyberApp_FIA.Services
                 Argon2Iterations = Database.GetNullableInt(r, "Argon2Iterations"),
                 Argon2Parallelism = Database.GetNullableInt(r, "Argon2Parallelism"),
                 FailedLoginCount = r.GetInt32(r.GetOrdinal("FailedLoginCount")),
-                LockoutUntilUtc = Database.GetNullableDateTime(r, "LockoutUntilUtc")
+                LockoutUntilUtc = Database.GetNullableDateTime(r, "LockoutUntilUtc"),
+                MfaEnabled = r.GetBoolean(r.GetOrdinal("MfaEnabled")),
+                PasswordUpdatedAtUtc = Database.GetNullableDateTime(r, "PasswordUpdatedAtUtc")
+
             },
             EmailParam(email));
         }
@@ -136,18 +143,47 @@ namespace CyberApp_FIA.Services
         /// Replaces a user's password hash. Used when upgrading PBKDF2 hashes to Argon2
         /// at login, and for password changes/resets.
         /// </summary>
-        public static void UpdatePasswordHash(string userId, passHasher.PasswordHashResult password)
+        public static void UpdatePasswordHash(string userId, passHasher.PasswordHashResult password, bool passwordChanged = true)
         {
             if (password == null) throw new ArgumentNullException(nameof(password));
 
+            var parameters = new System.Collections.Generic.List<SqlParameter>(PasswordParams(userId, password))
+            {
+                Database.Param("@Changed", SqlDbType.Bit, passwordChanged)
+            };
+
+
             Database.ExecuteNonQuery(@"
             UPDATE dbo.UserCredentials
-            SET PasswordHash = @Hash, PasswordSalt = @Salt, Algorithm = @Algo,
+               SET PasswordHash = @Hash, PasswordSalt = @Salt, Algorithm = @Algo,
                    Argon2MemoryKiB = @M, Argon2Iterations = @T, Argon2Parallelism = @P,
-                   PasswordUpdatedAtUtc = SYSUTCDATETIME()
-            WHERE UserId = @UserId;",
-                PasswordParams(userId, password));
+                   PasswordUpdatedAtUtc = CASE WHEN @Changed = 1 THEN SYSUTCDATETIME() ELSE PasswordUpdatedAtUtc END
+             WHERE UserId = @UserId;",
+
+                parameters.ToArray());
         }
+
+        /// <summary>
+        /// The user's current password stamp (same format as LoginRecord.PasswordStamp),
+        /// or null if the user doesn't exist. Pages compare this to Session["PasswordStamp"]
+        /// to end sessions that started before a password reset.
+        /// </summary>
+        public static string GetPasswordStamp(string userId)
+        {
+            var value = Database.ExecuteScalar(
+                "SELECT PasswordUpdatedAtUtc FROM dbo.UserCredentials WHERE UserId = @UserId;",
+                UserIdParam(userId));
+            if (value == null) return null;
+            return FormatStamp(DateTime.SpecifyKind((DateTime)value, DateTimeKind.Utc));
+        }
+
+        private static string FormatStamp(DateTime? utc)
+        {
+            return utc.HasValue
+                ? utc.Value.ToString("yyyy-MM-ddTHH:mm:ss.fffZ", System.Globalization.CultureInfo.InvariantCulture)
+                : "";
+        }
+
 
         /// <summary>
         /// Records a failed login in a single UPDATE, so simultaneous attempts can't be undercounted.
