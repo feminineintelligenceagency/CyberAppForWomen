@@ -121,10 +121,13 @@ namespace CyberApp_FIA.Account
                 return;
             }
 
-            // Success: clear failures, upgrade the hash if needed ---
+            // Success: clear failures if Mfa is not enabled, upgrade the hash if needed 
             try
             {
-                UserRepository.ResetFailedLogins(user.UserId);
+                if (!user.MfaEnabled)
+                {
+                    UserRepository.ResetFailedLogins(user.UserId);
+                }
 
                 if (needsRehash)
                 {
@@ -139,11 +142,11 @@ namespace CyberApp_FIA.Account
             // 2FA check 
             if (user.MfaEnabled)
             {
-                // Store only the user id so Verify2FA.aspx knows which account is finishing
-                // sign-in. The normal authenticated session is NOT created until the code is verified.
                 Session["PendingMfaUserId"] = user.UserId;
+                Session["PendingMfaAtUtc"] = DateTime.UtcNow;   // Verify2FA expires this after 5 minutes
                 Response.Redirect("~/Account/Verify2FA.aspx");
                 return;
+
             }
 
 

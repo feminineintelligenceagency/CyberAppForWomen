@@ -208,4 +208,55 @@
   <entry id="log-0f301b7280844809ac3a8cdf9078cdcd" university="" role="Participant" type="Sign In" timestamp="2026-10-23T00:35:56.6449192Z" email="test2@gmail.com" firstName="">
     <details>Participant signed in.</details>
   </entry>
+  <entry id="log-8ac1651d0e864044b73b6e319a73671b" university="" role="SuperAdmin" type="Sign In Failed (Bad Password)" timestamp="2026-10-23T02:48:47.0898057Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>Incorrect password for existing account during sign in.</details>
+  </entry>
+  <entry id="log-b66a88cff35d4e6fae550a2b6936e282" university="" role="SuperAdmin" type="Sign In" timestamp="2026-10-23T02:49:00.9863497Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-2447a02c49714212904929227b8b1093" university="" role="Participant" type="Sign In" timestamp="2026-10-23T02:49:13.2578861Z" email="test2@gmail.com" firstName="">
+    <details>Participant signed in.</details>
+  </entry>
+  <entry id="log-67b2cf4ab6a142bb92b1bcb1aa32eccc" university="" role="Participant" type="Sign In" timestamp="2026-10-23T02:49:23.5823273Z" email="test2@gmail.com" firstName="">
+    <details>Participant signed in.</details>
+  </entry>
+  <entry id="log-c0f3543739444997b73c89309609f061" university="" role="Unknown" type="Sign In Failed (Unknown Email)" timestamp="2026-10-23T02:49:36.9407343Z" email="wqe@gmail.com" firstName="">
+    <details>Sign-in attempt with an email address that is not registered.</details>
+  </entry>
+  <entry id="log-bd255882456e4ddab2794fe36d05cf60" university="" role="Participant" type="Sign In" timestamp="2026-10-23T02:49:47.2478945Z" email="test2@gmail.com" firstName="">
+    <details>Participant signed in.</details>
+  </entry>
+  <entry id="log-15612124606e4f4ea570d361fed065dd" university="" role="SuperAdmin" type="Sign In" timestamp="2026-10-23T02:49:55.5608853Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-c74e0c237aec46e09a42c8794767c240" university="" role="SuperAdmin" type="Sign In" timestamp="2026-10-23T03:06:57.5259908Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-0799fc17f20d448e951cb48624ede223" university="" role="Participant" type="Sign In" timestamp="2026-10-23T03:07:07.5873413Z" email="test2@gmail.com" firstName="">
+    <details>Participant signed in.</details>
+  </entry>
+  <entry id="log-48be0af8d7a6450ab1cf39b168e181ef" university="Arizona State Univserity" role="UniversityAdmin" type="Sign In" timestamp="2026-10-23T03:07:20.6266984Z" email="asu@asu.edu" firstName="">
+    <details>UniversityAdmin signed in.</details>
+  </entry>
+  <entry id="log-aedf055f2c734e1090ef35c78fa6bffe" university="Arizona State Univserity" role="UniversityAdmin" type="Helper Created" timestamp="2026-10-23T03:07:34.7149895Z" email="asu@asu.edu" firstName="">
+    <details>University Admin asu@asu.edu created Helper helper1@gmail.com (userId=467182ce7e3b494baa7ea6e59e32c95f) for Arizona State Univserity.</details>
+  </entry>
+  <entry id="log-bfe2ec549ce043c0a7a7bb604bfe6b57" university="Arizona State Univserity" role="Helper" type="Sign In" timestamp="2026-10-23T03:07:48.2926137Z" email="helper1@gmail.com" firstName="">
+    <details>Helper signed in.</details>
+  </entry>
+  <entry id="log-6bd0ae5c062e4f78ba31d7d055beae05" university="Arizona State Univserity" role="Helper" type="Sign In" timestamp="2026-10-23T03:08:02.3049329Z" email="helper1@gmail.com" firstName="">
+    <details>Helper signed in.</details>
+  </entry>
+  <entry id="log-e12fc66ef81c4adba33b0e7a4095c75d" university="" role="Participant" type="Sign In" timestamp="2026-10-23T03:08:10.4349283Z" email="test2@gmail.com" firstName="">
+    <details>Participant signed in.</details>
+  </entry>
+  <entry id="log-f91e22bb70c648f7a0e5bc42f74d5b9c" university="" role="SuperAdmin" type="Sign In" timestamp="2026-10-23T03:44:22.7458063Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-4eb0ac5ea1cc4aeb83a6d054ac6e7b69" university="" role="Participant" type="Sign In" timestamp="2026-10-23T03:44:32.6171029Z" email="test2@gmail.com" firstName="">
+    <details>Participant signed in.</details>
+  </entry>
+  <entry id="log-23cf7a42350f436992f76b6d11440cb4" university="Arizona State Univserity" role="Helper" type="Sign In" timestamp="2026-10-23T03:44:49.9083353Z" email="helper1@gmail.com" firstName="">
+    <details>Helper signed in.</details>
+  </entry>
 </auditLog>

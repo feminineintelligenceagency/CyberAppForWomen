@@ -1,10 +1,12 @@
 ﻿using CyberApp_FIA.Services;
 using OtpNet;
 using System;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Web.Security;
 using System.Xml;
-using System.Security.Cryptography;
 
 namespace CyberApp_FIA.Account
 {
@@ -12,7 +14,13 @@ namespace CyberApp_FIA.Account
     {
         protected string VerificationMessage;
 
-        private string XmlPath => Server.MapPath("~/App_Data/users.xml");
+        //private string XmlPath => Server.MapPath("~/App_Data/users.xml");
+        private static readonly TimeSpan PendingMfaLifetime = TimeSpan.FromMinutes(5);
+
+        private static readonly string LockoutMessage =
+            "Too many failed attempts. Your account is locked for "
+            + (int)LoginRateLimiting.LockoutDuration.TotalMinutes + " minutes.";
+
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -25,175 +33,116 @@ namespace CyberApp_FIA.Account
                 return;
             }
 
+            var started = Session["PendingMfaAtUtc"] as DateTime?;
+            if (!started.HasValue || DateTime.UtcNow - started.Value > PendingMfaLifetime)
+            {
+                ClearPending();
+                Response.Redirect("~/Account/Login.aspx?expired=1");
+                return;
+            }
+
+
             // Only verify when the form is submitted.
             if (Request.HttpMethod != "POST")
                 return;
 
-            XmlDocument doc = new XmlDocument();
-            doc.Load(XmlPath);
-
-            XmlElement user = doc.SelectSingleNode(
-                $"/users/user[@id='{userId}']") as XmlElement;
-
-            if (user == null)
-            {
-                VerificationMessage = "User could not be found.";
-                return;
-            }
-
-            string encryptedSecret = user["mfaSecret"]?.InnerText;
-
-            if (string.IsNullOrWhiteSpace(encryptedSecret))
-            {
-                VerificationMessage = "MFA secret could not be found.";
-                return;
-            }
+            var now = DateTime.UtcNow;
 
             try
             {
-                // Decrypt the TOTP secret stored during MFA enrollment.
-                byte[] encryptedBytes =
-                    Convert.FromBase64String(encryptedSecret);
-
-                byte[] secretBytes =
-                    MachineKey.Unprotect(
-                        encryptedBytes,
-                        "FIA",
-                        "MFA-TOTP-Secret");
-
-                if (secretBytes == null)
+                var user = UserRepository.GetLoginById(userId);
+                if (user == null || !user.MfaEnabled)
                 {
-                    VerificationMessage = "Unable to decrypt MFA secret.";
+                    // Account deleted, or MFA turned off since the password step: start over.
+                    ClearPending();
+                    Response.Redirect("~/Account/Login.aspx");
                     return;
                 }
 
-                string secret =
-                    Encoding.UTF8.GetString(secretBytes);
-
-                Totp totp =
-                    new Totp(Base32Encoding.ToBytes(secret));
-
-                string enteredCode =
-                    (Request.Form["totpCode"] ?? "").Trim();
-
-                bool validTotp = totp.VerifyTotp(
-                enteredCode,
-                out long timeStepMatched,
-                new VerificationWindow(previous: 1, future: 1));
-
-                bool validBackupCode = false;
-
-                if (!validTotp)
+                if (user.IsLockedOut(now))
                 {
-                    validBackupCode =
-                        TryUseBackupCode(doc, user, enteredCode);
-                }
-
-                if (!validTotp && !validBackupCode)
-                {
-                    VerificationMessage =
-                        "Invalid authentication or backup code. Please try again.";
-
+                    ClearPending();
+                    VerificationMessage = LockoutMessage;
                     return;
                 }
 
-                // MFA passed. The user is now fully authenticated.
-                Session["UserId"] = user.GetAttribute("id");
-                Session["Role"] = user.GetAttribute("role");
-                Session["Email"] = user["email"]?.InnerText ?? "";
-                Session["University"] =
-                    user["university"]?.InnerText ?? "";
+                string entered = (Request.Form["totpCode"] ?? "").Trim();
 
-                Session.Remove("PendingMfaUserId");
+                bool accepted = TryAuthenticatorCode(user, entered)
+                             || UserRepository.TryUseBackupCode(user.UserId, entered);
+
+                if (!accepted)
+                {
+                    // Wrong codes count toward the same lockout as wrong passwords, so a
+                    // 6-digit code can't be brute-forced.
+                    var lockedUntil = UserRepository.RecordFailedLogin(
+                        user.UserId, LoginRateLimiting.MaxFailedAttempts, LoginRateLimiting.LockoutDuration);
+
+                    if (lockedUntil.HasValue)
+                    {
+                        ClearPending();
+                        VerificationMessage = LockoutMessage;
+                    }
+                    else
+                    {
+                        VerificationMessage = "Invalid authentication or backup code. Please try again.";
+                    }
+                    return;
+                }
+
+                // --- MFA passed: the user is now fully authenticated ---
+                UserRepository.ResetFailedLogins(user.UserId);
+
+                ClearPending();
+                Session["UserId"] = user.UserId;
+                Session["Role"] = user.Role;
+                Session["Email"] = user.Email;
+                Session["University"] = user.University ?? "";
+                Session["PasswordStamp"] = user.PasswordStamp;   // SecurePage checks this on every page
 
                 AuthSession.SignIn(Context);
 
-                switch ((user.GetAttribute("role") ?? "")
-                .Trim()
-                .ToLowerInvariant())
-                {
-                    case "superadmin":
-                        Response.Redirect(
-                            "~/Account/SuperAdmin/SuperAdminHome.aspx", false);
-                        Context.ApplicationInstance.CompleteRequest();
-                        return;
+                try { UniversityAuditLogger.AppendForCurrentUser(this, "Sign In", user.Role + " signed in (two-factor)."); } catch { }
 
-                    case "universityadmin":
-                        Response.Redirect(
-                            "~/Account/UniversityAdmin/UniversityAdminHome.aspx", false);
-                        Context.ApplicationInstance.CompleteRequest();
-                        return;
-
-                    case "helper":
-                        Response.Redirect(
-                            "~/Account/Helper/Home.aspx", false);
-                        Context.ApplicationInstance.CompleteRequest();
-                        return;
-
-                    default:
-                        Response.Redirect(
-                            "~/Account/Participant/SelectEvent.aspx", false);
-                        Context.ApplicationInstance.CompleteRequest();
-                        return;
-                }
+                Response.Redirect(GetLandingPage(user.Role), false);
+                Context.ApplicationInstance.CompleteRequest();
             }
-            catch (Exception)
+            catch (SqlException)
             {
-                VerificationMessage =
-                    "Something went wrong while verifying your code. Please try again.";
+                VerificationMessage = "Verification is temporarily unavailable. Please try again in a moment.";
             }
         }
-
-        private bool TryUseBackupCode(
-    XmlDocument doc,
-    XmlElement user,
-    string enteredCode)
+        private static bool TryAuthenticatorCode(UserRepository.LoginRecord user, string entered)
         {
-            XmlElement backupCodes =
-                user["backupCodes"];
+            var digits = new string((entered ?? "").Where(char.IsDigit).ToArray());
+            if (digits.Length != 6) return false;
 
-            if (backupCodes == null)
+            var secret = UserRepository.UnprotectMfaSecret(user.MfaSecretProtected);
+            if (secret == null) return false;   // can't decrypt here; a backup code still works
+
+            var totp = new Totp(Base32Encoding.ToBytes(secret));
+            if (!totp.VerifyTotp(digits, out long timeStep, new VerificationWindow(previous: 1, future: 1)))
                 return false;
 
-            string normalized =
-                enteredCode
-                    .Replace("-", "")
-                    .Replace(" ", "")
-                    .ToUpperInvariant();
+            // Same code (or an older one) already used? Reject it.
+            return UserRepository.TryAcceptTotpTimeStep(user.UserId, timeStep);
+        }
 
-            byte[] enteredHash;
+        private void ClearPending()
+        {
+            Session.Remove("PendingMfaUserId");
+            Session.Remove("PendingMfaAtUtc");
+        }
 
-            using (SHA256 sha = SHA256.Create())
+        private static string GetLandingPage(string role)
+        {
+            switch ((role ?? "").Trim().ToLowerInvariant())
             {
-                enteredHash = sha.ComputeHash(
-                    Encoding.UTF8.GetBytes(normalized));
+                case "superadmin": return "~/Account/SuperAdmin/SuperAdminHome.aspx";
+                case "universityadmin": return "~/Account/UniversityAdmin/UniversityAdminHome.aspx";
+                case "helper": return "~/Account/Helper/Home.aspx";
+                default: return "~/Account/Participant/SelectEvent.aspx";
             }
-
-            string enteredHashText =
-                Convert.ToBase64String(enteredHash);
-
-            foreach (XmlNode node in backupCodes.ChildNodes)
-            {
-                XmlElement codeElement =
-                    node as XmlElement;
-
-                if (codeElement == null)
-                    continue;
-
-                if (codeElement.InnerText == enteredHashText)
-                {
-                    // Remove it so it can never be used again
-                    backupCodes.RemoveChild(codeElement);
-
-                    doc.Save(XmlPath);
-
-                    return true;
-                }
-            }
-
-            return false;
         }
     }
-
-
 }

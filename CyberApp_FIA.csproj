@@ -284,8 +284,9 @@
     <Compile Include="Account\Helper\ParticipantConversations.aspx.designer.cs">
       <DependentUpon>ParticipantConversations.aspx</DependentUpon>
     </Compile>
+    <Compile Include="App_Code\Services\AccountDeletionService.cs" />
     <Compile Include="App_Code\Services\Database.cs" />
-    <Compile Include="App_Code\Services\passHasher.cs" />
+    <Compile Include="Security\passHasher.cs" />
     <Compile Include="Account\Helper\ResourceViewer.aspx.cs">
       <DependentUpon>ResourceViewer.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -494,8 +495,6 @@
       <DependentUpon>Verify2FA.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="App_Code\PasswordHasher.cs" />
-    <Compile Include="App_Code\Services\AccountDeletionSersvice.cs" />
     <Compile Include="App_Code\Services\AuthSession.cs" />
     <Compile Include="App_Code\Services\AuthSessionInfo.cs" />
     <Compile Include="App_Code\Services\AuthSessionStore.cs" />
@@ -541,7 +540,6 @@
     <None Include="Properties\PublishProfiles\fiacyberapp-001-site1 - Web Deploy1.pubxml" />
     <None Include="Properties\PublishProfiles\fiacyberapp-001-site1 - Web Deploy2.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
-    <Content Include="smtp.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -65,22 +65,11 @@ namespace CyberApp_FIA
         {
             try
             {
-                var path = Server.MapPath("~/App_Data/users.xml");
-                if (!File.Exists(path)) return false;
+                var cuurent = UserRepository.GetPasswordStamp(userId);
+                if (cuurent == null) { return false; } // account no longer exists
 
-                var doc = new XmlDocument();
-                doc.Load(path);
-
-                foreach (XmlElement user in doc.SelectNodes("/users/user"))
-                {
-                    if (user.GetAttribute("id") != userId) continue;
-
-                    var current = user["passwordChangedUtc"]?.InnerText ?? "";
-                    var atLogin = Session["PasswordStamp"] as string ?? "";
-                    return string.Equals(current, atLogin, StringComparison.Ordinal);
-                }
-
-                return false; // account no longer exists
+                var atLogin = Session["PasswordStamp"] as string ?? "";
+                return string.Equals(cuurent, atLogin, StringComparison.Ordinal);
             }
             catch
             {
