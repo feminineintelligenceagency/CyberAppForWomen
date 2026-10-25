@@ -55,6 +55,12 @@ namespace CyberApp_FIA.Services
 
                 // 8. No-show records:  <missing participantId="...">
                 removed += RemoveElements(server, "missingParticipantSessions.xml", "/missingParticipantSessions/missing", "participantId", userId);
+
+                // 9. Inbox notifications and notification settings (Sprint 3):
+                //    <notifications><notification userId="..."> and <preference userId="...">
+                //    (Reminder frequency and email choice are saved on the user record, removed in step 1.)
+                removed += RemoveElements(server, "notifications.xml", "/notifications/notification", "userId", userId);
+                removed += RemoveElements(server, "notifications.xml", "/notifications/preference", "userId", userId);
             }
 
             return removed;

@@ -35,6 +35,8 @@
     .btn-danger{ background:var(--danger); color:#fff; }
     .btn-plain{ background:#f3f4f6; color:var(--ink); text-decoration:none; display:inline-block; }
     .msg{ margin-top:12px; color:var(--danger); }
+    .msg.ok{ color:#0a7a3c; }
+    .btn-primary{ background:linear-gradient(135deg,var(--fia-blue),#45c3b3); color:#fff; }
     .done{ text-align:center; }
   </style>
 </head>
@@ -48,6 +50,28 @@
         <h1>Account settings</h1>
         <p class="sub">Signed in as <asp:Literal ID="EmailLiteral" runat="server" /></p>
 
+                <%-- Sprint 3 (#21): course reminder settings --%>
+        <div class="card">
+          <h2>Course reminders</h2>
+          <p class="sub" style="margin-bottom:6px;">Get a reminder in your inbox when you have courses you haven't finished.</p>
+
+          <label for="ReminderFrequency">How often</label>
+          <asp:DropDownList ID="ReminderFrequency" runat="server" CssClass="input">
+            <asp:ListItem Value="Daily">Daily</asp:ListItem>
+            <asp:ListItem Value="Weekly">Weekly</asp:ListItem>
+            <asp:ListItem Value="Off">Off</asp:ListItem>
+          </asp:DropDownList>
+
+          <div class="check">
+            <asp:CheckBox ID="EmailReminders" runat="server" />
+            <label for="EmailReminders" style="margin:0;">Also email me a reminder. Emails use a plain subject line and don't mention this site.</label>
+          </div>
+
+          <asp:Button ID="BtnSaveReminders" runat="server" Text="Save reminder settings"
+                      CssClass="btn btn-primary" OnClick="BtnSaveReminders_Click" CausesValidation="false" />
+
+          <div class="msg ok"><asp:Literal ID="ReminderMessage" runat="server" EnableViewState="false" /></div>
+        </div>
         <div class="card danger">
           <h2>Delete my account</h2>
           <p>This permanently removes:</p>
@@ -57,6 +81,7 @@
             <li>Your course progress and badges</li>
             <li>Your session sign-ups</li>
             <li>Your messages with helpers</li>
+            <li>Your notifications and reminder settings</li>
           </ul>
           <p><strong>This cannot be undone.</strong></p>
 
