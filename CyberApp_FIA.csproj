@@ -108,6 +108,7 @@
     <Content Include="Account\Participant\EnrollSuccess.aspx" />
     <Content Include="Account\Participant\HelperConversation.aspx" />
     <Content Include="Account\Participant\HelperMessage.aspx" />
+    <Content Include="Account\Participant\Notifications.aspx" />
     <Content Include="Account\Participant\ParticipantScoreWidget.ascx" />
     <Content Include="Account\Participant\Quiz.aspx" />
     <Content Include="Account\Participant\Replacements.aspx" />
@@ -330,6 +331,13 @@
     <Compile Include="Account\Participant\HelperMessage.aspx.designer.cs">
       <DependentUpon>HelperMessage.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Account\Participant\Notifications.aspx.cs">
+      <DependentUpon>Notifications.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\Participant\Notifications.aspx.designer.cs">
+      <DependentUpon>Notifications.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Account\Participant\ParticipantScoreWidget.ascx.cs">
       <DependentUpon>ParticipantScoreWidget.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -524,6 +532,7 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Security\SessionHelper.cs" />
+    <Compile Include="Services\ReminderService.cs" />
     <Compile Include="Welcome_Page.aspx.cs">
       <DependentUpon>Welcome_Page.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
