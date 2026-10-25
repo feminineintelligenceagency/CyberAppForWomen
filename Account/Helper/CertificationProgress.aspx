@@ -675,7 +675,27 @@
   </div>
 </div>
       </div>
+               <section class="section-block">
+                    <h2 class="section-heading">Notification settings</h2>
+                    <p class="section-sub">
+                        Receive updates about completed certification steps and new modules.
+                    </p>
 
+                    <asp:CheckBox ID="CertificationNotificationsEnabled" runat="server"
+                        Text="Enable certification notifications" />
+
+                    <div style="margin-top:12px">
+                        <asp:Button ID="SaveNotificationSettingsButton" runat="server"
+                            Text="Save notification settings"
+                            CssClass="resource-confirm-btn"
+                            CausesValidation="false"
+                            OnClick="SaveNotificationSettingsButton_Click" />
+                    </div>
+
+                    <div role="status" aria-live="polite">
+                        <asp:Literal ID="NotificationSettingsMessage" runat="server" />
+                    </div>
+                </section>
               <asp:PlaceHolder ID="QuestionedNoticePH" runat="server" Visible="false">
         <div class="questioned-banner">
           <div class="questioned-banner-title">

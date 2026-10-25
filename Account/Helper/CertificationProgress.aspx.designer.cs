@@ -33,6 +33,33 @@ namespace CyberApp_FIA.Helper
         protected global::System.Web.UI.WebControls.Literal HelperName;
 
         /// <summary>
+        /// CertificationNotificationsEnabled control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBox CertificationNotificationsEnabled;
+
+        /// <summary>
+        /// SaveNotificationSettingsButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button SaveNotificationSettingsButton;
+
+        /// <summary>
+        /// NotificationSettingsMessage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal NotificationSettingsMessage;
+
+        /// <summary>
         /// QuestionedNoticePH control.
         /// </summary>
         /// <remarks>
