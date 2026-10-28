@@ -48,6 +48,13 @@ namespace CyberApp_FIA.Services
             context.Session[TokenSessionKey] = token;
             context.Session[SessionIdKey] = sessionId;
 
+            // Flag sign-ins from an unrecognized browser/device; a monitoring failure must never block login.
+            try
+            {
+                DeviceMonitor.CheckSignIn(context, userId, sessionId, GetDeviceType(context.Request.UserAgent), now);
+            }
+            catch { }
+
             context.Response.Cookies.Add(new HttpCookie(CookieName, token)
             {
                 HttpOnly = true,
