@@ -105,7 +105,78 @@ namespace CyberApp_FIA.Services
                 Expires = DateTime.UtcNow.AddYears(1)
             });
 
+            // Email outside the store lock so a slow mail server never blocks other sign-ins.
+            if (alert != null)
+                NotifyUser(context, alert);
+
             return alert;
+        }
+
+        /// <summary>
+        /// Emails the account's registered address about the new-device sign-in (approximate time, device type,
+        /// and a one-time password reset link; resetting the password also signs out every other session).
+        /// Marks the alert as notified when the email is sent. Never throws.
+        /// </summary>
+        private static void NotifyUser(HttpContext context, UnrecognizedLoginAlert alert)
+        {
+            try
+            {
+                var usersPath = context.Server.MapPath("~/App_Data/users.xml");
+                if (!File.Exists(usersPath)) return;
+
+                var users = new XmlDocument { XmlResolver = null };
+                users.Load(usersPath);
+
+                string email = null;
+                foreach (XmlElement user in users.SelectNodes("/users/user"))
+                {
+                    if (string.Equals(user.GetAttribute("id"), alert.UserId, StringComparison.Ordinal))
+                    {
+                        email = user["email"]?.InnerText?.Trim();
+                        break;
+                    }
+                }
+                if (string.IsNullOrWhiteSpace(email)) return;
+
+                var token = PasswordResetService.CreateToken(alert.UserId);
+                var link = context.Request.Url.GetLeftPart(UriPartial.Authority)
+                           + VirtualPathUtility.ToAbsolute("~/Account/ResetPassword.aspx")
+                           + "?token=" + HttpUtility.UrlEncode(token);
+
+                // Round to the minute: the email gives an approximate time, not an exact timestamp.
+                var when = alert.ActivatedAtUtc.ToString("MMMM d, yyyy 'at' h:mm tt", CultureInfo.InvariantCulture) + " UTC";
+                var body =
+                    "We noticed a sign-in to your account from a device or browser we don't recognize." + Environment.NewLine + Environment.NewLine +
+                    "Device type: " + alert.DeviceType + Environment.NewLine +
+                    "Approximate time: " + when + Environment.NewLine + Environment.NewLine +
+                    "If this was you, no action is needed." + Environment.NewLine + Environment.NewLine +
+                    "If this wasn't you, reset your password now. Resetting it also signs out every other session on your account." + Environment.NewLine +
+                    "Use this link within " + (int)PasswordResetService.TokenLifetime.TotalMinutes + " minutes. It only works once:" + Environment.NewLine +
+                    link;
+
+                EmailService.Send(email, "New sign-in to your account", body);
+                MarkNotified(context, alert.AlertId);
+            }
+            catch
+            {
+                // Best-effort: the alert stays notified="false" in loginAlerts.xml if the email fails.
+            }
+        }
+
+        private static void MarkNotified(HttpContext context, string alertId)
+        {
+            lock (StoreLock)
+            {
+                var path = context.Server.MapPath("~/App_Data/loginAlerts.xml");
+                var doc = Load(path, AlertRoot);
+                foreach (XmlElement a in doc.SelectNodes("/" + AlertRoot + "/alert"))
+                {
+                    if (!string.Equals(a.GetAttribute("id"), alertId, StringComparison.Ordinal)) continue;
+                    a.SetAttribute("notified", "true");
+                    Save(doc, path);
+                    return;
+                }
+            }
         }
 
         // Appends to loginAlerts.xml; notified="false" marks it for the email step to pick up.
