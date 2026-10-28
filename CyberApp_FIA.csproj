@@ -51,6 +51,14 @@
       <HintPath>packages\Konscious.Security.Cryptography.Blake2.1.1.1\lib\net46\Konscious.Security.Cryptography.Blake2.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Otp.NET, Version=1.4.1.0, Culture=neutral, PublicKeyToken=38a48df817e173a6, processorArchitecture=MSIL">
+      <HintPath>packages\Otp.NET.1.4.1\lib\net461\Otp.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="QRCoder, Version=1.8.0.0, Culture=neutral, PublicKeyToken=c4ed5b9ae8358a28, processorArchitecture=MSIL">
+      <HintPath>packages\QRCoder.1.8.0\lib\net40\QRCoder.dll</HintPath>
+    </Reference>
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
     </Reference>
@@ -78,6 +86,7 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform">
@@ -86,6 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AboutUs.aspx" />
+    <Content Include="Account\ForgotPassword.aspx" />
     <Content Include="Account\Helper\Badges.aspx" />
     <Content Include="Account\Helper\CertificationProgress.aspx" />
     <Content Include="Account\Helper\HelperConversation.aspx" />
@@ -101,7 +111,10 @@
     <Content Include="Account\Participant\ParticipantScoreWidget.ascx" />
     <Content Include="Account\Participant\Quiz.aspx" />
     <Content Include="Account\Participant\Replacements.aspx" />
+    <Content Include="Account\Participant\Settings.aspx" />
     <Content Include="Account\Participant\SwapSession.aspx" />
+    <Content Include="Account\Security\Enable2FA.aspx" />
+    <Content Include="Account\ResetPassword.aspx" />
     <Content Include="Account\SuperAdmin\CertificationRules.aspx" />
     <Content Include="Account\CreateAccountPage.aspx" />
     <Content Include="Account\SuperAdmin\CreateUniversityAdmin.aspx" />
@@ -116,6 +129,7 @@
     <Content Include="Account\UniversityAdmin\UniversityAdminAudit.aspx" />
     <Content Include="Account\UniversityAdmin\UniversityAdminHelperAudit.aspx" />
     <Content Include="Account\UniversityAdmin\UniversityAdminHome.aspx" />
+    <Content Include="Account\Verify2FA.aspx" />
     <Content Include="App_Data\Audit_Log\UnvAdminAudit.xml" />
     <Content Include="App_Data\badgeDescriptions.xml" />
     <Content Include="App_Data\certificationRules.xml" />
@@ -220,6 +234,13 @@
     </Compile>
     <Compile Include="AboutUs.aspx.designer.cs">
       <DependentUpon>AboutUs.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Account\ForgotPassword.aspx.cs">
+      <DependentUpon>ForgotPassword.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\ForgotPassword.aspx.designer.cs">
+      <DependentUpon>ForgotPassword.aspx</DependentUpon>
     </Compile>
     <Compile Include="Account\Helper\Badges.aspx.cs">
       <DependentUpon>Badges.aspx</DependentUpon>
@@ -330,12 +351,30 @@
     <Compile Include="Account\Participant\Replacements.aspx.designer.cs">
       <DependentUpon>Replacements.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Account\Participant\Settings.aspx.cs">
+      <DependentUpon>Settings.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\Participant\Settings.aspx.designer.cs">
+      <DependentUpon>Settings.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Account\Participant\SwapSession.aspx.cs">
       <DependentUpon>SwapSession.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Account\Participant\SwapSession.aspx.designer.cs">
       <DependentUpon>SwapSession.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Account\Security\Enable2FA.aspx.cs">
+      <DependentUpon>Enable2FA.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\ResetPassword.aspx.cs">
+      <DependentUpon>ResetPassword.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\ResetPassword.aspx.designer.cs">
+      <DependentUpon>ResetPassword.aspx</DependentUpon>
     </Compile>
     <Compile Include="Account\SuperAdmin\CertificationRules.aspx.cs">
       <DependentUpon>CertificationRules.aspx</DependentUpon>
@@ -450,12 +489,18 @@
     <Compile Include="Account\Participant\SelectEvent.aspx.designer.cs">
       <DependentUpon>SelectEvent.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Account\Verify2FA.aspx.cs">
+      <DependentUpon>Verify2FA.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="App_Code\PasswordHasher.cs" />
+    <Compile Include="App_Code\Services\AccountDeletionService.cs" />
     <Compile Include="App_Code\Services\AuthSession.cs" />
     <Compile Include="App_Code\Services\AuthSessionInfo.cs" />
     <Compile Include="App_Code\Services\AuthSessionStore.cs" />
     <Compile Include="App_Code\Services\DataProtector.cs" />
     <Compile Include="App_Code\Services\DeviceMonitor.cs" />
+    <Compile Include="App_Code\Services\EmailSender.cs" />
     <Compile Include="App_Code\Services\EnrollmentSync.cs" />
     <Compile Include="App_Code\Services\QuizService.cs" />
     <Compile Include="App_Code\Services\UniversityAuditLogger.cs" />
@@ -470,6 +515,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Security\EmailService.cs" />
+    <Compile Include="Security\PasswordResetService.cs" />
     <Compile Include="Security\SecurePage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -492,6 +539,7 @@
     <None Include="Properties\PublishProfiles\fiacyberapp-001-site1 - Web Deploy1.pubxml" />
     <None Include="Properties\PublishProfiles\fiacyberapp-001-site1 - Web Deploy2.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <Content Include="smtp.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

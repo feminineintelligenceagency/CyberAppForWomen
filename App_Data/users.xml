@@ -54,4 +54,19 @@
     <lockoutUntilUtc>
     </lockoutUntilUtc>
   </user>
+  <user id="a064308603504a54b7dbb67c313d02db" role="Participant">
+    <firstName>kevin</firstName>
+    <lastName>nguyen</lastName>
+    <email>kevinn0427@gmail.com</email>
+    <university>
+    </university>
+    <passwordHash algo="Argon2" m="19456" t="2" p="1">x6acDNTPR02NBtWG9/wZuuq1gMnnjzc2ycBgfu77zKA=</passwordHash>
+    <passwordSalt>SKe8VhCSZFGjT/0I3yN6+g==</passwordSalt>
+    <createdAt>2026-10-14T09:07:58.6711252Z</createdAt>
+    <consentAcceptedAt>2026-10-14T09:07:58.6711252Z</consentAcceptedAt>
+    <consentIp>::1</consentIp>
+    <failedLoginCount>0</failedLoginCount>
+    <lockoutUntilUtc>
+    </lockoutUntilUtc>
+  </user>
 </users>

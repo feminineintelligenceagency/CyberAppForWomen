@@ -127,4 +127,13 @@
   <entry id="log-f3eac16ffefd4e7ab86a1c0418c83e03" university="" role="SuperAdmin" type="Sign In" timestamp="2026-09-30T05:31:10.8687460Z" email="lauren.nignon@gmail.com" firstName="Lauren">
     <details>SuperAdmin signed in.</details>
   </entry>
+  <entry id="log-1819af17000a4fc8a5ce05937181bda6" university="Arizona State University" role="Participant" type="Account Created" timestamp="2026-10-14T09:07:58.8059739Z" email="kevinn0427@gmail.com" firstName="kevin">
+    <details>New Participant account created (userId=a064308603504a54b7dbb67c313d02db). Consent accepted at 2026-10-14T09:07:58.6711252Z UTC from IP ::1.</details>
+  </entry>
+  <entry id="log-3a08d03e1b0b4662a3a53feea094e9b6" university="" role="Participant" type="Sign In" timestamp="2026-10-14T09:08:06.8247728Z" email="kevinn0427@gmail.com" firstName="kevin">
+    <details>Participant signed in.</details>
+  </entry>
+  <entry id="log-4a3f3f4c1dba4a4ca941a52ef33dab3d" university="" role="SuperAdmin" type="Sign In" timestamp="2026-10-14T09:09:56.8520320Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
 </auditLog>
