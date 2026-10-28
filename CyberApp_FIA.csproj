@@ -509,6 +509,7 @@
     <Compile Include="Services\CertificationNotifications.cs" />
     <Compile Include="Services\NotificationInfo.cs" />
     <Compile Include="App_Code\Services\DataProtector.cs" />
+    <Compile Include="App_Code\Services\DeviceMonitor.cs" />
     <Compile Include="App_Code\Services\EmailSender.cs" />
     <Compile Include="App_Code\Services\EnrollmentSync.cs" />
     <Compile Include="Services\NotificationStore.cs" />
