@@ -156,30 +156,23 @@ namespace CyberApp_FIA.Participant
         /// Saves how often reminders are sent (Daily, Weekly, or Off) and whether to email them.
         protected void BtnSaveReminders_Click(object sender, EventArgs e)
         {
-            ReminderService.SaveSettings(
-                Context,
-                Session["UserId"] as string,
-                ReminderFrequency.SelectedValue,
-                EmailReminders.Checked);
+            try
+            {
+                ReminderService.SaveSettings(
+                    Context,
+                    Session["UserId"] as string,
+                    ReminderFrequency.SelectedValue,
+                    EmailReminders.Checked);
+            }
+            catch
+            {
+                ReminderMessage.Text = "We couldn't save your reminder settings. Please try again.";
+                return;
+            }
 
             ReminderMessage.Text = ReminderFrequency.SelectedValue == ReminderService.Off
                 ? "Reminders are turned off."
                 : "Your reminder settings were saved.";
-        }
-        ///>Finds the user by id, comparing as plain text (injection-safe)
-        private XmlElement FindUser(string userId)
-        {
-            if (string.IsNullOrWhiteSpace(userId) || !File.Exists(UsersXmlPath)) return null;
-
-            var doc = new XmlDocument();
-            doc.Load(UsersXmlPath);
-
-            foreach (XmlElement u in doc.SelectNodes("/users/user"))
-            {
-                if (string.Equals(u.GetAttribute("id"), userId, StringComparison.OrdinalIgnoreCase))
-                    return u;
-            }
-            return null;
         }
 
         private void ShowError(string message)

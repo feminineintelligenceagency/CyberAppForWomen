@@ -16,6 +16,9 @@ namespace CyberApp_FIA.Services
     ///   These all go through ON DELETE CASCADE from dbo.Users.
     ///   Audit log entries are kept as a security record, but their email and first name are removed.
     ///
+    /// If a new feature stores user data:
+    ///   - in a new database table: give its UserId foreign key ON DELETE CASCADE (nothing to add here)
+    ///   - in a new XML file: add a RemoveElements line BEFORE the database step
     public static class AccountDeletionService
     {
         // One lock for the whole deletion, so two requests can't half-delete the same account.
@@ -23,10 +26,12 @@ namespace CyberApp_FIA.Services
 
 
         /// Deletes the user with this id from the database and every remaining XML file.
-        /// Returns how many records were removed the account counts as 1,
+        /// Returns how many records were removed: the account counts as 1,
         /// plus each XML element removed. Returns 0 if the user didn't exist anywhere.
         ///
-        /// the XML files are cleaned FIRST and the database account is deleted LAST.
+        /// Order matters: the XML files are cleaned FIRST and the database account is deleted LAST.
+        /// The XML cleanup is safe to run again, so if anything throws, the user still has an
+        /// account, can still sign in, and can just try again.
         public static int DeleteUser(HttpServerUtility server, string userId)
         {
             if (string.IsNullOrWhiteSpace(userId))
@@ -53,17 +58,18 @@ namespace CyberApp_FIA.Services
                 // 5. No-show records:  <missing participantId="...">
                 removed += RemoveElements(server, "missingParticipantSessions.xml", "/missingParticipantSessions/missing", "participantId", userId);
 
-                // 6. the account and everything in the database throws SqlException if the database can't be reached.
-                //    Nothing in the database is deleted in that case
+                // 6. Inbox notifications and notification settings (Sprint 3):
+                //    <notifications><notification userId="..."> and <preference userId="...">
+                removed += RemoveElements(server, "notifications.xml", "/notifications/notification", "userId", userId);
+                removed += RemoveElements(server, "notifications.xml", "/notifications/preference", "userId", userId);
+
+                // 7. LAST: the account and everything in the database (see the order note above).
+                //    Throws SqlException if the database can't be reached. Nothing in the
+                //    database is deleted in that case, so the user can try again.
                 if (UserRepository.DeleteUser(userId))
                 {
                     removed += 1;
                 }
-                // 9. Inbox notifications and notification settings (Sprint 3):
-                //    <notifications><notification userId="..."> and <preference userId="...">
-                //    (Reminder frequency and email choice are saved on the user record, removed in step 1.)
-                removed += RemoveElements(server, "notifications.xml", "/notifications/notification", "userId", userId);
-                removed += RemoveElements(server, "notifications.xml", "/notifications/preference", "userId", userId);
             }
 
             return removed;
@@ -72,7 +78,6 @@ namespace CyberApp_FIA.Services
 
         /// Opens one XML file in App_Data, removes every element at 'path' whose
         /// 'attribute' equals the user id, and saves the file only if something changed.
-
         private static int RemoveElements(HttpServerUtility server, string fileName, string path,
                                           string attribute, string userId)
         {
@@ -82,7 +87,8 @@ namespace CyberApp_FIA.Services
             var doc = new XmlDocument();
             doc.Load(fullPath);
 
-            // Collect matches first, then remove them. The user id is compared as plain text, never placed inside the XPath query,
+            // Collect matches first, then remove them. (Removing while looping would skip items.)
+            // The user id is compared as plain text, never placed inside the XPath query,
             // the same injection-safe pattern used in Login.
             var toRemove = new List<XmlElement>();
             foreach (XmlElement el in doc.SelectNodes(path))

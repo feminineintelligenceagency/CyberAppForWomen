@@ -1,18 +1,18 @@
-﻿using System;
+﻿using CyberApp_FIA.Services;
+using System;
 using System.Diagnostics;
-using System.IO;
 using System.Web;
 using System.Web.UI;
-using System.Xml;
 using static QRCoder.PayloadGenerator;
 
 namespace CyberApp_FIA.Account
 {
     /// <summary>
-    /// Forgot Password page.
+    /// Forgot Password page
     /// The user types an email. If it matches an account, a reset link is emailed to the
-    /// account's REGISTERED email address (from users.xml, not what was typed).
+    /// account's REGISTERED email address (from the database, not what was typed).
     /// The page always shows the same message, so it can't be used to check whose email is registered.
+    /// the email uses EmailSender's generic subject and sender name.
     /// </summary>
     public partial class ForgotPassword : Page
     {
@@ -44,15 +44,7 @@ namespace CyberApp_FIA.Account
                             link + Environment.NewLine + Environment.NewLine +
                             "If you didn't ask for this, you can ignore this email. Your password won't change.";
 
-                        EmailService.Send(registeredEmail, "Password reset request", body);
-                            var body =
-                                "We received a request to reset your password." + Environment.NewLine + Environment.NewLine +
-                                "Use this link within " + (int)PasswordResetService.TokenLifetime.TotalMinutes + " minutes. It only works once:" + Environment.NewLine +
-                                link + Environment.NewLine + Environment.NewLine +
-                                "If you didn't ask for this, you can ignore this email. Your password won't change.";
-
-                            CyberApp_FIA.Services.EmailSender.TrySend(registeredEmail, body);   // Story #10: generic subject
-                        }
+                        EmailSender.TrySend(registeredEmail, body);   // Story #10: generic subject
                     }
                 }
             }
@@ -70,5 +62,4 @@ namespace CyberApp_FIA.Account
                 "The link expires in " + (int)PasswordResetService.TokenLifetime.TotalMinutes + " minutes.";
         }
     }
-
 }
