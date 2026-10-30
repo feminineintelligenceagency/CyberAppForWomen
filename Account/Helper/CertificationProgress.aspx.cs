@@ -45,6 +45,9 @@ namespace CyberApp_FIA.Helper
             if (!IsPostBack)
             {
                 HelperName.Text = GetHelperDisplayName();
+                CertificationNotificationsEnabled.Checked =
+                    NotificationStore.GetEnabled(
+                        Context, helperId, NotificationService.Certification);
 
                 // Seed helperProgress.xml for this helper if needed
                 EnsureHelperProgressSeeded(helperId, HelperName.Text);
@@ -55,6 +58,41 @@ namespace CyberApp_FIA.Helper
             }
         }
 
+
+        protected void SaveNotificationSettingsButton_Click(object sender, EventArgs e)
+        {
+            var helperId = Session["UserId"] as string;
+
+            if (string.IsNullOrWhiteSpace(helperId) ||
+                !string.Equals(Session["Role"] as string, "Helper",
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                Response.Redirect("~/Account/Login.aspx");
+                return;
+            }
+
+            try
+            {
+                // Save only the signed-in helper's certification preference.
+                NotificationStore.SetEnabled(
+                    Context,
+                    helperId,
+                    NotificationService.Certification,
+                    CertificationNotificationsEnabled.Checked);
+
+                NotificationSettingsMessage.Text = "Notification settings saved.";
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceError(
+                    "Could not save certification notification preference: {0}", ex);
+
+                NotificationSettingsMessage.Text =
+                    "Could not save your settings. Please try again.";
+            }
+
+            BindCertificationView();
+        }
         private string GetHelperDisplayName()
         {
             var name = Session["HelperName"] as string;
@@ -1199,6 +1237,11 @@ namespace CyberApp_FIA.Helper
                 return n;
             }
 
+
+            bool wasConfirmed = string.Equals(
+                courseEl["resourcesConfirmed"]?.InnerText,
+                "true",
+                StringComparison.OrdinalIgnoreCase);
             // Mark quiz as passed at least at the minimum score.
             var quizScoreNode = courseEl["quizScore"] ?? doc.CreateElement("quizScore");
             quizScoreNode.InnerText = passScore.ToString();
@@ -1282,6 +1325,19 @@ namespace CyberApp_FIA.Helper
             }
 
             doc.Save(HelperProgressXmlPath);
+
+            // Notify only on the first confirmation, after progress is saved.
+            if (!wasConfirmed && !isResubmission)
+            {
+                NotificationService.Create(
+                    Context,
+                    helperId,
+                    NotificationService.Certification,
+                    "Certification step completed",
+                    $"You confirmed the resources and quiz for \"{courseTitle}\". Admin review is pending.",
+                    "~/Account/Helper/CertificationProgress.aspx",
+                    $"certification:{courseId}:resources-quiz-completed");
+            }
         }
 
 

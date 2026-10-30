@@ -58,8 +58,13 @@ namespace CyberApp_FIA.Participant
             MySessionsRepeater.ItemCommand += SessionsRepeater_ItemCommand;
         }
 
+        // Sprint 3 (#21): text shown next to "Inbox" in the header, e.g. " (2)".
+        protected string InboxBadge = "";
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            LoadInbox();
+
             if (!IsPostBack)
             {
                 var role = (string)Session["role"];
@@ -129,6 +134,31 @@ namespace CyberApp_FIA.Participant
         }
 
         private string CurrentUserId() => Session["UserId"] as string;
+
+        /// <summary>
+        /// Sprint 3 (#21): creates any course reminders that are due, then counts unread
+        /// notifications for the Inbox link. Never breaks the page if something goes wrong.
+        /// </summary>
+        private void LoadInbox()
+        {
+            var userId = CurrentUserId();
+            if (string.IsNullOrEmpty(userId)) return;
+            if (!string.Equals(Session["Role"] as string, "Participant", StringComparison.OrdinalIgnoreCase)) return;
+
+            try
+            {
+                // Only check for new reminders on the first load, not on every button click.
+                if (!IsPostBack)
+                    ReminderService.CheckForUser(Context, userId);
+
+                int unread = NotificationStore.GetForUser(Context, userId).Count(n => !n.IsRead);
+                InboxBadge = unread > 0 ? " (" + unread + ")" : "";
+            }
+            catch
+            {
+                InboxBadge = "";
+            }
+        }
 
         private void LoadSessionSecurity()
         {

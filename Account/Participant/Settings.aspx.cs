@@ -30,6 +30,7 @@ namespace CyberApp_FIA.Participant
             if (!IsPostBack)
             {
                 EmailLiteral.Text = Server.HtmlEncode(Session["Email"] as string ?? "");
+                LoadReminderSettings();
             }
         }
 
@@ -122,21 +123,63 @@ namespace CyberApp_FIA.Participant
                 "Participant deleted their own account.",
                 userId: user.UserId, role: user.Role, university: user.University);
 
-            //Discreet confirmation email
-            //Plain subject and body with no details about the platform's topics,
-            //in case someone else sees the inbox. If email isn't set up, this is skipped.
+            // Story #10: subject, sender name, and first line are generic (set inside EmailSender)
             EmailSender.TrySend(
                 email,
-                "Your request is complete",
-                "Hello,\r\n\r\n" +
-                "This confirms that your account has been closed and the information " +
+               "This confirms that your account has been closed and the information " +
                 "associated with it has been removed, as you requested.\r\n\r\n" +
-                "If you did not make this request, you can reply to this email.\r\n");
+                "If you did not make this request, please contact the program team.\r\n");
 
             //End the session and show the confirmation
             AuthSession.SignOut(Context);
             SettingsPanel.Visible = false;
             DonePanel.Visible = true;
+        }
+
+        // ===================== Sprint 3 (#21): course reminders =====================
+
+        /// Shows the user's saved reminder frequency and email choice.
+        private void LoadReminderSettings()
+        {
+            try
+            {
+                var settings = ReminderService.GetSettings(Context, Session["UserId"] as string);
+                ReminderFrequency.SelectedValue = settings.Frequency;
+                EmailReminders.Checked = settings.EmailEnabled;
+            }
+            catch
+            {
+                // If settings can't be read, the defaults on the page are used.
+            }
+        }
+
+        /// Saves how often reminders are sent (Daily, Weekly, or Off) and whether to email them.
+        protected void BtnSaveReminders_Click(object sender, EventArgs e)
+        {
+            ReminderService.SaveSettings(
+                Context,
+                Session["UserId"] as string,
+                ReminderFrequency.SelectedValue,
+                EmailReminders.Checked);
+
+            ReminderMessage.Text = ReminderFrequency.SelectedValue == ReminderService.Off
+                ? "Reminders are turned off."
+                : "Your reminder settings were saved.";
+        }
+        ///>Finds the user by id, comparing as plain text (injection-safe)
+        private XmlElement FindUser(string userId)
+        {
+            if (string.IsNullOrWhiteSpace(userId) || !File.Exists(UsersXmlPath)) return null;
+
+            var doc = new XmlDocument();
+            doc.Load(UsersXmlPath);
+
+            foreach (XmlElement u in doc.SelectNodes("/users/user"))
+            {
+                if (string.Equals(u.GetAttribute("id"), userId, StringComparison.OrdinalIgnoreCase))
+                    return u;
+            }
+            return null;
         }
 
         private void ShowError(string message)

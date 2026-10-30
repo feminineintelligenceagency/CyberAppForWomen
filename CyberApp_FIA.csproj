@@ -108,6 +108,7 @@
     <Content Include="Account\Participant\EnrollSuccess.aspx" />
     <Content Include="Account\Participant\HelperConversation.aspx" />
     <Content Include="Account\Participant\HelperMessage.aspx" />
+    <Content Include="Account\Participant\Notifications.aspx" />
     <Content Include="Account\Participant\ParticipantScoreWidget.ascx" />
     <Content Include="Account\Participant\Quiz.aspx" />
     <Content Include="Account\Participant\Replacements.aspx" />
@@ -332,6 +333,13 @@
     <Compile Include="Account\Participant\HelperMessage.aspx.designer.cs">
       <DependentUpon>HelperMessage.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Account\Participant\Notifications.aspx.cs">
+      <DependentUpon>Notifications.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\Participant\Notifications.aspx.designer.cs">
+      <DependentUpon>Notifications.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Account\Participant\ParticipantScoreWidget.ascx.cs">
       <DependentUpon>ParticipantScoreWidget.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -498,9 +506,14 @@
     <Compile Include="App_Code\Services\AuthSession.cs" />
     <Compile Include="App_Code\Services\AuthSessionInfo.cs" />
     <Compile Include="App_Code\Services\AuthSessionStore.cs" />
+    <Compile Include="Services\CertificationNotifications.cs" />
+    <Compile Include="Services\NotificationInfo.cs" />
     <Compile Include="App_Code\Services\DataProtector.cs" />
+    <Compile Include="App_Code\Services\DeviceMonitor.cs" />
     <Compile Include="App_Code\Services\EmailSender.cs" />
     <Compile Include="App_Code\Services\EnrollmentSync.cs" />
+    <Compile Include="Services\NotificationStore.cs" />
+    <Compile Include="Services\NotificationService.cs" />
     <Compile Include="App_Code\Services\QuizService.cs" />
     <Compile Include="App_Code\Services\UniversityAuditLogger.cs" />
     <Compile Include="App_Code\Database\UserRepository.cs" />
@@ -521,6 +534,7 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Security\SessionHelper.cs" />
+    <Compile Include="Services\ReminderService.cs" />
     <Compile Include="Welcome_Page.aspx.cs">
       <DependentUpon>Welcome_Page.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

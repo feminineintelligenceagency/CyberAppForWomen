@@ -59,6 +59,11 @@ namespace CyberApp_FIA.Services
                 {
                     removed += 1;
                 }
+                // 9. Inbox notifications and notification settings (Sprint 3):
+                //    <notifications><notification userId="..."> and <preference userId="...">
+                //    (Reminder frequency and email choice are saved on the user record, removed in step 1.)
+                removed += RemoveElements(server, "notifications.xml", "/notifications/notification", "userId", userId);
+                removed += RemoveElements(server, "notifications.xml", "/notifications/preference", "userId", userId);
             }
 
             return removed;

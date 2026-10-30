@@ -105,6 +105,42 @@ namespace CyberApp_FIA.Participant
         protected global::System.Web.UI.WebControls.LinkButton AckNoShowBtn;
 
         /// <summary>
+        /// SessionSecurityPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.PlaceHolder SessionSecurityPanel;
+
+        /// <summary>
+        /// SignOutOtherSessionsBtn control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button SignOutOtherSessionsBtn;
+
+        /// <summary>
+        /// SessionSecurityStatus control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal SessionSecurityStatus;
+
+        /// <summary>
+        /// ActiveSessionsRepeater control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Repeater ActiveSessionsRepeater;
+
+        /// <summary>
         /// ScoreWidget control.
         /// </summary>
         /// <remarks>
@@ -283,10 +319,5 @@ namespace CyberApp_FIA.Participant
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label FormMessage;
-
-        protected global::System.Web.UI.WebControls.PlaceHolder SessionSecurityPanel;
-        protected global::System.Web.UI.WebControls.Button SignOutOtherSessionsBtn;
-        protected global::System.Web.UI.WebControls.Literal SessionSecurityStatus;
-        protected global::System.Web.UI.WebControls.Repeater ActiveSessionsRepeater;
     }
 }

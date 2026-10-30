@@ -1179,6 +1179,7 @@ namespace CyberApp_FIA.Account
             var totalTeaching = 0;
             var totalHelp = 0;
 
+            var notificationChecks = new List<Action>();
             foreach (XmlElement courseEl in helperEl.SelectNodes("./course"))
             {
                 var courseId = courseEl.GetAttribute("id");
@@ -1199,6 +1200,25 @@ namespace CyberApp_FIA.Account
 
                 var effectiveTeaching = Math.Max(0, teachingRaw - teachingQuestioned);
                 var effectiveHelp = Math.Max(0, helpRaw - helpQuestioned);
+
+
+                int previousTeaching;
+                int previousHelp;
+
+                int.TryParse(courseEl["teachingSessions"]?.InnerText, out previousTeaching);
+                int.TryParse(courseEl["helpSessions"]?.InnerText, out previousHelp);
+
+                var notificationCourse = courseEl;
+
+                notificationChecks.Add(() =>
+                    CertificationNotifications.SessionRequirementCompleted(
+                        Context, helperId, notificationCourse,
+                        "teachingSessions", previousTeaching));
+
+                notificationChecks.Add(() =>
+                    CertificationNotifications.SessionRequirementCompleted(
+                        Context, helperId, notificationCourse,
+                        "helpSessions", previousHelp));
 
                 SetChildInnerText(progressDoc, courseEl, "teachingSessions", effectiveTeaching.ToString());
                 SetChildInnerText(progressDoc, courseEl, "helpSessions", effectiveHelp.ToString());
@@ -1234,6 +1254,11 @@ namespace CyberApp_FIA.Account
             SetChildInnerText(progressDoc, totalsEl, "lastUpdatedUtc", nowIso);
 
             progressDoc.Save(HelperProgressXmlPath);
+
+            foreach (var notify in notificationChecks)
+            {
+                notify();
+            }
         }
 
         private static string GetLatestQuestionedNoteForCourse(

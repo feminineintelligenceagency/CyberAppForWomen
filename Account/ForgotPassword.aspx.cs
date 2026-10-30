@@ -45,6 +45,14 @@ namespace CyberApp_FIA.Account
                             "If you didn't ask for this, you can ignore this email. Your password won't change.";
 
                         EmailService.Send(registeredEmail, "Password reset request", body);
+                            var body =
+                                "We received a request to reset your password." + Environment.NewLine + Environment.NewLine +
+                                "Use this link within " + (int)PasswordResetService.TokenLifetime.TotalMinutes + " minutes. It only works once:" + Environment.NewLine +
+                                link + Environment.NewLine + Environment.NewLine +
+                                "If you didn't ask for this, you can ignore this email. Your password won't change.";
+
+                            CyberApp_FIA.Services.EmailSender.TrySend(registeredEmail, body);   // Story #10: generic subject
+                        }
                     }
                 }
             }

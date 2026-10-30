@@ -962,7 +962,13 @@
     Security
 </a>
 
+<%-- Sprint 3 (#21): inbox with unread count --%>
 <a class="pill pill-link pill-push"
+   href="<%: ResolveUrl("~/Account/Participant/Notifications.aspx") %>">
+    Inbox<%: InboxBadge %>
+</a>
+
+<a class="pill pill-link"
    href="<%: ResolveUrl("~/Account/Participant/Settings.aspx") %>">
     Settings
 </a>

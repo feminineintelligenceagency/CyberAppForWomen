@@ -116,6 +116,7 @@ namespace CyberApp_FIA.Account
 
             doc.DocumentElement.AppendChild(course);
             doc.Save(MicrocoursesXmlPath);
+            CertificationNotifications.ModulePublished(Context, course, false);
 
             FormMessage.Text = "<span style='color:#0a7a3c'>Microcourse saved.</span>";
             ClearForm();
