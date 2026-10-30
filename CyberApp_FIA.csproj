@@ -172,6 +172,7 @@
     <Content Include="ParticipantBadges\ParticipantSMSettingsBadge.png" />
     <Content Include="ParticipantBadges\ParticipantSpywareBadge.png" />
     <Content Include="ParticipantBadges\ParticipantVPNBadge.png" />
+    <Content Include="smtp.config" />
     <Content Include="Tier1HelperBadge\Tier12FAHelper.png" />
     <Content Include="Tier1HelperBadge\Tier1AIHelper.png" />
     <Content Include="Tier1HelperBadge\Tier1BankingHelper.png" />
@@ -554,6 +555,7 @@
     <None Include="Properties\PublishProfiles\fiacyberapp-001-site1 - Web Deploy1.pubxml" />
     <None Include="Properties\PublishProfiles\fiacyberapp-001-site1 - Web Deploy2.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <Content Include="Secrets.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

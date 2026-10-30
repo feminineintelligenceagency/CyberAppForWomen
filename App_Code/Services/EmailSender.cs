@@ -54,15 +54,17 @@ namespace CyberApp_FIA.Services
                     message.Body = GenericOpening + Environment.NewLine + Environment.NewLine + (body ?? string.Empty);
                     message.IsBodyHtml = false; // plain text email
 
+                    client.DeliveryMethod = SmtpDeliveryMethod.Network;
                     client.EnableSsl = true; // secure connection
                     client.Credentials = new NetworkCredential(user, password);
                     client.Send(message);
                 }
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 // if email fails don't crash the page
+                System.Diagnostics.Debug.WriteLine("EmailSender failed: " + ex);
                 return false;
             }
         }
