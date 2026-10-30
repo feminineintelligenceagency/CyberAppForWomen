@@ -121,21 +121,9 @@ namespace CyberApp_FIA.Services
         {
             try
             {
-                var usersPath = context.Server.MapPath("~/App_Data/users.xml");
-                if (!File.Exists(usersPath)) return;
-
-                var users = new XmlDocument { XmlResolver = null };
-                users.Load(usersPath);
-
-                string email = null;
-                foreach (XmlElement user in users.SelectNodes("/users/user"))
-                {
-                    if (string.Equals(user.GetAttribute("id"), alert.UserId, StringComparison.Ordinal))
-                    {
-                        email = user["email"]?.InnerText?.Trim();
-                        break;
-                    }
-                }
+                // Users live in the database now (UserRepository), not users.xml.
+                var account = UserRepository.GetLoginById(alert.UserId);
+                var email = (account?.Email ?? "").Trim();
                 if (string.IsNullOrWhiteSpace(email)) return;
 
                 var token = PasswordResetService.CreateToken(alert.UserId);
