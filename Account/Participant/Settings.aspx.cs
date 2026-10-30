@@ -91,16 +91,12 @@ namespace CyberApp_FIA.Participant
             //Delete everything stored about this user ---
             AccountDeletionService.DeleteUser(Server, userId);
 
-            //Discreet confirmation email
-            //Plain subject and body with no details about the platform's topics,
-            //in case someone else sees the inbox. If email isn't set up, this is skipped.
+            // Story #10: subject, sender name, and first line are generic (set inside EmailSender)
             EmailSender.TrySend(
                 email,
-                "Your request is complete",
-                "Hello,\r\n\r\n" +
-                "This confirms that your account has been closed and the information " +
+               "This confirms that your account has been closed and the information " +
                 "associated with it has been removed, as you requested.\r\n\r\n" +
-                "If you did not make this request, you can reply to this email.\r\n");
+                "If you did not make this request, please contact the program team.\r\n");
 
             //End the session and show the confirmation
             AuthSession.SignOut(Context);
