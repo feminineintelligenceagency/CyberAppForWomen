@@ -52,8 +52,8 @@ namespace CyberApp_FIA.Services
                 EventKey = eventKey
             });
 
-            // Only newly saved notifications send email.
-            if (created)
+            // Course reminders handle their own email opt-in and summary.
+            if (created && category != CourseReminder)
             {
                 SendEmail(context, userId, title, message, linkUrl);
             }

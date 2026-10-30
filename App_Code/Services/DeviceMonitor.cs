@@ -154,8 +154,11 @@ namespace CyberApp_FIA.Services
                     "Use this link within " + (int)PasswordResetService.TokenLifetime.TotalMinutes + " minutes. It only works once:" + Environment.NewLine +
                     link;
 
-                EmailService.Send(email, "New sign-in to your account", body);
-                MarkNotified(context, alert.AlertId);
+                // Mark delivered only when the shared sender succeeds.
+                if (EmailSender.TrySend(email, "New sign-in to your account", body))
+                {
+                    MarkNotified(context, alert.AlertId);
+                }
             }
             catch
             {

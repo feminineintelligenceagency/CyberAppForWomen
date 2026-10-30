@@ -370,3 +370,6 @@ Secrets.config
 smtp.config
 App_Data/authSessions.xml
 /App_Data/notifications.xml
+
+/App_Data/knownDevices.xml
+/App_Data/loginAlerts.xml
