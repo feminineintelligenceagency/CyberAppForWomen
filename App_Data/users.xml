@@ -39,12 +39,11 @@
     <consentAcceptedAt>2026-09-23T10:52:10.6817844Z</consentAcceptedAt>
     <consentIp>::1</consentIp>
   </user>
-  <user id="e5edf7715c6241fca761519144323fd7" role="Participant">
+  <user id="e5edf7715c6241fca761519144323fd7" role="Participant" assignedHelperId="fe3dfc264b7347b29de294fe77fe6575">
     <firstName>test</firstName>
     <lastName>1</lastName>
     <email>test1@gmail.com</email>
-    <university>
-    </university>
+    <university>Arizona State Univserity</university>
     <passwordHash algo="Argon2" m="19456" t="2" p="1">KcmYWLkBBu0zAhBD8GAxm6ow2oR34I9cARfy1Bh3uRA=</passwordHash>
     <passwordSalt>D0wSkRmvs85a0DNHDpEVTA==</passwordSalt>
     <createdAt>2026-09-29T21:02:05.0080751Z</createdAt>
@@ -53,6 +52,7 @@
     <failedLoginCount>0</failedLoginCount>
     <lockoutUntilUtc>
     </lockoutUntilUtc>
+    <lastEventId>8df4fe6be24049fda42008aaa646d048</lastEventId>
   </user>
   <user id="a064308603504a54b7dbb67c313d02db" role="Participant">
     <firstName>kevin</firstName>

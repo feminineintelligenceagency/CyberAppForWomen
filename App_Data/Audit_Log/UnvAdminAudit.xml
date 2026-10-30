@@ -280,4 +280,34 @@
   <entry id="log-4343c8976b4b4a0f8fe2a4cbcb271797" university="" role="Participant" type="Sign In" timestamp="2026-10-23T04:54:45.2238616Z" email="test2@gmail.com" firstName="">
     <details>Participant signed in (two-factor).</details>
   </entry>
+  <entry id="log-384a8176a968429ab6f3f8f562f28772" university="" role="SuperAdmin" type="Sign In" timestamp="2026-10-26T04:37:58.6080858Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-d1f1900d33664be5a49ad5605d29ca72" university="" role="Participant" type="Sign In" timestamp="2026-10-26T04:38:33.1715953Z" email="test2@gmail.com" firstName="">
+    <details>Participant signed in (two-factor).</details>
+  </entry>
+  <entry id="log-edf1168a2d964b798976af88d0a571e0" university="" role="Participant" type="Sign In" timestamp="2026-10-28T04:14:40.7930472Z" email="test1@gmail.com" firstName="test">
+    <details>Participant signed in.</details>
+  </entry>
+  <entry id="log-cc57ea74d1be459cb29204c01df52627" university="Arizona State Univserity" role="Participant" type="Participant Pre-Event Quiz Completion" timestamp="2026-10-28T04:15:21.3676279Z" email="test1@gmail.com" firstName="test">
+    <details>Participant completed the pre-event cybersecurity quiz.</details>
+  </entry>
+  <entry id="log-f6c44df2174d401bb0943309624494bb" university="" role="Unknown" type="Sign In Failed (Unknown Email)" timestamp="2026-10-28T04:15:46.2794250Z" email="test1@gmail.com" firstName="">
+    <details>Sign-in attempt with an email address that is not registered.</details>
+  </entry>
+  <entry id="log-c5f6bacdb2cb40cca395525af067d893" university="" role="Unknown" type="Sign In Failed (Unknown Email)" timestamp="2026-10-28T04:15:59.6274968Z" email="test@gmail.com" firstName="">
+    <details>Sign-in attempt with an email address that is not registered.</details>
+  </entry>
+  <entry id="log-e81d2b0acef84bbbba769e3ff0a43fd8" university="" role="Unknown" type="Sign In Failed (Unknown Email)" timestamp="2026-10-28T04:16:02.0569197Z" email="test@gmail.com" firstName="">
+    <details>Sign-in attempt with an email address that is not registered.</details>
+  </entry>
+  <entry id="log-6245583e7f674e238e9123e491ed20db" university="Arizona State Univserity" role="Helper" type="Sign In" timestamp="2026-10-28T04:16:37.2758496Z" email="helper1@gmail.com" firstName="">
+    <details>Helper signed in.</details>
+  </entry>
+  <entry id="log-5699d234193b4e7fb07fb6e014101f4d" university="" role="Participant" type="Sign In" timestamp="2026-10-28T04:17:10.4048509Z" email="jodiy51703@37xiao.com" firstName="">
+    <details>Participant signed in.</details>
+  </entry>
+  <entry id="log-03867e3fbe1849fb8ff69572aec69a4b" university="Arizona State Univserity" role="Participant" type="Participant Pre-Event Quiz Completion" timestamp="2026-10-28T04:18:02.5424293Z" email="jodiy51703@37xiao.com" firstName="">
+    <details>Participant completed the pre-event cybersecurity quiz.</details>
+  </entry>
 </auditLog>

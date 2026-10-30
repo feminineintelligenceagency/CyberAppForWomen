@@ -1,20 +1,17 @@
 ﻿using System;
 using System.IO;
-using System.Xml;
+using System.Data.SqlClient;
 using CyberApp_FIA.Services;
 
 namespace CyberApp_FIA.Participant
 {
-    
-    /// Sprint 2 (April Lee story): participant account settings.
+
+    /// Sprint 2 (April Lee story): participant account settings
     /// Lets a participant permanently delete their account after confirming
     /// with their password and a checkbox.
     /// SecurePage already sends logged-out visitors to the login page.
-    
     public partial class Settings : SecurePage
     {
-        private string UsersXmlPath => Server.MapPath("~/App_Data/users.xml");
-
         // Wrong-password attempts allowed on this page before we sign the person out,
         // so someone at an unlocked computer can't keep guessing.
         private const int MaxPasswordAttempts = 5;
@@ -56,8 +53,18 @@ namespace CyberApp_FIA.Participant
                 return;
             }
 
-            //Find this user's record in users.xml
-            var user = FindUser(userId);
+            //Find this user's account in the database
+            UserRepository.LoginRecord user;
+            try
+            {
+                user = string.IsNullOrWhiteSpace(userId) ? null : UserRepository.GetLoginById(userId);
+            }
+            catch (SqlException)
+            {
+                ShowError("We couldn't reach your account right now. Please try again in a moment.");
+                return;
+            }
+
             if (user == null)
             {
                 ShowError("We couldn't find your account. Please sign in again.");
@@ -66,7 +73,17 @@ namespace CyberApp_FIA.Participant
 
             //Check the password with the team's shared hasher (same check as Login)
             bool needsRehash;
-            if (!passHasher.VerifyUser(user, password, out needsRehash))
+            bool valid = passHasher.VerifyStored(
+                password,
+                user.Algorithm,
+                user.PasswordHash,
+                user.PasswordSalt,
+                user.Argon2MemoryKiB,
+                user.Argon2Iterations,
+                user.Argon2Parallelism,
+                out needsRehash);
+
+            if (!valid)
             {
                 int attempts = (Session[AttemptsKey] as int? ?? 0) + 1;
                 Session[AttemptsKey] = attempts;
@@ -85,10 +102,25 @@ namespace CyberApp_FIA.Participant
             }
 
             //Save the email BEFORE deleting, because the record will be gone afterwards.
-            var email = user["email"]?.InnerText?.Trim() ?? "";
+            var email = (user.Email ?? "").Trim();
 
-            //Delete everything stored about this user ---
-            AccountDeletionService.DeleteUser(Server, userId);
+            //Delete everything stored about this user (database + remaining XML files)
+            try
+            {
+                AccountDeletionService.DeleteUser(Server, user.UserId);
+            }
+            catch (Exception)
+            {
+                // The database delete runs last and in one transaction, so if anything failed
+                // the account still exists and the user can simply try again.
+                ShowError("We couldn't delete your account right now. Please try again in a moment.");
+                return;
+            }
+
+            //Security record without personal details (no email or name)
+            UserRepository.AppendAudit("Account Deleted",
+                "Participant deleted their own account.",
+                userId: user.UserId, role: user.Role, university: user.University);
 
             //Discreet confirmation email
             //Plain subject and body with no details about the platform's topics,
@@ -105,22 +137,6 @@ namespace CyberApp_FIA.Participant
             AuthSession.SignOut(Context);
             SettingsPanel.Visible = false;
             DonePanel.Visible = true;
-        }
-
-        ///>Finds the user by id, comparing as plain text (injection-safe)
-        private XmlElement FindUser(string userId)
-        {
-            if (string.IsNullOrWhiteSpace(userId) || !File.Exists(UsersXmlPath)) return null;
-
-            var doc = new XmlDocument();
-            doc.Load(UsersXmlPath);
-
-            foreach (XmlElement u in doc.SelectNodes("/users/user"))
-            {
-                if (string.Equals(u.GetAttribute("id"), userId, StringComparison.OrdinalIgnoreCase))
-                    return u;
-            }
-            return null;
         }
 
         private void ShowError(string message)

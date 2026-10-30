@@ -4,7 +4,6 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Text;
 using System.Web.UI;
-using System.Xml;
 
 namespace CyberApp_FIA.Account
 {
@@ -14,12 +13,10 @@ namespace CyberApp_FIA.Account
     /// - Only allows self-registration as Participant or Helper
     /// - Hashes the password with Argon2 (passHasher.HashNewPassword)
     /// - Creates the user and credentials in one transaction (UserRepository.CreateUser)
-    /// - Writes an "Account Created" audit entry
+    /// - Writes an "Account Created" audit entry (dbo.AuditLog)
     /// </summary>
     public partial class CreateAccountPage : Page
     {
-        private string AuditXmlPath => Server.MapPath("~/App_Data/Audit_Log/UnvAdminAudit.xml");
-
         // Roles a visitor may choose for themselves. Admin roles must be granted by an existing admin
         private static readonly string[] SelfRegistrationRoles = { "Participant", "Helper" };
 
@@ -28,7 +25,7 @@ namespace CyberApp_FIA.Account
             // Honor ASP.NET validators (required fields, email format, consent, etc.).
             if (!Page.IsValid) return;
 
-            // re-check consent server-side.
+            //re-check consent server-side.
             if (!Consent.Checked)
             {
                 ShowError("Please accept the consent.");
@@ -65,7 +62,7 @@ namespace CyberApp_FIA.Account
                     FirstName = firstName,
                     LastName = lastName,
                     Role = role,
-                    University = null,           
+                    University = null,
                     ConsentAcceptedAtUtc = now,
                     ConsentIp = consentIp
                 };
@@ -87,7 +84,7 @@ namespace CyberApp_FIA.Account
                 return;
             }
 
-            // Redirect outside the try block.
+            // Redirect outside the try block
             Response.Redirect("~/Account/Login.aspx");
         }
 
@@ -116,47 +113,17 @@ namespace CyberApp_FIA.Account
         }
 
         /// <summary>
-        /// Writes an "Account Created" audit entry (still XML for now; moves to dbo.AuditLog
-        /// when the audit logger is converted). Best-effort: never blocks sign-up.
+        /// Adds an "Account Created" entry to the audit log (dbo.AuditLog). Never throws,
+        /// so it can't block sign-up. University is left empty until sign-up collects it.
         /// </summary>
-        private void WriteAccountCreatedAuditEntry(string userId, string email, string firstName,
-                                                   string role, string consentIp, string consentAtUtc)
+        private static void WriteAccountCreatedAuditEntry(string userId, string email, string firstName,
+                                                          string role, string consentIp, string consentAtUtc)
         {
-            try
-            {
-                var dir = Path.GetDirectoryName(AuditXmlPath);
-                if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir)) Directory.CreateDirectory(dir);
-                if (!File.Exists(AuditXmlPath))
-                {
-                    File.WriteAllText(AuditXmlPath,
-                        "<?xml version='1.0' encoding='utf-8'?><auditLog version='1'></auditLog>", Encoding.UTF8);
-                }
-
-                var doc = new XmlDocument();
-                doc.Load(AuditXmlPath);
-
-                var entry = doc.CreateElement("entry");
-                entry.SetAttribute("id", "log-" + Guid.NewGuid().ToString("N"));
-                entry.SetAttribute("university", "Arizona State University"); // adjust once university is collected
-                entry.SetAttribute("role", role);
-                entry.SetAttribute("type", "Account Created");
-                entry.SetAttribute("timestamp", DateTime.UtcNow.ToString("o"));
-                entry.SetAttribute("email", email ?? "");
-                entry.SetAttribute("firstName", firstName ?? "");
-
-                var details = doc.CreateElement("details");
-                details.InnerText =
-                    $"New {role} account created (userId={userId}). " +
-                    $"Consent accepted at {consentAtUtc} UTC from IP {consentIp}.";
-                entry.AppendChild(details);
-
-                doc.DocumentElement.AppendChild(entry);
-                doc.Save(AuditXmlPath);
-            }
-            catch
-            {
-                // Fail-safe: never block sign-up on audit logging.
-            }
+            UserRepository.AppendAudit(
+                "Account Created",
+                $"New {role} account created (userId={userId}). " +
+                $"Consent accepted at {consentAtUtc} UTC from IP {consentIp}.",
+                userId, email, firstName, role, university: null);
         }
     }
 }

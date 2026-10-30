@@ -58,6 +58,21 @@ namespace CyberApp_FIA.Services
             public string ConsentIp { get; set; }
         }
 
+        /// <summary>One audit log entry.</summary>
+        public sealed class AuditEntry
+        {
+            public string LogId { get; set; }
+            public DateTime TimestampUtc { get; set; }
+            public string Type { get; set; }
+            public string UserId { get; set; }
+            public string Email { get; set; }
+            public string FirstName { get; set; }
+            public string Role { get; set; }
+            public string University { get; set; }
+            public string Details { get; set; }
+        }
+
+
         /// <summary>Maps a SqlDataReader row to a LoginRecord.</summary>
         /// used for both GetLoginByEmail and GetLoginById. Returns null if the reader is empty.
         private static LoginRecord MapLogin(SqlDataReader r)
@@ -189,6 +204,44 @@ namespace CyberApp_FIA.Services
         }
 
         /// <summary>
+        /// Permanently deletes a user's account and everything the database stores about them.
+        ///
+        /// Deleting the dbo.Users row automatically removes:
+        ///   UserCredentials -> UserMfaBackupCodes, PasswordResetTokens ->
+        ///   QuizProgress -> QuizProgressAnswers, QuizResults -> QuizResultDomainScores, QuizResultItems
+        ///
+        /// Audit log entries are kept but email and first name are removed.
+        /// either everything is deleted or nothing is. Returns false if the user didn't exist.
+        /// </summary>
+        public static bool DeleteUser(string userId)
+        {
+            return Database.InTransaction((conn, tx) =>
+            {
+                // Get the email first. some audit entries only have the email.
+                var email = Database.ExecuteScalar(conn, tx,
+                    "SELECT Email FROM dbo.Users WITH (UPDLOCK) WHERE UserId = @UserId;",
+                    UserIdParam(userId)) as string;
+
+                if (email == null) return false; 
+
+                // Anonymize the audit trail instead of deleting it.
+                Database.ExecuteNonQuery(conn, tx, @"
+                    UPDATE dbo.AuditLog
+                       SET Email = NULL, FirstName = NULL
+                     WHERE UserId = @UserId OR Email = @Email;",
+                    UserIdParam(userId),
+                    EmailParam(email));
+
+                // Delete the account. foreign keys cascade to all tables.
+                var rows = Database.ExecuteNonQuery(conn, tx,
+                    "DELETE FROM dbo.Users WHERE UserId = @UserId;",
+                    UserIdParam(userId));
+
+                return rows == 1;
+            });
+        }
+
+        /// <summary>
         /// The user's current password stamp (same format as LoginRecord.PasswordStamp),
         /// or null if the user doesn't exist. Pages compare this to Session["PasswordStamp"]
         /// to end sessions that started before a password reset.
@@ -223,14 +276,18 @@ namespace CyberApp_FIA.Services
             DECLARE @Now DATETIME2(3) = SYSUTCDATETIME();
 
             UPDATE dbo.UserCredentials
-            SET FailedLoginCount = CASE WHEN LockoutUntilUtc IS NOT NULL AND LockoutUntilUtc <= @Now THEN 1
-                ELSE FailedLoginCount + 1 END,
-            LockoutUntilUtc ='CASE WHEN (CASE WHEN LockoutUntilUtc IS NOT NULL AND LockoutUntilUtc <= @Now THEN 1
-                ELSE FailedLoginCount + 1 END) >= @Max
-            THEN DATEADD(SECOND, @LockSeconds, @Now)
-            WHEN LockoutUntilUtc <= @Now THEN NULL
-                ELSE LockoutUntilUtc END, LastFailedLoginUtc = @Now 
-            OUTPUT inserted.LockoutUntilUtc WHERE UserId = @UserId;";
+               SET FailedLoginCount =
+                       CASE WHEN LockoutUntilUtc IS NOT NULL AND LockoutUntilUtc <= @Now THEN 1
+                            ELSE FailedLoginCount + 1 END,
+                   LockoutUntilUtc =
+                       CASE WHEN (CASE WHEN LockoutUntilUtc IS NOT NULL AND LockoutUntilUtc <= @Now THEN 1
+                                       ELSE FailedLoginCount + 1 END) >= @Max
+                                 THEN DATEADD(SECOND, @LockSeconds, @Now)
+                            WHEN LockoutUntilUtc <= @Now THEN NULL
+                            ELSE LockoutUntilUtc END,
+                   LastFailedLoginUtc = @Now
+            OUTPUT inserted.LockoutUntilUtc
+             WHERE UserId = @UserId;";
 
             var result = Database.ExecuteScalar(sql,
                 UserIdParam(userId),
@@ -374,6 +431,128 @@ namespace CyberApp_FIA.Services
                      WHERE UserId = @UserId;", UserIdParam(userId));
             });
         }
+
+        //Database audit stuff
+
+        /// <summary>
+        /// Adds an audit entry. Best-effort: returns false (and never throws) if it couldn't be saved,
+        /// so audit logging can never break sign-in, sign-up or any other action.
+        /// </summary>
+        /// <param name="type">e.g. "Sign In", "Sign In Failed (Bad Password)", "Account Created".</param>
+        public static bool AppendAudit(string type, string details,
+                                       string userId = null, string email = null, string firstName = null,
+                                       string role = null, string university = null)
+        {
+            try
+            {
+                Database.ExecuteNonQuery(@"
+                    INSERT INTO dbo.AuditLog (LogId, TimestampUtc, Type, UserId, Email, FirstName, Role, University, Details)
+                    VALUES (@Id, SYSUTCDATETIME(), @Type, @AuditUserId, @AuditEmail, @First, @Role, @Uni, @Details);",
+                    Database.Param("@Id", SqlDbType.VarChar, 40, "log-" + Guid.NewGuid().ToString("N")),
+                    Database.Param("@Type", SqlDbType.NVarChar, 100, Truncate(type, 100) ?? "Unknown"),
+                    Database.Param("@AuditUserId", SqlDbType.Char, 32, AuditUserIdOrNull(userId)),
+                    Database.Param("@AuditEmail", SqlDbType.NVarChar, 256, Truncate(NullIfBlank(email)?.ToLowerInvariant(), 256)),
+                    Database.Param("@First", SqlDbType.NVarChar, 100, Truncate(NullIfBlank(firstName), 100)),
+                    Database.Param("@Role", SqlDbType.VarChar, 30, Truncate(NullIfBlank(role) ?? "Unknown", 30)),
+                    Database.Param("@Uni", SqlDbType.NVarChar, 200, Truncate(NullIfBlank(university), 200)),
+                    Database.Param("@Details", SqlDbType.NVarChar, -1, details));
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Never let audit logging break the action being logged.
+                System.Diagnostics.Trace.TraceError("UserRepository.AppendAudit failed: " + ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Most recent audit entries, newest first. Optional filters:
+        /// university (UniversityAdmin view), sinceUtc, and type.
+        /// </summary>
+        public static List<AuditEntry> GetRecentAudit(int top = 200, string university = null,
+                                                      DateTime? sinceUtc = null, string type = null)
+        {
+            var sql = new StringBuilder(@"
+                SELECT TOP (@Top) LogId, TimestampUtc, Type, UserId, Email, FirstName, Role, University, Details
+                  FROM dbo.AuditLog
+                 WHERE 1 = 1");
+            var p = new List<SqlParameter> { Database.Param("@Top", SqlDbType.Int, Math.Max(1, Math.Min(top, 5000))) };
+
+            if (!string.IsNullOrWhiteSpace(university))
+            {
+                sql.Append(" AND University = @Uni");
+                p.Add(Database.Param("@Uni", SqlDbType.NVarChar, 200, university.Trim()));
+            }
+            if (sinceUtc.HasValue)
+            {
+                sql.Append(" AND TimestampUtc > @Since");
+                p.Add(Database.Param("@Since", SqlDbType.DateTime2, sinceUtc.Value));
+            }
+            if (!string.IsNullOrWhiteSpace(type))
+            {
+                sql.Append(" AND Type = @Type");
+                p.Add(Database.Param("@Type", SqlDbType.NVarChar, 100, type.Trim()));
+            }
+            sql.Append(" ORDER BY TimestampUtc DESC;");
+
+            return Database.Query(sql.ToString(), MapAudit, p.ToArray());
+        }
+
+        /// <summary>
+        /// How many entries of the given types happened after sinceUtc
+        /// (all types if none are given). Used for the Super Admin "new critical activity" alert.
+        /// </summary>
+        public static int CountAuditSince(DateTime sinceUtc, params string[] types)
+        {
+            var sql = new StringBuilder("SELECT COUNT(*) FROM dbo.AuditLog WHERE TimestampUtc > @Since");
+            var p = new List<SqlParameter> { Database.Param("@Since", SqlDbType.DateTime2, sinceUtc) };
+
+            if (types != null && types.Length > 0)
+            {
+                sql.Append(" AND Type IN (");
+                for (int i = 0; i < types.Length; i++)
+                {
+                    if (i > 0) sql.Append(", ");
+                    sql.Append("@T").Append(i);
+                    p.Add(Database.Param("@T" + i, SqlDbType.NVarChar, 100, types[i]));
+                }
+                sql.Append(")");
+            }
+            sql.Append(";");
+
+            return Convert.ToInt32(Database.ExecuteScalar(sql.ToString(), p.ToArray()));
+        }
+
+        private static AuditEntry MapAudit(SqlDataReader r)
+        {
+            return new AuditEntry
+            {
+                LogId = r.GetString(r.GetOrdinal("LogId")),
+                TimestampUtc = DateTime.SpecifyKind(r.GetDateTime(r.GetOrdinal("TimestampUtc")), DateTimeKind.Utc),
+                Type = r.GetString(r.GetOrdinal("Type")),
+                UserId = Database.GetStringOrNull(r, "UserId"),
+                Email = Database.GetStringOrNull(r, "Email"),
+                FirstName = Database.GetStringOrNull(r, "FirstName"),
+                Role = Database.GetStringOrNull(r, "Role"),
+                University = Database.GetStringOrNull(r, "University"),
+                Details = Database.GetStringOrNull(r, "Details")
+            };
+        }
+
+        /// <summary>Only real 32-character user ids are stored; anything else becomes NULL.</summary>
+        private static string AuditUserIdOrNull(string userId)
+        {
+            var id = (userId ?? "").Trim().ToLowerInvariant();
+            return id.Length == 32 ? id : null;
+        }
+
+        private static string Truncate(string s, int max)
+        {
+            if (s == null) return null;
+            return s.Length <= max ? s : s.Substring(0, max);
+        }
+
 
 
         /// <summary>
