@@ -121,7 +121,7 @@ namespace CyberApp_FIA.Services
 
                     string email = user["email"]?.InnerText?.Trim();
 
-                    if (!EmailSender.TrySend(email, title, body))
+                    if (!EmailSender.TrySend(email, body))
                     {
                         Trace.TraceError(
                             "Notification email failed or SMTP is not configured for user {0}.",

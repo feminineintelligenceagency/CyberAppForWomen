@@ -155,7 +155,7 @@ namespace CyberApp_FIA.Services
                     link;
 
                 // Mark delivered only when the shared sender succeeds.
-                if (EmailSender.TrySend(email, "New sign-in to your account", body))
+                if (EmailSender.TrySend(email, body))
                 {
                     MarkNotified(context, alert.AlertId);
                 }

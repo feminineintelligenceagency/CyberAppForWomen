@@ -256,7 +256,6 @@ namespace CyberApp_FIA.Services
 
             EmailSender.TrySend(
                 email,
-                "You have an update",
                 "Hello,\r\n\r\n" +
                 "You have a new update waiting for you. Sign in to your account to see it.\r\n\r\n" +
                 "You can change or turn off these emails in your account settings.\r\n");

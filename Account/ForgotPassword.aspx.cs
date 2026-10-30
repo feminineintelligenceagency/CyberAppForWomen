@@ -50,7 +50,7 @@ namespace CyberApp_FIA.Account
                                 link + Environment.NewLine + Environment.NewLine +
                                 "If you didn't ask for this, you can ignore this email. Your password won't change.";
 
-                            EmailService.Send(registeredEmail, "You have a new update", body);   // Story #10: generic subject
+                            CyberApp_FIA.Services.EmailSender.TrySend(registeredEmail, body);   // Story #10: generic subject
                         }
                     }
                 }
