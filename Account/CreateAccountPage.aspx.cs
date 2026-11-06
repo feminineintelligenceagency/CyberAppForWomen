@@ -20,10 +20,26 @@ namespace CyberApp_FIA.Account
         // Roles a visitor may choose for themselves. Admin roles must be granted by an existing admin
         private static readonly string[] SelfRegistrationRoles = { "Participant", "Helper" };
 
+        /// <summary>OnInit hook to enable the consent checkbox only if the privacy disclosure was opened in this session.</summary>
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+            Consent.Enabled = PrivacyDisclosure.HasViewed(Session);
+        }
+
+
         protected void BtnSignUp_Click(object sender, EventArgs e)
         {
             // Honor ASP.NET validators (required fields, email format, consent, etc.).
             if (!Page.IsValid) return;
+
+            //check if privacy disclosure was opened in this session.
+            if (!PrivacyDisclosure.HasViewed(Session))
+            {
+                ShowError("Please open and read the privacy disclosure before agreeing.");
+                return;
+            }
+
 
             //re-check consent server-side.
             if (!Consent.Checked)

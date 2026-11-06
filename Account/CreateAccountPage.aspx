@@ -53,6 +53,15 @@
     .consent{background:#f6f7fb;border:1px solid #e8eef7;border-radius:12px;padding:12px;margin-top:6px}
     .row{display:flex;gap:10px;align-items:flex-start}
 
+    /* Privacy disclosure link + "open it first" hint */
+    #privacyLink{color:var(--fia-blue);text-decoration:underline}
+    .privacy-hint{color:var(--muted);font-size:.85rem;margin:6px 0 0 28px}
+
+    /* Greyed-out checkbox until the disclosure is opened
+       (ASP.NET wraps a disabled CheckBox in <span class="aspNetDisabled">) */
+    .aspNetDisabled input[type=checkbox],
+    input[type=checkbox]:disabled{cursor:not-allowed;opacity:.5}
+
     /* ========== Buttons row ========== */
     .btnrow{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
     .btn{border:0;border-radius:12px;padding:12px 18px;font-weight:700;font-family:Poppins;cursor:pointer}
@@ -152,13 +161,21 @@
         <asp:HiddenField ID="Role" runat="server" Value="Participant" />
 
         <!-- ===================== Consent section ===================== -->
+        <!-- The checkbox stays disabled until the privacy disclosure is opened. -->
         <div class="consent">
           <div class="row">
             <asp:CheckBox ID="Consent" runat="server" />
-            <label for="Consent">
-              I consent to FIA storing my account details and activity needed for my learning and safety.
+            <label for="<%= Consent.ClientID %>">
+              I consent to FIA storing my account details and activity needed for my learning and safety,
+              as described in the
+              <a id="privacyLink" href="<%= ResolveUrl("~/PrivacyDisclosure.aspx") %>"
+                 target="_blank" rel="noopener">privacy disclosure</a>.
               I understand I can request deletion at any time.
             </label>
+          </div>
+
+          <div id="privacyHint" class="privacy-hint">
+            Please open the privacy disclosure to enable this box.
           </div>
 
           <!-- Server-side validator for consent -->
@@ -196,8 +213,31 @@
 
       </div>
     </div>
+
+    <script>
+      // Enables the consent checkbox as soon as the privacy disclosure link is clicked.
+      // (The server separately checks that the disclosure page was actually opened.)
+      (function () {
+        var link = document.getElementById('privacyLink');
+        var box = document.getElementById('<%= Consent.ClientID %>');
+        var hint = document.getElementById('privacyHint');
+        if (!link || !box) return;
+
+        // Already opened earlier in this session (e.g. after a failed submit): hide the hint.
+        if (!box.disabled && hint) hint.style.display = 'none';
+
+        link.addEventListener('click', function () {
+          box.disabled = false;
+          // ASP.NET wraps a disabled CheckBox in <span class="aspNetDisabled" disabled="disabled">
+          var wrap = box.parentNode;
+          if (wrap && wrap.classList && wrap.classList.contains('aspNetDisabled')) {
+            wrap.classList.remove('aspNetDisabled');
+            wrap.removeAttribute('disabled');
+          }
+          if (hint) hint.style.display = 'none';
+        });
+      })();
+    </script>
   </form>
 </body>
 </html>
-
-

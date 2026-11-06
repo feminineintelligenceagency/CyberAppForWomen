@@ -172,6 +172,7 @@
     <Content Include="ParticipantBadges\ParticipantSMSettingsBadge.png" />
     <Content Include="ParticipantBadges\ParticipantSpywareBadge.png" />
     <Content Include="ParticipantBadges\ParticipantVPNBadge.png" />
+    <Content Include="PrivacyDisclosure.aspx" />
     <Content Include="smtp.config" />
     <Content Include="Tier1HelperBadge\Tier12FAHelper.png" />
     <Content Include="Tier1HelperBadge\Tier1AIHelper.png" />
@@ -288,6 +289,13 @@
     </Compile>
     <Compile Include="App_Code\Services\AccountDeletionService.cs" />
     <Compile Include="App_Code\Database\Database.cs" />
+    <Compile Include="PrivacyDisclosure.aspx.cs">
+      <DependentUpon>PrivacyDisclosure.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="PrivacyDisclosure.aspx.designer.cs">
+      <DependentUpon>PrivacyDisclosure.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Security\passHasher.cs" />
     <Compile Include="Account\Helper\ResourceViewer.aspx.cs">
       <DependentUpon>ResourceViewer.aspx</DependentUpon>
