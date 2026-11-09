@@ -136,4 +136,13 @@
   <entry id="log-4a3f3f4c1dba4a4ca941a52ef33dab3d" university="" role="SuperAdmin" type="Sign In" timestamp="2026-10-14T09:09:56.8520320Z" email="lauren.nignon@gmail.com" firstName="Lauren">
     <details>SuperAdmin signed in.</details>
   </entry>
+  <entry id="log-4ec4dde21a6f44298d6d233ee5a4677d" university="" role="SuperAdmin" type="Sign In" timestamp="2026-11-07T03:59:16.8498897Z" email="lauren.nignon@gmail.com" firstName="Lauren">
+    <details>SuperAdmin signed in.</details>
+  </entry>
+  <entry id="log-1b36bad5576e4c0da01254cc01bcde52" university="" role="Participant" type="Sign In Failed (Bad Password)" timestamp="2026-11-07T04:41:46.0565829Z" email="kevinn0427@gmail.com" firstName="kevin">
+    <details>Incorrect password (or missing/corrupted hash data) for existing account during sign in.</details>
+  </entry>
+  <entry id="log-b8868eaed3114dcb93744e515194e124" university="" role="Participant" type="Sign In" timestamp="2026-11-07T04:41:52.6592789Z" email="kevinn0427@gmail.com" firstName="kevin">
+    <details>Participant signed in.</details>
+  </entry>
 </auditLog>
