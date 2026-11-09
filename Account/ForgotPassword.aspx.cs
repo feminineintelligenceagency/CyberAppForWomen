@@ -32,11 +32,16 @@ namespace CyberApp_FIA.Account
 
                     if (!string.IsNullOrWhiteSpace(userId) && !string.IsNullOrWhiteSpace(registeredEmail))
                     {
-                        var token = PasswordResetService.CreateToken(userId);
+                        // Check the site address first so no token is created if we can't build a safe link.
+                        // The link uses the configured site address, never the request's Host header.
+                        string linkBase;
+                        if (!SiteLinks.TryBuild("~/Account/ResetPassword.aspx", out linkBase))
+                        {
+                            throw new InvalidOperationException("Password reset email not sent: Notifications:BaseUrl is not configured.");
+                        }
 
-                        var link = Request.Url.GetLeftPart(UriPartial.Authority)
-                                   + ResolveUrl("~/Account/ResetPassword.aspx")
-                                   + "?token=" + HttpUtility.UrlEncode(token);
+                        var token = PasswordResetService.CreateToken(userId);
+                        var link = linkBase + "?token=" + HttpUtility.UrlEncode(token);
 
                         var body =
                             "We received a request to reset your password." + Environment.NewLine + Environment.NewLine +

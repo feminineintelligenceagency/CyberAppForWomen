@@ -126,10 +126,12 @@ namespace CyberApp_FIA.Services
                 var email = (account?.Email ?? "").Trim();
                 if (string.IsNullOrWhiteSpace(email)) return;
 
+                // Link comes from the configured site address, never the request's Host header.
+                string linkBase;
+                if (!SiteLinks.TryBuild("~/Account/ResetPassword.aspx", out linkBase)) return;
+
                 var token = PasswordResetService.CreateToken(alert.UserId);
-                var link = context.Request.Url.GetLeftPart(UriPartial.Authority)
-                           + VirtualPathUtility.ToAbsolute("~/Account/ResetPassword.aspx")
-                           + "?token=" + HttpUtility.UrlEncode(token);
+                var link = linkBase + "?token=" + HttpUtility.UrlEncode(token);
 
                 // Round to the minute: the email gives an approximate time, not an exact timestamp.
                 var when = alert.ActivatedAtUtc.ToString("MMMM d, yyyy 'at' h:mm tt", CultureInfo.InvariantCulture) + " UTC";

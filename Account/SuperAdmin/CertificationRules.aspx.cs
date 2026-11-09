@@ -113,7 +113,7 @@ namespace CyberApp_FIA.Account
 
             var doc = new XmlDocument();
             doc.Load(RulesXmlPath);
-            var r = (XmlElement)doc.SelectSingleNode($"/certRules/rule[@id='{id}']");
+            var r = (XmlElement)doc.SelectSingleNode($"/certRules/rule[@id={XPathSafe.Lit(id)}]");
             if (r == null) return;
 
             RuleId.Text = r.GetAttribute("id");
@@ -152,7 +152,7 @@ namespace CyberApp_FIA.Account
             var trimmedId = RuleId.Text.Trim();
 
             // Upsert rule
-            var r = (XmlElement)doc.SelectSingleNode($"/certRules/rule[@id='{trimmedId}']");
+            var r = (XmlElement)doc.SelectSingleNode($"/certRules/rule[@id={XPathSafe.Lit(trimmedId)}]");
             if (r == null)
             {
                 r = doc.CreateElement("rule");
@@ -186,7 +186,7 @@ namespace CyberApp_FIA.Account
             var doc = new XmlDocument();
             doc.Load(RulesXmlPath);
             var trimmedId = RuleId.Text.Trim();
-            var r = (XmlElement)doc.SelectSingleNode($"/certRules/rule[@id='{trimmedId}']");
+            var r = (XmlElement)doc.SelectSingleNode($"/certRules/rule[@id={XPathSafe.Lit(trimmedId)}]");
             if (r != null)
             {
                 r.ParentNode.RemoveChild(r);

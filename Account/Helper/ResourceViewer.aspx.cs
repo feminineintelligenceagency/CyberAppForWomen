@@ -67,7 +67,7 @@ namespace CyberApp_FIA.Helper
                 var doc = new XmlDocument();
                 doc.Load(MicrocoursesXmlPath);
 
-                var c = (XmlElement)doc.SelectSingleNode($"/microcourses/course[@id='{courseId}']");
+                var c = (XmlElement)doc.SelectSingleNode($"/microcourses/course[@id={XPathSafe.Lit(courseId)}]");
                 if (c != null)
                 {
                     title = c["title"]?.InnerText ?? title;

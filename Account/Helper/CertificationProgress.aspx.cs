@@ -308,7 +308,7 @@ namespace CyberApp_FIA.Helper
                 doc.AppendChild(root);
             }
 
-            var helperEl = (XmlElement)root.SelectSingleNode($"./helper[@id='{helperId}']");
+            var helperEl = (XmlElement)root.SelectSingleNode($"./helper[@id={XPathSafe.Lit(helperId)}]");
             if (helperEl == null)
             {
                 helperEl = doc.CreateElement("helper");
@@ -323,7 +323,7 @@ namespace CyberApp_FIA.Helper
 
             foreach (var course in courses)
             {
-                var courseEl = (XmlElement)helperEl.SelectSingleNode($"./course[@id='{course.Id}']");
+                var courseEl = (XmlElement)helperEl.SelectSingleNode($"./course[@id={XPathSafe.Lit(course.Id)}]");
                 if (courseEl == null)
                 {
                     courseEl = doc.CreateElement("course");
@@ -821,10 +821,10 @@ namespace CyberApp_FIA.Helper
                 doc.Load(HelperProgressXmlPath);
 
                 var helperId = Session["UserId"] as string ?? string.Empty;
-                var helperEl = (XmlElement)doc.SelectSingleNode($"/helperProgress/helper[@id='{helperId}']");
+                var helperEl = (XmlElement)doc.SelectSingleNode($"/helperProgress/helper[@id={XPathSafe.Lit(helperId)}]");
                 if (helperEl != null)
                 {
-                    var courseEl = (XmlElement)helperEl.SelectSingleNode($"./course[@id='{course.Id}']");
+                    var courseEl = (XmlElement)helperEl.SelectSingleNode($"./course[@id={XPathSafe.Lit(course.Id)}]");
                     if (courseEl != null)
                     {
                         var teachingAckUtc = ParseUtcOrMin(courseEl["teachingReviewAcknowledgedUtc"]?.InnerText ?? string.Empty);
@@ -1206,7 +1206,7 @@ namespace CyberApp_FIA.Helper
             doc.Load(HelperProgressXmlPath);
             var root = doc.DocumentElement;
 
-            var helperEl = (XmlElement)root.SelectSingleNode($"./helper[@id='{helperId}']");
+            var helperEl = (XmlElement)root.SelectSingleNode($"./helper[@id={XPathSafe.Lit(helperId)}]");
             if (helperEl == null)
             {
                 helperEl = doc.CreateElement("helper");
@@ -1214,7 +1214,7 @@ namespace CyberApp_FIA.Helper
                 root.AppendChild(helperEl);
             }
 
-            var courseEl = (XmlElement)helperEl.SelectSingleNode($"./course[@id='{courseId}']");
+            var courseEl = (XmlElement)helperEl.SelectSingleNode($"./course[@id={XPathSafe.Lit(courseId)}]");
             if (courseEl == null)
             {
                 courseEl = doc.CreateElement("course");

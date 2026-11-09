@@ -57,7 +57,7 @@ namespace CyberApp_FIA.Helper
                     doc.Load(UsersXmlPath);
 
                     // Simple lookup by @id in users.xml
-                    var node = doc.SelectSingleNode($"/users/user[@id='{userId}']");
+                    var node = doc.SelectSingleNode($"/users/user[@id={XPathSafe.Lit(userId)}]");
                     if (node != null)
                     {
                         firstName = node["firstName"]?.InnerText ?? "";

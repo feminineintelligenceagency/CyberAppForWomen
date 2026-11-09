@@ -529,7 +529,7 @@ namespace CyberApp_FIA.Participant
             {
                 if (string.IsNullOrEmpty(userId) || !File.Exists(UsersXmlPath)) return null;
                 var doc = new XmlDocument(); doc.Load(UsersXmlPath);
-                var node = (XmlElement)doc.SelectSingleNode($"/users/user[@id='{userId}']/lastEventId");
+                var node = (XmlElement)doc.SelectSingleNode($"/users/user[@id={XPathSafe.Lit(userId)}]/lastEventId");
                 return node?.InnerText?.Trim();
             }
             catch { return null; }
@@ -546,7 +546,7 @@ namespace CyberApp_FIA.Participant
 
                 if (!string.IsNullOrEmpty(userId))
                 {
-                    user = doc.SelectSingleNode($"/users/user[@id='{userId}']") as XmlElement;
+                    user = doc.SelectSingleNode($"/users/user[@id={XPathSafe.Lit(userId)}]") as XmlElement;
                 }
 
                 // Fallback: locate by email if no userId in session
@@ -590,7 +590,7 @@ namespace CyberApp_FIA.Participant
 
                 if (!string.IsNullOrEmpty(userId))
                 {
-                    user = doc.SelectSingleNode($"/users/user[@id='{userId}']") as XmlElement;
+                    user = doc.SelectSingleNode($"/users/user[@id={XPathSafe.Lit(userId)}]") as XmlElement;
                 }
 
                 if (user == null && !string.IsNullOrWhiteSpace(fallbackEmail))
@@ -621,7 +621,7 @@ namespace CyberApp_FIA.Participant
             {
                 if (string.IsNullOrEmpty(eventId) || !File.Exists(EventsXmlPath)) return false;
                 var doc = new XmlDocument(); doc.Load(EventsXmlPath);
-                var ev = (XmlElement)doc.SelectSingleNode($"/events/event[@id='{eventId}']");
+                var ev = (XmlElement)doc.SelectSingleNode($"/events/event[@id={XPathSafe.Lit(eventId)}]");
                 return ev != null;
             }
             catch { return false; }

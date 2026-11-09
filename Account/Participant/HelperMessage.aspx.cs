@@ -71,7 +71,7 @@ namespace CyberApp_FIA.Participant
             var doc = new XmlDocument();
             doc.Load(usersPath);
 
-            var me = (XmlElement)doc.SelectSingleNode($"/users/user[@id='{userId}']");
+            var me = (XmlElement)doc.SelectSingleNode($"/users/user[@id={XPathSafe.Lit(userId)}]");
             if (me == null)
                 return false;
 
@@ -84,7 +84,7 @@ namespace CyberApp_FIA.Participant
             if (string.IsNullOrWhiteSpace(participantName))
                 participantName = me["name"]?.InnerText ?? me["email"]?.InnerText ?? userId;
 
-            var helper = (XmlElement)doc.SelectSingleNode($"/users/user[@id='{helperId}' and @role='Helper']");
+            var helper = (XmlElement)doc.SelectSingleNode($"/users/user[@id={XPathSafe.Lit(helperId)} and @role='Helper']");
             if (helper == null)
                 return false;
 

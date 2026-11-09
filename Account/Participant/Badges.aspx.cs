@@ -96,7 +96,7 @@ namespace CyberApp_FIA.Participant
             var doc = new XmlDocument();
             doc.Load(ParticipantBadgesXmlPath);
 
-            var user = doc.SelectSingleNode($"/participantBadges/user[@id='{userId}']") as XmlElement;
+            var user = doc.SelectSingleNode($"/participantBadges/user[@id={XPathSafe.Lit(userId)}]") as XmlElement;
             if (user == null)
                 return rows;
 

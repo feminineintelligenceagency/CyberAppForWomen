@@ -373,3 +373,13 @@ App_Data/authSessions.xml
 
 /App_Data/knownDevices.xml
 /App_Data/loginAlerts.xml
+
+# Security (Task #109): App_Data holds runtime data (accounts, hashes, messages, audit logs).
+# Never commit it. Only the reference-content files listed with "!" below are tracked.
+/App_Data/*.xml
+/App_Data/Audit_Log/
+!/App_Data/badgeDescriptions.xml
+!/App_Data/certificationRules.xml
+!/App_Data/microcourses.xml
+!/App_Data/quiz_questions.xml
+!/App_Data/quiz_rules.xml

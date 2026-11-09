@@ -3,13 +3,16 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Web;
+using System.Web.SessionState;
 using System.Xml;
+using CyberApp_FIA.Services;
 
 namespace CyberApp_FIA.Participant
 {
     // If your .ashx directive says Class="CyberApp_FIA.Participant.CalendarIcs",
     // rename this class to CalendarIcs. Otherwise leave it as Calendar.
-    public class Calendar : IHttpHandler
+    // IRequiresSessionState: lets the handler read the login session (without it Session is null).
+    public class Calendar : IHttpHandler, IRequiresSessionState
     {
         public bool IsReusable => true;
 
@@ -18,6 +21,17 @@ namespace CyberApp_FIA.Participant
 
         public void ProcessRequest(HttpContext context)
         {
+            // Only signed-in users may download a calendar file. Without this check anyone on the
+            // internet could read session details (helper, room, times, course title).
+            var signedInUser = context.Session?["UserId"] as string;
+            if (string.IsNullOrWhiteSpace(signedInUser) || !AuthSession.IsValid(context))
+            {
+                context.Response.StatusCode = 401;
+                context.Response.ContentType = "text/plain; charset=utf-8";
+                context.Response.Write("Please sign in to download this calendar file.");
+                return;
+            }
+
             var eventId = context.Request.QueryString["eventId"] ?? string.Empty;
             var sessionId = context.Request.QueryString["sessionId"] ?? string.Empty;
 
@@ -39,7 +53,7 @@ namespace CyberApp_FIA.Participant
                 var doc = new XmlDocument();
                 doc.Load(sessionsPath);
 
-                var s = (XmlElement)doc.SelectSingleNode($"/eventSessions/session[@eventId='{eventId}' and @id='{sessionId}']");
+                var s = (XmlElement)doc.SelectSingleNode($"/eventSessions/session[@eventId={XPathSafe.Lit(eventId)} and @id={XPathSafe.Lit(sessionId)}]");
                 if (s != null)
                 {
                     courseId = s["courseId"]?.InnerText ?? courseId;
@@ -74,7 +88,7 @@ namespace CyberApp_FIA.Participant
             {
                 var doc = new XmlDocument();
                 doc.Load(coursesPath);
-                var c = (XmlElement)doc.SelectSingleNode($"/microcourses/course[@id='{courseId}']");
+                var c = (XmlElement)doc.SelectSingleNode($"/microcourses/course[@id={XPathSafe.Lit(courseId)}]");
                 if (c != null)
                 {
                     var t = c["title"]?.InnerText;

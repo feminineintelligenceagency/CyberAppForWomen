@@ -256,7 +256,7 @@ namespace CyberApp_FIA.Participant
 
             if (!File.Exists(EventsXmlPath)) { EventName.Text = "(unknown)"; return; }
             var doc = new XmlDocument(); doc.Load(EventsXmlPath);
-            var ev = (XmlElement)doc.SelectSingleNode($"/events/event[@id='{eventId}']");
+            var ev = (XmlElement)doc.SelectSingleNode($"/events/event[@id={XPathSafe.Lit(eventId)}]");
             EventName.Text = ev?["name"]?.InnerText ?? "(unknown)";
         }
 
@@ -295,7 +295,7 @@ namespace CyberApp_FIA.Participant
                 doc.Load(usersPath);
 
                 // Find the current participant by id.
-                var me = (XmlElement)doc.SelectSingleNode($"/users/user[@id='{userId}']");
+                var me = (XmlElement)doc.SelectSingleNode($"/users/user[@id={XPathSafe.Lit(userId)}]");
                 if (me == null)
                     return;
 
@@ -305,7 +305,7 @@ namespace CyberApp_FIA.Participant
                     return;
 
                 // Find the Helper row using that id
-                var helper = (XmlElement)doc.SelectSingleNode($"/users/user[@id='{helperId}' and @role='Helper']");
+                var helper = (XmlElement)doc.SelectSingleNode($"/users/user[@id={XPathSafe.Lit(helperId)} and @role='Helper']");
                 if (helper == null)
                     return;
 
@@ -457,7 +457,7 @@ namespace CyberApp_FIA.Participant
                         {
                             var microDoc = new XmlDocument();
                             microDoc.Load(MicrocoursesXmlPath);
-                            var courseEl = microDoc.SelectSingleNode($"/microcourses/course[@id='{courseId}']") as XmlElement;
+                            var courseEl = microDoc.SelectSingleNode($"/microcourses/course[@id={XPathSafe.Lit(courseId)}]") as XmlElement;
                             var t = (courseEl?["title"]?.InnerText ?? "").Trim();
                             if (!string.IsNullOrWhiteSpace(t))
                                 courseTitle = t;
@@ -573,7 +573,7 @@ namespace CyberApp_FIA.Participant
                 var doc = new XmlDocument();
                 doc.Load(UsersXmlPath);
 
-                var me = doc.SelectSingleNode($"/users/user[@id='{userId}']") as XmlElement;
+                var me = doc.SelectSingleNode($"/users/user[@id={XPathSafe.Lit(userId)}]") as XmlElement;
                 if (me == null)
                     return;
 
@@ -651,7 +651,7 @@ namespace CyberApp_FIA.Participant
             var doc = new XmlDocument();
             doc.Load(HelperMessagesXmlPath);
 
-            foreach (XmlElement conv in doc.SelectNodes($"/helperMessages/conversation[@participantId='{participantId}' and @helperId='{helperId}']"))
+            foreach (XmlElement conv in doc.SelectNodes($"/helperMessages/conversation[@participantId={XPathSafe.Lit(participantId)} and @helperId={XPathSafe.Lit(helperId)}]"))
             {
                 var topic = DataProtector.Decrypt(conv.GetAttribute("topic") ?? "");   // Epic #7: decrypt topic for the conversation card
                 var createdOnStr = conv.GetAttribute("createdOn");
@@ -946,7 +946,7 @@ namespace CyberApp_FIA.Participant
             var doc = new XmlDocument();
             doc.Load(EventSessionsXmlPath);
 
-            foreach (XmlElement s in doc.SelectNodes($"/eventSessions/session[@eventId='{eventId}']"))
+            foreach (XmlElement s in doc.SelectNodes($"/eventSessions/session[@eventId={XPathSafe.Lit(eventId)}]"))
             {
                 var courseId = (s["courseId"]?.InnerText ?? "").Trim();
                 var endIso = (s["end"]?.InnerText ?? "").Trim();
@@ -1312,12 +1312,12 @@ namespace CyberApp_FIA.Participant
             var enr = new XmlDocument(); enr.Load(EnrollmentsXmlPath);
             var ses = new XmlDocument(); ses.Load(EventSessionsXmlPath);
 
-            foreach (XmlElement s in enr.SelectNodes($"/enrollments/session[@eventId='{eventId}']"))
+            foreach (XmlElement s in enr.SelectNodes($"/enrollments/session[@eventId={XPathSafe.Lit(eventId)}]"))
             {
                 var sid = s.GetAttribute("id");
-                if (s.SelectSingleNode($"enrolled/user[@id='{userId}']") == null) continue;
+                if (s.SelectSingleNode($"enrolled/user[@id={XPathSafe.Lit(userId)}]") == null) continue;
 
-                var sn = (XmlElement)ses.SelectSingleNode($"/eventSessions/session[@eventId='{eventId}' and @id='{sid}']");
+                var sn = (XmlElement)ses.SelectSingleNode($"/eventSessions/session[@eventId={XPathSafe.Lit(eventId)} and @id={XPathSafe.Lit(sid)}]");
                 if (sn == null) continue;
 
                 var startIso = sn["start"]?.InnerText ?? "";
@@ -1365,7 +1365,7 @@ namespace CyberApp_FIA.Participant
             if (!File.Exists(EventSessionsXmlPath)) return false;
 
             var ses = new XmlDocument(); ses.Load(EventSessionsXmlPath);
-            var s = (XmlElement)ses.SelectSingleNode($"/eventSessions/session[@eventId='{eventId}' and @id='{sessionId}']");
+            var s = (XmlElement)ses.SelectSingleNode($"/eventSessions/session[@eventId={XPathSafe.Lit(eventId)} and @id={XPathSafe.Lit(sessionId)}]");
             if (s == null) return false;
 
             var startIso = s["start"]?.InnerText ?? "";
@@ -1386,7 +1386,7 @@ namespace CyberApp_FIA.Participant
         {
             if (!File.Exists(EventSessionsXmlPath)) return null;
             var ses = new XmlDocument(); ses.Load(EventSessionsXmlPath);
-            var s = (XmlElement)ses.SelectSingleNode($"/eventSessions/session[@eventId='{eventId}' and @id='{sessionId}']");
+            var s = (XmlElement)ses.SelectSingleNode($"/eventSessions/session[@eventId={XPathSafe.Lit(eventId)} and @id={XPathSafe.Lit(sessionId)}]");
             if (s == null) return null;
             if (!DateTime.TryParse(s["start"]?.InnerText ?? "", CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal, out var startUtc)) return null;
             if (!DateTime.TryParse(s["end"]?.InnerText ?? "", CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal, out var endUtc)) return null;
@@ -1398,7 +1398,7 @@ namespace CyberApp_FIA.Participant
         {
             if (string.IsNullOrWhiteSpace(userId)) return 0;
             var doc = LoadEnrollmentsDoc();
-            var ses = (XmlElement)doc.SelectSingleNode($"/enrollments/session[@eventId='{eventId}' and @id='{sessionId}']");
+            var ses = (XmlElement)doc.SelectSingleNode($"/enrollments/session[@eventId={XPathSafe.Lit(eventId)} and @id={XPathSafe.Lit(sessionId)}]");
             if (ses == null) return 0;
 
             var list = ses.SelectNodes("waitlist/user");
@@ -1470,7 +1470,7 @@ namespace CyberApp_FIA.Participant
             if (!File.Exists(EventCoursesXmlPath)) return set;
 
             var doc = new XmlDocument(); doc.Load(EventCoursesXmlPath);
-            foreach (XmlElement c in doc.SelectNodes($"/eventCourses/event[@id='{eventId}']/course[@enabled='true']"))
+            foreach (XmlElement c in doc.SelectNodes($"/eventCourses/event[@id={XPathSafe.Lit(eventId)}]/course[@enabled='true']"))
             {
                 var id = c.GetAttribute("id");
                 if (!string.IsNullOrEmpty(id)) set.Add(id);
@@ -1567,7 +1567,7 @@ namespace CyberApp_FIA.Participant
             if (!File.Exists(CompletionsXmlPath)) return set;
 
             var doc = new XmlDocument(); doc.Load(CompletionsXmlPath);
-            foreach (XmlElement c in doc.SelectNodes($"/completions/user[@id='{userId}']/course"))
+            foreach (XmlElement c in doc.SelectNodes($"/completions/user[@id={XPathSafe.Lit(userId)}]/course"))
             {
                 var id = c.GetAttribute("id");
                 if (!string.IsNullOrWhiteSpace(id)) set.Add(id);
@@ -1584,7 +1584,7 @@ namespace CyberApp_FIA.Participant
                 EnsureXmlDoc(CompletionsXmlPath, "completions");
                 var doc = new XmlDocument(); doc.Load(CompletionsXmlPath);
 
-                var user = (XmlElement)doc.SelectSingleNode($"/completions/user[@id='{userId}']");
+                var user = (XmlElement)doc.SelectSingleNode($"/completions/user[@id={XPathSafe.Lit(userId)}]");
                 if (user == null)
                 {
                     user = doc.CreateElement("user");
@@ -1592,7 +1592,7 @@ namespace CyberApp_FIA.Participant
                     doc.DocumentElement.AppendChild(user);
                 }
 
-                var existing = (XmlElement)user.SelectSingleNode($"course[@id='{courseId}']");
+                var existing = (XmlElement)user.SelectSingleNode($"course[@id={XPathSafe.Lit(courseId)}]");
                 if (existing == null)
                 {
                     var c = doc.CreateElement("course");
@@ -1626,7 +1626,7 @@ namespace CyberApp_FIA.Participant
             var doc = new XmlDocument(); doc.Load(EventSessionsXmlPath);
             var myIntervals = GetUserEnrolledIntervals(eventId, userId);
 
-            foreach (XmlElement s in doc.SelectNodes($"/eventSessions/session[@eventId='{eventId}']"))
+            foreach (XmlElement s in doc.SelectNodes($"/eventSessions/session[@eventId={XPathSafe.Lit(eventId)}]"))
             {
                 var courseId = s["courseId"]?.InnerText ?? "";
                 if (string.IsNullOrEmpty(courseId)) continue;
@@ -1763,16 +1763,16 @@ namespace CyberApp_FIA.Participant
             // NEW: capture all enrolled intervals to detect conflicts across "My Sessions".
             var myIntervals = GetUserEnrolledIntervals(eventId, userId);
 
-            foreach (XmlElement sesNode in docEnr.SelectNodes($"/enrollments/session[@eventId='{eventId}']"))
+            foreach (XmlElement sesNode in docEnr.SelectNodes($"/enrollments/session[@eventId={XPathSafe.Lit(eventId)}]"))
             {
                 var sid = sesNode.GetAttribute("id");
 
                 // include waitlisted sessions, not only enrolled
-                bool isEnrolled = sesNode.SelectSingleNode($"enrolled/user[@id='{userId}']") != null;
-                bool isWaitlisted = !isEnrolled && sesNode.SelectSingleNode($"waitlist/user[@id='{userId}']") != null;
+                bool isEnrolled = sesNode.SelectSingleNode($"enrolled/user[@id={XPathSafe.Lit(userId)}]") != null;
+                bool isWaitlisted = !isEnrolled && sesNode.SelectSingleNode($"waitlist/user[@id={XPathSafe.Lit(userId)}]") != null;
                 if (!isEnrolled && !isWaitlisted) continue;
 
-                var s = (XmlElement)docSess.SelectSingleNode($"/eventSessions/session[@eventId='{eventId}' and @id='{sid}']");
+                var s = (XmlElement)docSess.SelectSingleNode($"/eventSessions/session[@eventId={XPathSafe.Lit(eventId)} and @id={XPathSafe.Lit(sid)}]");
                 if (s == null) continue;
 
                 var courseId = s["courseId"]?.InnerText ?? "";
@@ -1862,7 +1862,7 @@ namespace CyberApp_FIA.Participant
                 bool isAdmitted = false;
                 if (isEnrolled)
                 {
-                    var thisUserNode = sesNode.SelectSingleNode($"enrolled/user[@id='{userId}']") as XmlElement;
+                    var thisUserNode = sesNode.SelectSingleNode($"enrolled/user[@id={XPathSafe.Lit(userId)}]") as XmlElement;
                     if (thisUserNode != null &&
                         string.Equals(thisUserNode.GetAttribute("admitted"), "true", StringComparison.OrdinalIgnoreCase))
                     {
@@ -2073,7 +2073,7 @@ namespace CyberApp_FIA.Participant
 
         private XmlElement EnsureSessionNode(XmlDocument doc, string eventId, string sessionId)
         {
-            var ses = (XmlElement)doc.SelectSingleNode($"/enrollments/session[@eventId='{eventId}' and @id='{sessionId}']");
+            var ses = (XmlElement)doc.SelectSingleNode($"/enrollments/session[@eventId={XPathSafe.Lit(eventId)} and @id={XPathSafe.Lit(sessionId)}]");
             if (ses == null)
             {
                 ses = doc.CreateElement("session");
@@ -2097,21 +2097,21 @@ namespace CyberApp_FIA.Participant
         private int GetEnrolledCount(string eventId, string sessionId)
         {
             var doc = LoadEnrollmentsDoc();
-            var node = doc.SelectNodes($"/enrollments/session[@eventId='{eventId}' and @id='{sessionId}']/enrolled/user");
+            var node = doc.SelectNodes($"/enrollments/session[@eventId={XPathSafe.Lit(eventId)} and @id={XPathSafe.Lit(sessionId)}]/enrolled/user");
             return node?.Count ?? 0;
         }
 
         private bool IsUserEnrolled(string eventId, string sessionId, string userId)
         {
             var doc = LoadEnrollmentsDoc();
-            var node = doc.SelectSingleNode($"/enrollments/session[@eventId='{eventId}' and @id='{sessionId}']/enrolled/user[@id='{userId}']");
+            var node = doc.SelectSingleNode($"/enrollments/session[@eventId={XPathSafe.Lit(eventId)} and @id={XPathSafe.Lit(sessionId)}]/enrolled/user[@id={XPathSafe.Lit(userId)}]");
             return node != null;
         }
 
         private bool IsUserWaitlisted(string eventId, string sessionId, string userId)
         {
             var doc = LoadEnrollmentsDoc();
-            var node = doc.SelectSingleNode($"/enrollments/session[@eventId='{eventId}' and @id='{sessionId}']/waitlist/user[@id='{userId}']");
+            var node = doc.SelectSingleNode($"/enrollments/session[@eventId={XPathSafe.Lit(eventId)} and @id={XPathSafe.Lit(sessionId)}]/waitlist/user[@id={XPathSafe.Lit(userId)}]");
             return node != null;
         }
 
@@ -2119,7 +2119,7 @@ namespace CyberApp_FIA.Participant
         {
             if (!File.Exists(EventSessionsXmlPath)) return 0;
             var doc = new XmlDocument(); doc.Load(EventSessionsXmlPath);
-            var s = (XmlElement)doc.SelectSingleNode($"/eventSessions/session[@eventId='{eventId}' and @id='{sessionId}']");
+            var s = (XmlElement)doc.SelectSingleNode($"/eventSessions/session[@eventId={XPathSafe.Lit(eventId)} and @id={XPathSafe.Lit(sessionId)}]");
             if (s == null) return 0;
             return int.TryParse(s["capacity"]?.InnerText, out var v) ? v : 0;
         }
@@ -2128,7 +2128,7 @@ namespace CyberApp_FIA.Participant
         {
             if (!File.Exists(EventSessionsXmlPath)) return null;
             var doc = new XmlDocument(); doc.Load(EventSessionsXmlPath);
-            var s = (XmlElement)doc.SelectSingleNode($"/eventSessions/session[@eventId='{eventId}' and @id='{sessionId}']");
+            var s = (XmlElement)doc.SelectSingleNode($"/eventSessions/session[@eventId={XPathSafe.Lit(eventId)} and @id={XPathSafe.Lit(sessionId)}]");
             return s?["courseId"]?.InnerText ?? null;
         }
 
@@ -2140,8 +2140,8 @@ namespace CyberApp_FIA.Participant
                 var doc = LoadEnrollmentsDoc();
                 var ses = EnsureSessionNode(doc, eventId, sessionId);
 
-                if (ses.SelectSingleNode($"enrolled/user[@id='{userId}']") != null) { message = "You’re already enrolled in this session."; return true; }
-                if (ses.SelectSingleNode($"waitlist/user[@id='{userId}']") != null) { message = "You’re already on the waitlist for this session."; return false; }
+                if (ses.SelectSingleNode($"enrolled/user[@id={XPathSafe.Lit(userId)}]") != null) { message = "You’re already enrolled in this session."; return true; }
+                if (ses.SelectSingleNode($"waitlist/user[@id={XPathSafe.Lit(userId)}]") != null) { message = "You’re already on the waitlist for this session."; return false; }
 
                 if (SessionOverlapsUser(eventId, userId, sessionId, out var conflict))
                 {
@@ -2199,8 +2199,8 @@ namespace CyberApp_FIA.Participant
                 var remaining = Math.Max(0, cap - currentEnrolled);
                 if (remaining > 0) { message = "Seats are still available; please enroll instead of joining the waitlist."; return false; }
 
-                if (ses.SelectSingleNode($"enrolled/user[@id='{userId}']") != null) { message = "You’re already enrolled in this session."; return false; }
-                if (ses.SelectSingleNode($"waitlist/user[@id='{userId}']") != null) { message = "You’re already on the waitlist for this session."; return false; }
+                if (ses.SelectSingleNode($"enrolled/user[@id={XPathSafe.Lit(userId)}]") != null) { message = "You’re already enrolled in this session."; return false; }
+                if (ses.SelectSingleNode($"waitlist/user[@id={XPathSafe.Lit(userId)}]") != null) { message = "You’re already on the waitlist for this session."; return false; }
 
                 if (SessionOverlapsUser(eventId, userId, sessionId, out var conflict))
                 {
@@ -2252,7 +2252,7 @@ namespace CyberApp_FIA.Participant
                 var doc = LoadEnrollmentsDoc();
                 var ses = EnsureSessionNode(doc, eventId, sessionId);
 
-                var enrolledNode = (XmlElement)ses.SelectSingleNode($"enrolled/user[@id='{userId}']");
+                var enrolledNode = (XmlElement)ses.SelectSingleNode($"enrolled/user[@id={XPathSafe.Lit(userId)}]");
                 if (enrolledNode == null) { message = "You are not enrolled in this session."; return false; }
 
                 var courseId = GetCourseIdForSession(eventId, sessionId);
@@ -2307,8 +2307,8 @@ namespace CyberApp_FIA.Participant
                 var doc = LoadEnrollmentsDoc();
                 var ses = EnsureSessionNode(doc, eventId, sessionId);
 
-                var enrolledNode = (XmlElement)ses.SelectSingleNode($"enrolled/user[@id='{userId}']");
-                var waitNode = (XmlElement)ses.SelectSingleNode($"waitlist/user[@id='{userId}']");
+                var enrolledNode = (XmlElement)ses.SelectSingleNode($"enrolled/user[@id={XPathSafe.Lit(userId)}]");
+                var waitNode = (XmlElement)ses.SelectSingleNode($"waitlist/user[@id={XPathSafe.Lit(userId)}]");
 
                 if (enrolledNode == null && waitNode == null)
                 {
