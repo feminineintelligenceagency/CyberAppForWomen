@@ -156,6 +156,8 @@
     <Content Include="Account\Participant\Home.aspx" />
     <Content Include="Account\Participant\SelectEvent.aspx" />
     <Content Include="ContactUs.aspx" />
+    <Content Include="Content\fia-brand.css" />
+    <Content Include="Content\logo.png" />
     <Content Include="Global.asax" />
     <Content Include="ParticipantBadges\Participant2FABadge.png" />
     <Content Include="ParticipantBadges\ParticipantAIBadge.png" />
