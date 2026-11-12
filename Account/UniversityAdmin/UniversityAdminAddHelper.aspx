@@ -266,7 +266,7 @@ gap:18px;
       margin-bottom:8px;
     }
   </style>
-</head>
+     <link href="~/Content/mobile.css" rel="stylesheet" /></head>
 <body>
   <form id="form1" runat="server">
     <asp:HiddenField ID="UniversityValue" runat="server" />

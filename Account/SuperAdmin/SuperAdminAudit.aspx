@@ -388,7 +388,7 @@
       });
 
   </script>
-</head>
+     <link href="~/Content/mobile.css" rel="stylesheet" /></head>
 <body>
   <form id="form1" runat="server">
     <div class="wrap">

@@ -35,6 +35,14 @@
       align-items:start;
     }
     @media (max-width: 760px){ .grid{ grid-template-columns: 1fr; } }
+        /* Sprint 4 (#15): fit small phones */
+    .grid > *{ min-width:0; }
+    @media (max-width: 480px){
+      .wrap{ padding:14px; }
+      .card{ padding:18px; }
+      .row{ flex-wrap:wrap; gap:2px 10px; }
+      .k{ width:auto; min-width:0; }
+    }
 
     .panel{
       background:#fff; border:1px dashed #e7edf7; border-radius:16px; padding:16px;
@@ -64,7 +72,7 @@
     }
     .footnote{ color:var(--muted); margin-top:8px; }
   </style>
-</head>
+     <link href="~/Content/mobile.css" rel="stylesheet" /></head>
 <body>
   <form id="form1" runat="server">
     <div class="wrap">

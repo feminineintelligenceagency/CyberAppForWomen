@@ -367,7 +367,7 @@
     .err{color:#c21d1d;font-size:.9rem;}
     .ok{color:#0a7a3c;font-size:.9rem;}
   </style>
-</head>
+     <link href="~/Content/mobile.css" rel="stylesheet" /></head>
 
 <body>
 <form id="form1" runat="server">

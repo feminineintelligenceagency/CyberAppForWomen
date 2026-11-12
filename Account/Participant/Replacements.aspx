@@ -58,7 +58,7 @@
     .topbar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
     .link{ color:var(--fia-blue); text-decoration:none; border-bottom:1px dashed #cfe8fb; padding-bottom:1px; }
   </style>
-</head>
+     <link href="~/Content/mobile.css" rel="stylesheet" /></head>
 <body>
   <form id="form1" runat="server">
     <div class="wrap">

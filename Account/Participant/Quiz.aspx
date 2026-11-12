@@ -135,7 +135,7 @@
       .card{padding:18px}
     }
   </style>
-</head>
+     <link href="~/Content/mobile.css" rel="stylesheet" /></head>
 <body>
     <form id="form1" runat="server" enableviewstate="true">
   <asp:ScriptManager runat="server" />

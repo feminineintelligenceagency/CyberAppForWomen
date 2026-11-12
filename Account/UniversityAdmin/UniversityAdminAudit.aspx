@@ -240,6 +240,12 @@
       display:flex;
       flex-direction:column;
     }
+        /* Sprint 4 (#15): stack the row and let the long button wrap on phones */
+    @media (max-width:640px){
+      .helper-row{ flex-wrap:wrap; }
+      .helper-main{ min-width:0; }
+      .helper-row .btn{ white-space:normal; text-align:center; }
+    }
     .helper-name{
       font-weight:600;
       font-family:Poppins;
@@ -369,7 +375,7 @@
           });
       });
   </script>
-</head>
+     <link href="~/Content/mobile.css" rel="stylesheet" /></head>
 <body>
   <form id="form1" runat="server">
     <div class="wrap">

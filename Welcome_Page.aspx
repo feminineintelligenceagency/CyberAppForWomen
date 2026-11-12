@@ -113,6 +113,8 @@
             align-items:center;
         }
         @media (max-width:900px){ .hero{ grid-template-columns:1fr; } }
+                /* Sprint 4 (#15): let hero columns shrink, so the image scroller can't force the page 1500px wide on phones */
+        .hero > *{ min-width:0; }
 
         .tagline{
             display:inline-block;
@@ -290,7 +292,7 @@
         .c4{ background:#ff7a1a } .c5{ background:#b1c12a } .c6{ background:#56c7b5 }
         .c7{ background:#2c82b7 } .c8{ background:#a55bd7 } .c9{ background:#ff6fbd }
     </style>
-</head>
+     <link href="~/Content/mobile.css" rel="stylesheet" /></head>
 
 <body>
     <form id="form1" runat="server">

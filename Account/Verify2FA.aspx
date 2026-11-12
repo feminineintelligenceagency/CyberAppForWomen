@@ -125,7 +125,7 @@
       margin-top:12px;
     }
   </style>
-</head>
+     <link href="~/Content/mobile.css" rel="stylesheet" /></head>
 
 <body>
   <div class="wrap">

@@ -1,0 +1,111 @@
+﻿/* ==========================================================================
+   FIA shared phone styles
+   Sprint 4, user story #15 (April): the site should work well on a phone.
+
+   Every rule is inside a phone-width media query, so desktop and laptop
+   layouts do not change at all. Each page links this file at the END of its
+   <head>, after the page's own <style>, so these phone rules win when two
+   rules are equally specific.
+   ========================================================================== */
+
+@media (max-width: 640px) {
+
+    /* ---------- Task #104: general phone layout ---------- */
+
+    /* Stop iPhone from enlarging text when the phone is turned sideways. */
+    html {
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+    }
+
+    /* Long words, emails and links wrap instead of pushing the page wider. */
+    body {
+        overflow-wrap: break-word;
+    }
+
+    /* Media never gets wider than the screen. */
+    img, video, canvas {
+        max-width: 100%;
+        height: auto;
+    }
+
+    iframe {
+        max-width: 100%;
+    }
+
+    /* Public pages (Welcome, About, Contact): header wraps, chip text stays on one line */
+    .site-header {
+        flex-wrap: wrap;
+    }
+
+        .site-header .brand {
+            min-width: 0;
+        }
+
+    a.chip {
+        white-space: nowrap;
+    }
+
+
+    /* ---------- Task #105: no sideways scrolling ---------- */
+
+    /* Wide tables scroll inside their own box instead of sliding the whole page. */
+    table {
+        display: block;
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    pre, code {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
+
+
+    /* ---------- Task #106: easy to tap (at least 44px) ---------- */
+
+    /* Buttons */
+    input[type="submit"],
+    input[type="button"],
+    input[type="reset"],
+    button {
+        min-height: 44px;
+    }
+
+    /* Links that look like buttons, pills or chips */
+    a.btn, a.pill, a.chip, a.link, a.back-link, a.btn-view,
+    a.resource-link, a.rv-fallback-link, a.join-room,
+    a.helper-signout, a.helper-link-btn, a.btn-convo, a.page-link,
+    a.rules-edit-link, a.manage-link,
+    .foot a {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Text boxes and dropdowns: 44px tall, and 16px text so iPhone does not
+     zoom in every time a field is tapped. (!important because some pages
+     style their own boxes with classes, and anything under 16px zooms.) */
+    input[type="text"], input[type="email"], input[type="password"],
+    input[type="number"], input[type="tel"], input[type="search"],
+    input[type="url"], input[type="date"], input[type="time"],
+    input[type="datetime-local"], select {
+        min-height: 44px;
+        font-size: 16px !important;
+        max-width: 100%;
+    }
+
+    textarea {
+        font-size: 16px !important;
+        max-width: 100%;
+    }
+
+    /* Bigger checkboxes and radio buttons */
+    input[type="checkbox"], input[type="radio"] {
+        width: 22px;
+        height: 22px;
+        flex: 0 0 auto;
+    }
+}
