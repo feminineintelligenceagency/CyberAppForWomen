@@ -30,10 +30,13 @@
           display:grid;place-items:center;color:#fff;font-family:Poppins
         }
         h1{font-family:Poppins,sans-serif;font-size:1.5rem;margin:0}
-        .placeholder{
-          background:#f6f7fb;border:1px dashed #cdd6e4;border-radius:12px;
-          padding:24px;margin-top:14px;color:var(--muted);text-align:center
-        }
+        .wrap{align-items:start}
+        .card{width:min(780px,100%);color:#1c1c1c;line-height:1.55}
+        .updated{color:var(--muted);font-size:.9rem;margin:.25rem 0 1rem}
+        h2{font-family:Poppins,sans-serif;font-size:1.1rem;margin:24px 0 8px}
+        p{margin:0 0 10px}
+        ul{margin:0 0 10px;padding-left:22px}
+        li{margin-bottom:6px}
         .btnrow{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
         .btn{border:0;border-radius:12px;padding:12px 18px;font-weight:700;font-family:Poppins;cursor:pointer}
         .primary{color:#fff;background:linear-gradient(135deg,var(--fia-blue),var(--fia-teal))}
@@ -48,27 +51,98 @@
                     <h1>Privacy Disclosure</h1>
                 </div>
 
-                <div class="placeholder">
-                    ***THIS IS PLACEHOLDER TEXT FOR THE PRIVACY DISCLOSURE.***
-                </div>
+        <p class="updated">Last updated: November 2026</p>
+
+        <p>
+            Your privacy matters to us. This disclosure explains what information we collect when you use [PLACEHOLDER],
+            how we use it, and the choices you have. By creating an account, you agree to the practices described here.
+        </p>
+
+        <h2>Information we collect</h2>
+        <p><strong>Information you give us.</strong> When you create an account or use the site, you may provide
+            information such as your name, email address, password and answers you submit through the site.</p>
+        <p><strong>Information about your use of the site.</strong> We keep records of your activity on the site,
+            such as the courses and sessions you take part in and your progress.</p>
+        <p><strong>Information collected automatically.</strong> When you use the site, we may collect technical
+            information such as your IP address and the times you sign in. This helps us keep accounts secure.</p>
+
+        <h2>How we use your information</h2>
+        <ul>
+            <li>To create and manage your account and provide the site's features</li>
+            <li>To personalize your learning experience</li>
+            <li>To communicate with you about your account</li>
+            <li>To protect the security of your account and the site</li>
+            <li>To improve the app experience</li>
+        </ul>
+
+        <h2>How we share your information</h2>
+        <p>We do not sell your personal information or use it for advertising. We only share information:</p>
+        <ul>
+            <li>With program staff and volunteers who need it to support you</li>
+            <li>With service providers that help us run the site (for example, hosting and email), who may only use it for that purpose</li>
+            <li>When required by law, or to protect the safety of our users</li>
+        </ul>
+
+        <h2>How we protect your information</h2>
+        <p>
+            We use reasonable safeguards to protect your information, including encrypting sensitive data and
+            never storing your password in a readable form. We strive to ensure the security for all users.
+        </p>
+
+        <h2>Communications</h2>
+        <p>
+            To protect your privacy, emails from us are kept discreet and do not describe the nature of the site
+            in the subject line. Please be on the lookout for any emails coming form the offical [PLACEHOLDER] domain (PUT EXXAMPLE EMAIL WHEN WE HAVE ONE)
+        </p>
+
+        <h2>Cookies</h2>
+        <p>
+            We use only the cookies necessary for the site to work, such as keeping you signed in.
+            We do not use advertising or tracking cookies.
+        </p>
+
+        <h2>Keeping and deleting your information</h2>
+        <p>
+            We keep your information for as long as your account is active. You can delete your account at any
+            time from your account settings, which permanently removes your personal information. Some limited
+            records may be kept for security purposes in a form that no longer identifies you.
+        </p>
+
+        <h2>Changes to this disclosure</h2>
+        <p>
+            We may update this disclosure from time to time. If we make significant changes, we will let you know
+            through the site or email.
+        </p>
+
+        <h2>Contact us</h2>
+        <p>If you have questions about this disclosure or your information, please contact the program team.</p>
 
                 <div class="btnrow">
-                    <button type="button" id="backBtn" class="btn primary">Back to account creation</button>
+                    <button type="button" id="backBtn" class="btn primary"><%= Server.HtmlEncode(BackButtonText) %></button>
                 </div>
             </div>
         </div>
 
         <script>
-            // Closes this tab so the user lands back on the sign-up tab
-            // Changes to account creation If the tab can't be closed
-            document.getElementById('backBtn').addEventListener('click', function () {
-                window.close();
-                setTimeout(function () {
-                    if (!window.closed) {
-                        window.location.href = '<%= ResolveUrl("~/Account/CreateAccountPage.aspx") %>';
+            (function () {
+                var fromAbout = <%= FromAboutPage ? "true" : "false" %>;
+                var backUrl = '<%= HttpUtility.JavaScriptStringEncode(BackUrl) %>';
+
+                document.getElementById('backBtn').addEventListener('click', function () {
+                    if (fromAbout) {
+                        // Opened from About Us in the same tab -> go back there.
+                        window.location.href = backUrl;
+                        return;
                     }
-                }, 300);
-            });
+
+                    // Closes this tab so the user lands back on the sign-up tab
+                    // Changes to account creation If the tab can't be closed
+                    window.close();
+                    setTimeout(function () {
+                        if (!window.closed) window.location.href = backUrl;
+                    }, 300);
+                });
+            })();
         </script>
     </form>
 </body>

@@ -17,10 +17,32 @@ namespace CyberApp_FIA.Account
         /// <summary>Session key holding the UTC time this disclosure was opened.</summary>
         public const string ViewedSessionKey = "PrivacyDisclosureViewedAtUtc";
 
+        private const string SignUpPageUrl = "~/Account/CreateAccountPage.aspx";
+        private const string AboutPageUrl = "~/AboutUs.aspx";
+
+        /// <summary>Trackers for figuring out where to take users after closing disclosure </summary>
+        protected bool FromAboutPage { get; private set; }
+        protected string BackButtonText { get; private set; }
+        protected string BackUrl { get; private set; }
+
+
         protected void Page_Load(object sender, EventArgs e)
         {
             // Record that the disclosure was opened in this browser session.
             Session[ViewedSessionKey] = DateTime.UtcNow;
+
+            FromAboutPage = string.Equals(Request.QueryString["from"], "about", StringComparison.OrdinalIgnoreCase);
+
+            if (FromAboutPage)
+            {
+                BackButtonText = "Back to About Us";
+                BackUrl = ResolveUrl(AboutPageUrl);
+            }
+            else
+            {
+                BackButtonText = "Back to account creation";
+                BackUrl = ResolveUrl(SignUpPageUrl);
+            }
         }
 
         /// <summary>True if the privacy disclosure was opened in this session.</summary>

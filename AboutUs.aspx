@@ -226,6 +226,8 @@
             display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;
             border-top:1px solid #eef1f6;
         }
+        .footer-link{ color:#7a8796; text-decoration:underline; }
+        .footer-link:hover{ color:var(--fia-blue); }
         .dots{
             display:flex; gap:8px; align-items:center;
         }
@@ -356,6 +358,7 @@
                         <asp:HyperLink runat="server" CssClass="btn btn-primary" NavigateUrl="~/Account/CreateAccountPage.aspx" Text="Create Account" />
                         <asp:HyperLink runat="server" CssClass="btn btn-outline" NavigateUrl="~/Account/Login.aspx" Text="Sign In" />
                         <asp:HyperLink runat="server" CssClass="btn btn-outline" NavigateUrl="~/Welcome_Page.aspx" Text="Back to Home" />
+                        <!-- <asp:HyperLink runat="server" CssClass="btn btn-outline" NavigateUrl="~/PrivacyDisclosure.aspx?from=about" Text="Privacy Disclosure" /> -->
                     </div>
                 </div>
             </section>
@@ -363,7 +366,10 @@
 
         <!-- Footer -->
         <footer class="site-footer">
-            <div>© <%= DateTime.Now.Year %> Feminine Intelligence Agency</div>
+            <div>
+                © <%= DateTime.Now.Year %> Feminine Intelligence Agency
+                · <asp:HyperLink runat="server" CssClass="footer-link" NavigateUrl="~/PrivacyDisclosure.aspx?from=about" Text="Privacy Disclosure" />
+            </div>
             <div class="dots" aria-hidden="true">
                 <div class="dot c1"></div><div class="dot c2"></div><div class="dot c3"></div>
                 <div class="dot c4"></div><div class="dot c5"></div><div class="dot c6"></div>
