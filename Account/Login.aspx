@@ -6,15 +6,12 @@
   <title>FIA • Sign In</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400&family=Poppins:wght@600&display=swap" rel="stylesheet" />
-
+  <link runat="server" href="~/Content/fia-brand.css" rel="stylesheet" />
   <style>
     /* =========================
        Design tokens / variables
        ========================= */
     :root{
-      --fia-pink:#f06aa9;
-      --fia-blue:#2a99db;
-      --fia-teal:#45c3b3;
       --ink:#1c1c1c;
       --muted:#6b7280;
       --ring:rgba(42,153,219,.25);
@@ -147,7 +144,8 @@
 
         <!-- Header / page title -->
         <div class="brand">
-          <div class="badge">FIA</div>
+          <img runat="server" src="~/Content/logo.png"
+            width="40" height="40" alt="Feminine Intelligence Agency" />
           <h1>Welcome back</h1>
         </div>
         <p class="sub">Click with confidence—sign in to continue your progress.</p>

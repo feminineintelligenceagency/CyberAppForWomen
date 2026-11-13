@@ -8,12 +8,11 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400&family=Poppins:wght@500;700&display=swap" rel="stylesheet" />
 
+    <link runat="server" rel="stylesheet" href="~/Content/fia-brand.css" />
+
     <style>
         :root{
             /* Brand Palette */
-            --fia-pink:#f06aa9;
-            --fia-blue:#2a99db;
-            --fia-teal:#45c3b3;
 
             --ink:#1c1c1c;
             --muted:#6b7280;
@@ -300,7 +299,8 @@
         <!-- Header -->
         <header class="site-header" role="banner">
             <div class="brand">
-                <div class="brand-badge">FIA</div>
+                <img runat="server" src="~/Content/logo.png"
+                width="40" height="40" alt="" />
                 <h1>Feminine Intelligence Agency</h1>
             </div>
 
