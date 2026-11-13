@@ -587,7 +587,7 @@
           }, 3000);
       }
   </script>
-</head>
+     <link href="~/Content/mobile.css" rel="stylesheet" /></head>
 <body>
   <form id="form1" runat="server">
     <asp:ScriptManager runat="server" />
@@ -653,7 +653,7 @@
                   <span class="session-label">Session Room</span>
                   <asp:PlaceHolder runat="server" Visible='<%# !string.IsNullOrWhiteSpace(Convert.ToString(Eval("Room"))) %>'>
                     <span class="session-value">
-                      <a href='<%# Eval("Room") %>' target="_blank" rel="noopener">Open Room</a>
+                     <a class="join-room" href='<%# Eval("Room") %>' target="_blank" rel="noopener">Open Room</a>
                     </span>
                   </asp:PlaceHolder>
                   <asp:PlaceHolder runat="server" Visible='<%# string.IsNullOrWhiteSpace(Convert.ToString(Eval("Room"))) %>'>

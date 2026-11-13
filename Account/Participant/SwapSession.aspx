@@ -97,7 +97,7 @@
     .link{ color:var(--fia-blue); text-decoration:none; border-bottom:1px dashed #cfe8fb; padding-bottom:1px; }
     .message{ margin-top:16px; }
   </style>
-</head>
+     <link href="~/Content/mobile.css" rel="stylesheet" /></head>
 <body>
   <form id="form1" runat="server">
     <div class="wrap">

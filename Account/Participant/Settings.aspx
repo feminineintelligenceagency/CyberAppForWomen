@@ -39,7 +39,7 @@
     .btn-primary{ background:linear-gradient(135deg,var(--fia-blue),#45c3b3); color:#fff; }
     .done{ text-align:center; }
   </style>
-</head>
+     <link href="~/Content/mobile.css" rel="stylesheet" /></head>
 <body>
   <form id="form1" runat="server">
     <div class="wrap">

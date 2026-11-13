@@ -268,7 +268,7 @@
         .c4{ background:#ff7a1a } .c5{ background:#b1c12a } .c6{ background:#56c7b5 }
         .c7{ background:#2c82b7 } .c8{ background:#a55bd7 } .c9{ background:#ff6fbd }
     </style>
-</head>
+     <link href="~/Content/mobile.css" rel="stylesheet" /></head>
 
 <body>
     <form id="form1" runat="server">

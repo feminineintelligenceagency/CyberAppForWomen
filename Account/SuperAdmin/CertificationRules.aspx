@@ -179,6 +179,8 @@
         grid-template-columns:1fr;
       }
     }
+        /* Sprint 4 (#15): let cards shrink to the phone width */
+    .page-main > *{ min-width:0; }
 
     .card{
       background:var(--card-bg);
@@ -405,7 +407,7 @@
       }
     }
   </style>
-</head>
+     <link href="~/Content/mobile.css" rel="stylesheet" /></head>
 
 <body>
   <form id="form1" runat="server">

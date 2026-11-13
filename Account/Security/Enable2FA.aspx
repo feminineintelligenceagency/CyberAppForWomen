@@ -233,7 +233,7 @@
             }
         }
     </style>
-</head>
+     <link href="~/Content/mobile.css" rel="stylesheet" /></head>
 
 <body>
 

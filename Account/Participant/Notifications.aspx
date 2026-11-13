@@ -39,7 +39,7 @@
     .btn-plain{ background:#f3f4f6; color:var(--ink); }
     .empty{ background:#fff; border:1px solid var(--card-border); border-radius:14px; padding:18px; color:var(--muted); text-align:center; }
   </style>
-</head>
+     <link href="~/Content/mobile.css" rel="stylesheet" /></head>
 <body>
   <form id="form1" runat="server">
     <div class="wrap">

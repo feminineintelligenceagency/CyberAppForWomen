@@ -42,7 +42,7 @@
     a{ color:var(--fia-blue); text-decoration:none }
     a:hover{ text-decoration:underline }
   </style>
-</head>
+     <link href="~/Content/mobile.css" rel="stylesheet" /></head>
 
 <body>
   <form id="form1" runat="server">

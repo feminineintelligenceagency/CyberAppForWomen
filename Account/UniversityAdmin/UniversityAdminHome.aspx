@@ -5,6 +5,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>FIA • University Admin Home</title>
   <meta charset="utf-8" />
 
@@ -270,7 +271,7 @@
       }
     }
   </style>
-</head>
+     <link href="~/Content/mobile.css" rel="stylesheet" /></head>
 <body>
   <form id="form1" runat="server">
     <asp:HiddenField ID="UniversityValue" runat="server" />
@@ -392,7 +393,7 @@
             </span>
           </div>
           <div>
-            <a href="<%# Eval("manageUrl") %>"
+                        <a class="manage-link" href="<%# Eval("manageUrl") %>"
                style="font-size:12px; text-decoration:none; color:#2563eb;">
               Manage
             </a>

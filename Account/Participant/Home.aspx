@@ -71,6 +71,63 @@
     .subchips{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
     .pill-push{ margin-left:auto; }
 
+        /* ---------- Sprint 4 (#15): tidy header on phones ---------- */
+    @media (max-width: 640px){
+      /* Logo + title on one row, everything else below at full width */
+      .brand{
+        display:grid;
+        grid-template-columns:42px 1fr;
+        align-items:center;
+        column-gap:12px;
+        row-gap:14px;
+        margin-bottom:18px;
+      }
+      .brand > div:not(.badge){ display:contents; }
+      .brand h1{ margin:0; font-size:1.4rem; }
+
+      /* Header items become a neat 2-column grid */
+      .brand .subchips{
+        grid-column:1 / -1;
+        display:grid;
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+        gap:10px;
+        margin:0;
+      }
+      .brand .subchips > *{
+        margin:0 !important;
+        width:100%;
+        box-sizing:border-box;
+      }
+
+      /* University + Event: info boxes side by side (not buttons) */
+      .brand .subchips > span.pill{
+        order:0;
+        display:block;
+        padding:8px 12px;
+        border-radius:12px;
+        font-size:.85rem;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+      }
+
+      /* Buttons: same size, centered text, grouped in a sensible order */
+      .brand .subchips > a{
+        display:flex !important;
+        align-items:center;
+        justify-content:center;
+        text-align:center;
+        min-height:44px;
+        border-radius:12px;
+        font-weight:600;
+      }
+      .brand .subchips > a[href*="Notifications"]{ order:1; }  /* Inbox */
+      .brand .subchips > a[href*="Settings"]     { order:2; }  /* Settings */
+      .brand .subchips > a[href*="Enable2FA"]    { order:3; }  /* Security */
+      .brand .subchips > a[href*="SelectEvent"]  { order:4; }  /* Change event */
+      .brand .subchips > a:last-child            { order:5; grid-column:1 / -1; }  /* Sign out, full width */
+    }
+
     /* ---------- Note ---------- */
     .note{
       background:var(--pill-bg); border:1px solid var(--card-border);
@@ -936,7 +993,7 @@
           });
       });
   </script>
-</head>
+     <link href="~/Content/mobile.css" rel="stylesheet" /></head>
 
 <body>
   <form id="form1" runat="server">
@@ -1234,7 +1291,7 @@
                     <span class="label">Room</span>
                     <asp:PlaceHolder runat="server" Visible='<%# (bool)Eval("canSeeRoom") %>'>
                       <span class="value">
-                        <a href='<%# Eval("room") %>' target="_blank" rel="noopener">Join Room</a>
+                        <a class="join-room" href='<%# Eval("room") %>' target="_blank" rel="noopener">Join Room</a>
                       </span>
                     </asp:PlaceHolder>
                     <asp:PlaceHolder runat="server" Visible='<%# !(bool)Eval("canSeeRoom") %>'>
