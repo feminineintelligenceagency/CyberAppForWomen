@@ -349,4 +349,23 @@
     <maxParticipants>
     </maxParticipants>
   </course>
+  <course id="b619e2b6a09b489788d8adf0acd71477" status="Draft" createdAt="2026-11-07T04:01:25.7003700Z" createdBy="lauren.nignon@gmail.com">
+    <title>Who Else Is Logged In? Find and Remove Unknown Sessions</title>
+    <summary>Find out who’s logged into your accounts, sign out unknown devices, and secure your recovery info so no one can stay logged in without you knowing.</summary>
+    <duration>60</duration>
+    <externalLink>
+    </externalLink>
+    <tags>
+      <tag>privacy</tag>
+      <tag>accounts</tag>
+    </tags>
+    <requiredRules />
+    <prerequisites />
+    <startTime>
+    </startTime>
+    <endTime>
+    </endTime>
+    <maxParticipants>
+    </maxParticipants>
+  </course>
 </microcourses>

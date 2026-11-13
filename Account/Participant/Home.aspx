@@ -968,6 +968,12 @@
     Inbox<%: InboxBadge %>
 </a>
 
+<%-- Sprint 4: self-paced cybersecurity classes --%>
+<a class="pill pill-link"
+   href="<%: ResolveUrl("~/Account/Participant/ClassViewer.aspx") %>">
+    Classes
+</a>
+
 <a class="pill pill-link"
    href="<%: ResolveUrl("~/Account/Participant/Settings.aspx") %>">
     Settings

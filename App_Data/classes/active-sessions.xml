@@ -1,0 +1,197 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Sprint 4: "Who Else Is Logged In?" class, built from the sponsor's class-building template.
+  courseId must match this course's id in microcourses.xml (create the course on the Super Admin Microcourses page first).
+  Anything marked TODO comes from your template research (Task 1) or the full 20-question quiz (Task 3).
+-->
+<class courseId="b619e2b6a09b489788d8adf0acd71477" passScore="80">
+	<title>Who Else Is Logged In? Find and Remove Unknown Sessions</title>
+	<objective>Find every device logged into your email and Instagram, remove any you don't recognize, and make sure your recovery email and phone number are yours.</objective>
+	<northStar>Last week I checked who else was logged into my accounts, and it took 3 minutes. Let me show you where to look.</northStar>
+
+	<!-- Template section 1: the hook -->
+	<block minutes="0-5" name="The Hook">
+		<text>TODO: real incident from your research (who, what happened, what it cost them, what would have stopped it). Add the source in the Learn More list.</text>
+		<question>If someone you used to trust were still logged into your email right now, what could they see?</question>
+	</block>
+
+	<!-- Template section 3: the one thing -->
+	<block minutes="5-10" name="The One Thing">
+		<text>Today you'll learn to check who is logged into your accounts and kick out anyone who shouldn't be there.</text>
+		<text>This matters because an ex, a roommate, or anyone who once used your phone or laptop can stay logged in for months without you knowing.</text>
+	</block>
+
+	<!-- Core concept -->
+	<block minutes="10-20" name="Core Concept: Passwords vs. Sessions">
+		<video url="TODO: https://www.youtube.com/embed/VIDEO-ID" />
+		<text>Your password is the key to the front door. A session is someone who is already inside.</text>
+		<text>When you log in, the app remembers that device so you don't have to type your password again. That memory is a session, and it keeps working even after you walk away.</text>
+		<text>Changing your password doesn't always end other sessions. You have to sign them out yourself.</text>
+		<question>Why might someone still have access to your account even after you changed your password?</question>
+	</block>
+
+	<!-- Template section 4: real examples -->
+	<block minutes="20-35" name="Real Examples: Real Alert or Fake?">
+		<text>A real security alert tells you a new device signed in and points you to your account's own settings page.</text>
+		<text>A fake one asks you to click a link and "verify" your account by typing your password or a code.</text>
+		<question>You get an email saying "New sign-in on Windows. Click here to verify it was you." How do you check if it's real without clicking the link?</question>
+	</block>
+
+	<!-- Hands-on task on the student's own device -->
+	<block minutes="35-50" name="Hands-On: Check Your Own Accounts">
+		<step>Google: open your Google Account, go to Security, then "Your devices". Look at every device and location listed.</step>
+		<step>Instagram: go to Settings, Accounts Center, Password and security, then "Where you're logged in".</step>
+		<step>Sign out of any device you don't recognize.</step>
+		<step>In both accounts, check that the recovery email and phone number are yours.</step>
+		<step>Take a screenshot of your device list. That's your proof you checked.</step>
+		<question>Did you find any device you forgot about? What would you have done if you didn't recognize it?</question>
+	</block>
+
+	<!-- Template section 7: the close -->
+	<close>
+		<oneAction>Do the same check on one more account in the next 24 hours, like your bank, Snapchat, or school email.</oneAction>
+		<teachingPrompt>You're going to teach this to a friend in 10 minutes. What's the first thing you would show them, and why?</teachingPrompt>
+		<resource url="https://myaccount.google.com/device-activity">Google: see devices logged into your account</resource>
+		<resource url="https://help.instagram.com/">Instagram Help Center: account security</resource>
+	</close>
+
+	<!-- Template section 6: the quiz (20 questions) -->
+	<quiz>
+		<q id="1" correct="C">
+			<text>You changed your Instagram password, but your ex's phone still shows under "Where you're logged in." What's true?</text>
+			<option key="A" feedback="Changing your password doesn't always end sessions that are already open.">They were logged out automatically</option>
+			<option key="B" feedback="This list shows active sessions, not just old history.">It's just an old record, so you can ignore it</option>
+			<option key="C">They may still have access until you remove that session</option>
+			<option key="D" feedback="Deleting the app on your phone doesn't affect a session on their phone.">Deleting Instagram from your phone fixes it</option>
+		</q>
+		<q id="2" correct="B">
+			<text>What is a "session"?</text>
+			<option key="A" feedback="Your password is what you type; a session is what the app remembers after you log in.">Your password</option>
+			<option key="B">A device the app remembers as logged in, so it doesn't ask for your password again</option>
+			<option key="C" feedback="A session isn't a time limit; it can last for months.">The time you spend in the app each day</option>
+			<option key="D" feedback="Recovery info helps you get back in; it isn't a session.">Your recovery email address</option>
+		</q>
+		<q id="3" correct="A">
+			<text>You get an email: "New sign-in detected. Click here and enter your password to secure your account." What should you do?</text>
+			<option key="A">Don't click it. Open the app or website yourself and check your devices there.</option>
+			<option key="B" feedback="Real alerts don't need you to type your password into a link. This could be phishing.">Click the link and enter your password right away</option>
+			<option key="C" feedback="Ignoring it skips the check. Someone might really be logged in.">Ignore it, since alerts are usually fake</option>
+			<option key="D" feedback="Replying shares nothing useful and confirms your email is active to scammers.">Reply and ask if it's real</option>
+		</q>
+		<q id="4" correct="D">
+			<text>Why should your recovery email and phone number be checked, not just your devices?</text>
+			<option key="A" feedback="Recovery info matters for more than just forgotten passwords.">They only matter if you forget your password</option>
+			<option key="B" feedback="Alerts are a side effect. The real risk is that whoever controls your recovery info can reset your password.">They control which alerts you get</option>
+			<option key="C" feedback="Recovery info doesn't affect how fast an app runs.">They make the app run faster</option>
+			<option key="D">Whoever controls them can reset your password and get back in</option>
+		</q>
+		<q id="5" correct="B">
+			<text>True or false: once you change your password, everyone else is automatically logged out of every app.</text>
+			<option key="A" feedback="Many apps keep existing sessions open unless you sign them out yourself.">True</option>
+			<option key="B">False</option>
+		</q>
+		<q id="6" correct="C">
+			<text>Last year you logged into your Google account on your roommate's laptop and never logged out. She has since moved out. What should you do?</text>
+			<option key="A" feedback="Hoping she won't look isn't a plan. The session stays open until you end it.">Nothing, she probably won't look</option>
+			<option key="B" feedback="Asking is fine, but you can't confirm she did it. Checking yourself is the only sure way.">Ask her to log out for you</option>
+			<option key="C">Check "Your devices" in your Google Account and sign out of any device you don't recognize</option>
+			<option key="D" feedback="A new account doesn't remove access to your old one, which still holds your emails.">Make a brand new Google account</option>
+		</q>
+		<q id="7" correct="B">
+			<text>Where in Instagram can you see every device logged into your account?</text>
+			<option key="A" feedback="Your profile shows posts, not logged-in devices.">Your profile page</option>
+			<option key="B">Settings, then Accounts Center, then Password and security, then "Where you're logged in"</option>
+			<option key="C" feedback="Notifications show activity on your posts, not devices.">The notifications tab</option>
+			<option key="D" feedback="Your direct messages don't list devices.">Your direct messages</option>
+		</q>
+		<q id="8" correct="A">
+			<text>Your device list shows a sign-in from a city you have never been to. What's the best first step?</text>
+			<option key="A">Sign out of that session, then change your password and turn on two-factor authentication</option>
+			<option key="B" feedback="Locations can be off, but an unknown one is worth acting on. Doing nothing leaves the door open.">Ignore it, locations are always wrong</option>
+			<option key="C" feedback="Posting about it doesn't remove the person and can tip them off.">Post about it on your story to warn them</option>
+			<option key="D" feedback="Deleting your account loses your data. Signing them out fixes the problem without that.">Delete your whole account</option>
+		</q>
+		<q id="9" correct="D">
+			<text>Your ex knows your recovery phone number because it's an old shared family plan. Why is that a risk?</text>
+			<option key="A" feedback="The issue isn't calls, it's account access.">They can call you</option>
+			<option key="B" feedback="A recovery number doesn't show your location.">They can see your location</option>
+			<option key="C" feedback="It isn't about texts on its own. The number controls password resets.">They can read all your texts</option>
+			<option key="D">Codes to reset your password can go to that number, letting them get back into your account</option>
+		</q>
+		<q id="10" correct="B">
+			<text>True or false: if you don't recognize a device in your list, it's safe to leave it as long as you have a strong password.</text>
+			<option key="A" feedback="A strong password doesn't kick out someone who is already logged in.">True</option>
+			<option key="B">False</option>
+		</q>
+		<q id="11" correct="C">
+			<text>How often is it a good idea to check who is logged into your important accounts?</text>
+			<option key="A" feedback="Waiting for a problem means someone could have access for months first.">Only after something bad happens</option>
+			<option key="B" feedback="Once is a good start, but new sessions can appear any time.">Once, and never again</option>
+			<option key="C">Every few months, and any time a relationship, roommate, or job situation changes</option>
+			<option key="D" feedback="Every hour is unrealistic. A regular habit is what matters.">Every hour</option>
+		</q>
+		<q id="12" correct="A">
+			<text>You get a real Google alert: "New sign-in on iPhone." You don't own an iPhone. What do you do?</text>
+			<option key="A">Open your Google Account yourself, review the device, and sign it out if you don't recognize it</option>
+			<option key="B" feedback="Real alerts are worth acting on. Ignoring it leaves someone else in your account.">Ignore it, Google makes mistakes</option>
+			<option key="C" feedback="Replying to an automated alert does nothing.">Reply to the email asking who it is</option>
+			<option key="D" feedback="Waiting gives them more time in your account.">Wait to see if it happens again</option>
+		</q>
+		<q id="13" correct="D">
+			<text>Which of these would show up as a session in your device list?</text>
+			<option key="A" feedback="A text message isn't a login.">A friend texting you</option>
+			<option key="B" feedback="Following you doesn't log anyone into your account.">Someone following you on Instagram</option>
+			<option key="C" feedback="Viewing your public profile isn't a login.">Someone viewing your public profile</option>
+			<option key="D">An old phone you sold that is still signed in to your account</option>
+		</q>
+		<q id="14" correct="B">
+			<text>After you sign out unknown devices, what else should you do to keep them out?</text>
+			<option key="A" feedback="Your profile picture has nothing to do with access.">Change your profile picture</option>
+			<option key="B">Change your password and turn on two-factor authentication</option>
+			<option key="C" feedback="Making your account public gives away more information.">Make your account public</option>
+			<option key="D" feedback="Unfollowing people doesn't stop logins.">Unfollow everyone</option>
+		</q>
+		<q id="15" correct="C">
+			<text>A coworker says, "You can tell someone's in your account because your phone gets slower." Is that a good way to check?</text>
+			<option key="A" feedback="Phones slow down for many reasons. It tells you nothing about who is logged in.">Yes, a slow phone means someone is logged in</option>
+			<option key="B" feedback="Battery life has nothing to do with account sessions.">Yes, battery drain is the best sign</option>
+			<option key="C">No, the only reliable way is to check the device list in your account settings</option>
+			<option key="D" feedback="You don't need a technician. The device list is free and built into the app.">No, only a technician can tell</option>
+		</q>
+		<q id="16" correct="B">
+			<text>Pushback: "I have nothing to hide, so it doesn't matter who's logged in." What's the best response?</text>
+			<option key="A" feedback="Agreeing skips the real risks, like someone reading your messages or resetting your password.">"You're right, it doesn't matter"</option>
+			<option key="B">"It's not about hiding things. Someone logged in can read your messages, see where you are, and lock you out of your own account."</option>
+			<option key="C" feedback="Fear doesn't convince people. A clear reason works better.">"You'll get hacked for sure if you don't check"</option>
+			<option key="D" feedback="Dropping the topic leaves them at risk.">"Okay, never mind"</option>
+		</q>
+		<q id="17" correct="A">
+			<text>Pushback: "Checking devices takes too long." What's the best response?</text>
+			<option key="A">"It takes about 3 minutes, and you only need to do it every few months."</option>
+			<option key="B" feedback="Exaggerating hurts trust. The check is quick.">"It takes an hour, but it's worth it"</option>
+			<option key="C" feedback="Saying it's not needed is wrong. It is the main way to find unknown sessions.">"You're right, you don't need to"</option>
+			<option key="D" feedback="Paying someone isn't needed. It's free and built into the app.">"Pay someone to do it for you"</option>
+		</q>
+		<q id="18" correct="C">
+			<text>Pushback: "If my ex were logged in, I'd get an alert, so I don't need to check." What's the best response?</text>
+			<option key="A" feedback="Agreeing is risky. Alerts don't catch every session.">"True, alerts catch everything"</option>
+			<option key="B" feedback="Alerts are useful. The point is they aren't enough on their own.">"Alerts are always fake, so ignore them"</option>
+			<option key="C">"Alerts usually only show new sign-ins. If they were already logged in before, you may never get one."</option>
+			<option key="D" feedback="Changing apps doesn't solve it. The same check applies everywhere.">"Just switch to a different app"</option>
+		</q>
+		<q id="19" correct="D">
+			<text>Teaching: you have 10 minutes to teach a friend this topic. What should you do first?</text>
+			<option key="A" feedback="Definitions first lose people. Start with something they can see.">Explain what a session is in technical terms</option>
+			<option key="B" feedback="Scary stories alone don't show them what to do.">Tell them every hacking story you know</option>
+			<option key="C" feedback="Sending a link skips the part where they actually do it.">Send them a link and leave</option>
+			<option key="D">Have them open their own device list right away so they can see who is logged in</option>
+		</q>
+		<q id="20" correct="B">
+			<text>Teaching: your friend finds a device she doesn't recognize and panics. What do you tell her?</text>
+			<option key="A" feedback="Panicking doesn't help. There are clear steps to fix it.">"That's really bad, there's nothing you can do"</option>
+			<option key="B">"Sign that device out now, then change your password and turn on two-factor authentication. That locks them out."</option>
+			<option key="C" feedback="Deleting the account loses everything and isn't necessary.">"Delete your account right away"</option>
+			<option key="D" feedback="Waiting leaves the person in her account.">"Wait and see if it goes away"</option>
+		</q>
+	</quiz>
+</class>

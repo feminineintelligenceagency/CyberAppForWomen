@@ -105,6 +105,7 @@
     <Content Include="Account\Helper\ResourceViewer.aspx" />
     <Content Include="Account\Helper\Schedule.aspx" />
     <Content Include="Account\Participant\Badges.aspx" />
+    <Content Include="Account\Participant\ClassViewer.aspx" />
     <Content Include="Account\Participant\EnrollSuccess.aspx" />
     <Content Include="Account\Participant\HelperConversation.aspx" />
     <Content Include="Account\Participant\HelperMessage.aspx" />
@@ -134,6 +135,7 @@
     <Content Include="App_Data\Audit_Log\UnvAdminAudit.xml" />
     <Content Include="App_Data\badgeDescriptions.xml" />
     <Content Include="App_Data\certificationRules.xml" />
+    <Content Include="App_Data\classes\active-sessions.xml" />
     <Content Include="App_Data\completions.xml" />
     <Content Include="App_Data\enrollments.xml" />
     <Content Include="App_Data\eventCourses.xml" />
@@ -320,6 +322,13 @@
     </Compile>
     <Compile Include="Account\Participant\Calendar.ashx.cs">
       <DependentUpon>Calendar.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Account\Participant\ClassViewer.aspx.cs">
+      <DependentUpon>ClassViewer.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\Participant\ClassViewer.aspx.designer.cs">
+      <DependentUpon>ClassViewer.aspx</DependentUpon>
     </Compile>
     <Compile Include="Account\Participant\EnrollSuccess.aspx.cs">
       <DependentUpon>EnrollSuccess.aspx</DependentUpon>
@@ -515,6 +524,7 @@
     <Compile Include="App_Code\Services\AuthSession.cs" />
     <Compile Include="App_Code\Services\AuthSessionInfo.cs" />
     <Compile Include="App_Code\Services\AuthSessionStore.cs" />
+    <Compile Include="App_Code\Services\ClassService.cs" />
     <Compile Include="Services\CertificationNotifications.cs" />
     <Compile Include="Services\NotificationInfo.cs" />
     <Compile Include="App_Code\Services\DataProtector.cs" />
