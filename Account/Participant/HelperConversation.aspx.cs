@@ -62,7 +62,7 @@ namespace CyberApp_FIA.Participant
             var doc = new XmlDocument();
             doc.Load(HelperMessagesXmlPath);
 
-            var conv = (XmlElement)doc.SelectSingleNode($"/helperMessages/conversation[@id='{conversationId}']");
+            var conv = (XmlElement)doc.SelectSingleNode($"/helperMessages/conversation[@id={XPathSafe.Lit(conversationId)}]");
             if (conv == null)
                 throw new InvalidOperationException("Conversation not found.");
 
@@ -144,7 +144,7 @@ namespace CyberApp_FIA.Participant
                     var doc = new XmlDocument();
                     doc.Load(HelperMessagesXmlPath);
 
-                    var conv = (XmlElement)doc.SelectSingleNode($"/helperMessages/conversation[@id='{ConversationId}']");
+                    var conv = (XmlElement)doc.SelectSingleNode($"/helperMessages/conversation[@id={XPathSafe.Lit(ConversationId)}]");
                     if (conv == null)
                     {
                         FormMessage.Text = "<span style='color:#b00020'>Conversation not found.</span>";
@@ -221,7 +221,7 @@ namespace CyberApp_FIA.Participant
             var doc = new XmlDocument();
             doc.Load(usersPath);
 
-            var me = (XmlElement)doc.SelectSingleNode($"/users/user[@id='{userId}']");
+            var me = (XmlElement)doc.SelectSingleNode($"/users/user[@id={XPathSafe.Lit(userId)}]");
             if (me == null)
                 return false;
 

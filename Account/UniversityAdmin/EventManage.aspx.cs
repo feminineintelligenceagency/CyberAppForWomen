@@ -65,7 +65,7 @@ namespace CyberApp_FIA.Account
             if (!File.Exists(EventsXmlPath)) return;
 
             var doc = new XmlDocument(); doc.Load(EventsXmlPath);
-            var ev = (XmlElement)doc.SelectSingleNode($"/events/event[@id='{_eventId}']");
+            var ev = (XmlElement)doc.SelectSingleNode($"/events/event[@id={XPathSafe.Lit(_eventId)}]");
             if (ev == null)
             {
                 Response.Redirect("~/Account/UniversityAdmin/UniversityAdminHome.aspx");
@@ -123,7 +123,7 @@ namespace CyberApp_FIA.Account
             }
 
             var doc = new XmlDocument(); doc.Load(EventsXmlPath);
-            var ev = doc.SelectSingleNode($"/events/event[@id='{_eventId}']") as XmlElement;
+            var ev = doc.SelectSingleNode($"/events/event[@id={XPathSafe.Lit(_eventId)}]") as XmlElement;
             if (ev == null)
             {
                 EventMetaMessage.Text = "<span class='err'>Event not found.</span>";
@@ -187,7 +187,7 @@ namespace CyberApp_FIA.Account
             }
 
             var doc = new XmlDocument(); doc.Load(EventsXmlPath);
-            var ev = doc.SelectSingleNode($"/events/event[@id='{_eventId}']") as XmlElement;
+            var ev = doc.SelectSingleNode($"/events/event[@id={XPathSafe.Lit(_eventId)}]") as XmlElement;
             if (ev == null)
             {
                 EventMetaMessage.Text = "<span class='err'>Event not found.</span>";
@@ -205,7 +205,7 @@ namespace CyberApp_FIA.Account
                 if (File.Exists(EventCoursesXmlPath))
                 {
                     var ecDoc = new XmlDocument(); ecDoc.Load(EventCoursesXmlPath);
-                    var eNode = ecDoc.SelectSingleNode($"/eventCourses/event[@id='{_eventId}']") as XmlElement;
+                    var eNode = ecDoc.SelectSingleNode($"/eventCourses/event[@id={XPathSafe.Lit(_eventId)}]") as XmlElement;
                     if (eNode != null && ecDoc.DocumentElement != null)
                     {
                         ecDoc.DocumentElement.RemoveChild(eNode);
@@ -216,7 +216,7 @@ namespace CyberApp_FIA.Account
                 if (File.Exists(EventSessionsXmlPath))
                 {
                     var esDoc = new XmlDocument(); esDoc.Load(EventSessionsXmlPath);
-                    var sesNodes = esDoc.SelectNodes($"/eventSessions/session[@eventId='{_eventId}']");
+                    var sesNodes = esDoc.SelectNodes($"/eventSessions/session[@eventId={XPathSafe.Lit(_eventId)}]");
                     bool changed = false;
                     if (sesNodes != null && esDoc.DocumentElement != null)
                     {
@@ -300,7 +300,7 @@ namespace CyberApp_FIA.Account
             if (!File.Exists(EventCoursesXmlPath)) return set;
 
             var doc = new XmlDocument(); doc.Load(EventCoursesXmlPath);
-            var nodes = doc.SelectNodes($"/eventCourses/event[@id='{_eventId}']/course[@enabled='true']");
+            var nodes = doc.SelectNodes($"/eventCourses/event[@id={XPathSafe.Lit(_eventId)}]/course[@enabled='true']");
             foreach (XmlElement c in nodes) set.Add(c.GetAttribute("id"));
             return set;
         }
@@ -311,7 +311,7 @@ namespace CyberApp_FIA.Account
 
             var doc = new XmlDocument(); doc.Load(EventCoursesXmlPath);
 
-            var evNode = doc.SelectSingleNode($"/eventCourses/event[@id='{_eventId}']") as XmlElement;
+            var evNode = doc.SelectSingleNode($"/eventCourses/event[@id={XPathSafe.Lit(_eventId)}]") as XmlElement;
             if (evNode == null)
             {
                 var root = doc.DocumentElement ?? doc.AppendChild(doc.CreateElement("eventCourses")) as XmlElement;
@@ -415,7 +415,7 @@ namespace CyberApp_FIA.Account
             EnsureEventSessionsXml();
 
             var doc = new XmlDocument(); doc.Load(EventSessionsXmlPath);
-            var exist = doc.SelectNodes($"/eventSessions/session[@eventId='{_eventId}']");
+            var exist = doc.SelectNodes($"/eventSessions/session[@eventId={XPathSafe.Lit(_eventId)}]");
 
             foreach (XmlElement s in exist)
             {
@@ -497,7 +497,7 @@ namespace CyberApp_FIA.Account
             }
 
             var doc = new XmlDocument(); doc.Load(EventSessionsXmlPath);
-            foreach (XmlElement s in doc.SelectNodes($"/eventSessions/session[@eventId='{_eventId}']"))
+            foreach (XmlElement s in doc.SelectNodes($"/eventSessions/session[@eventId={XPathSafe.Lit(_eventId)}]"))
             {
                 var sessionId = s.GetAttribute("id");
 

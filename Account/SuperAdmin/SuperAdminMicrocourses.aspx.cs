@@ -180,7 +180,7 @@ namespace CyberApp_FIA.Account
             var doc = new XmlDocument();
             doc.Load(MicrocoursesXmlPath);
 
-            var course = doc.SelectSingleNode($"/microcourses/course[@id='{courseId}']") as XmlElement;
+            var course = doc.SelectSingleNode($"/microcourses/course[@id={XPathSafe.Lit(courseId)}]") as XmlElement;
             if (course == null)
             {
                 // Nothing to edit; reset editor
@@ -293,7 +293,7 @@ namespace CyberApp_FIA.Account
             var doc = new XmlDocument();
             doc.Load(MicrocoursesXmlPath);
 
-            var course = doc.SelectSingleNode($"/microcourses/course[@id='{courseId}']") as XmlElement;
+            var course = doc.SelectSingleNode($"/microcourses/course[@id={XPathSafe.Lit(courseId)}]") as XmlElement;
             if (course == null)
             {
                 FormMessage.Text = "<span style='color:#c21d1d'>Selected microcourse was not found.</span>";
@@ -446,7 +446,7 @@ namespace CyberApp_FIA.Account
             var doc = new XmlDocument();
             doc.Load(MicrocoursesXmlPath);
 
-            var course = doc.SelectSingleNode($"/microcourses/course[@id='{courseId}']") as XmlElement;
+            var course = doc.SelectSingleNode($"/microcourses/course[@id={XPathSafe.Lit(courseId)}]") as XmlElement;
             if (course == null)
             {
                 FormMessage.Text = "<span style='color:#c21d1d'>Selected microcourse was not found.</span>";

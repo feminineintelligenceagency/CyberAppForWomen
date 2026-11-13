@@ -115,7 +115,7 @@ namespace CyberApp_FIA.Account.Participant
             var doc = new XmlDocument();
             doc.Load(CompletionsXmlPath);
 
-            foreach (XmlElement c in doc.SelectNodes($"/completions/user[@id='{userId}']/course"))
+            foreach (XmlElement c in doc.SelectNodes($"/completions/user[@id={XPathSafe.Lit(userId)}]/course"))
             {
                 var id = c.GetAttribute("id");
                 if (!string.IsNullOrWhiteSpace(id))

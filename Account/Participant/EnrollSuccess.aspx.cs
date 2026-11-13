@@ -35,7 +35,7 @@ namespace CyberApp_FIA.Participant
             if (File.Exists(EventSessionsXmlPath))
             {
                 var doc = new System.Xml.XmlDocument(); doc.Load(EventSessionsXmlPath);
-                var s = (System.Xml.XmlElement)doc.SelectSingleNode($"/eventSessions/session[@eventId='{eventId}' and @id='{sessionId}']");
+                var s = (System.Xml.XmlElement)doc.SelectSingleNode($"/eventSessions/session[@eventId={XPathSafe.Lit(eventId)} and @id={XPathSafe.Lit(sessionId)}]");
                 if (s != null)
                 {
                     courseId = s["courseId"]?.InnerText ?? courseId;
@@ -53,7 +53,7 @@ namespace CyberApp_FIA.Participant
             if (!string.IsNullOrWhiteSpace(courseId) && File.Exists(MicrocoursesXmlPath))
             {
                 var doc = new System.Xml.XmlDocument(); doc.Load(MicrocoursesXmlPath);
-                var c = (System.Xml.XmlElement)doc.SelectSingleNode($"/microcourses/course[@id='{courseId}']");
+                var c = (System.Xml.XmlElement)doc.SelectSingleNode($"/microcourses/course[@id={XPathSafe.Lit(courseId)}]");
                 if (c != null) title = c["title"]?.InnerText ?? title;
             }
 

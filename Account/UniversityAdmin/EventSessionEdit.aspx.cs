@@ -95,7 +95,7 @@ namespace CyberApp_FIA.Account
 
             var doc = new XmlDocument();
             doc.Load(EventsXmlPath);
-            var ev = (XmlElement)doc.SelectSingleNode($"/events/event[@id='{_eventId}']");
+            var ev = (XmlElement)doc.SelectSingleNode($"/events/event[@id={XPathSafe.Lit(_eventId)}]");
             if (ev == null)
             {
                 Response.Redirect("~/Account/UniversityAdmin/EventManage.aspx?id=" + _eventId);
@@ -551,7 +551,7 @@ namespace CyberApp_FIA.Account
 
                 foreach (var pid in impactedIds)
                 {
-                    var userNode = usersDoc.SelectSingleNode($"/users/user[@id='{pid}']") as XmlElement;
+                    var userNode = usersDoc.SelectSingleNode($"/users/user[@id={XPathSafe.Lit(pid)}]") as XmlElement;
                     if (userNode == null) continue;
 
                     var notice = userNode["sessionDeletionNotice"] as XmlElement;
@@ -605,7 +605,7 @@ namespace CyberApp_FIA.Account
             var doc = new XmlDocument();
             doc.Load(MicrocoursesXmlPath);
 
-            var node = doc.SelectSingleNode($"/microcourses/course[@id='{courseId}']") as XmlElement;
+            var node = doc.SelectSingleNode($"/microcourses/course[@id={XPathSafe.Lit(courseId)}]") as XmlElement;
             if (node == null) return null;
 
             return node["title"]?.InnerText ?? null;
@@ -618,7 +618,7 @@ namespace CyberApp_FIA.Account
                 if (string.IsNullOrEmpty(userId) || !File.Exists(UsersXmlPath)) return "";
                 var doc = new XmlDocument();
                 doc.Load(UsersXmlPath);
-                var node = doc.SelectSingleNode($"/users/user[@id='{userId}']") as XmlElement;
+                var node = doc.SelectSingleNode($"/users/user[@id={XPathSafe.Lit(userId)}]") as XmlElement;
                 if (node == null) return "";
                 return node["email"]?.InnerText ?? "";
             }

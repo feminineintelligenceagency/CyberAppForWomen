@@ -227,7 +227,7 @@ namespace CyberApp_FIA.Helper
                     var doc = new XmlDocument();
                     doc.Load(UsersXmlPath);
 
-                    var node = doc.SelectSingleNode($"/users/user[@id='{userId}']") as XmlElement;
+                    var node = doc.SelectSingleNode($"/users/user[@id={XPathSafe.Lit(userId)}]") as XmlElement;
                     if (node != null)
                     {
                         firstName = (node["firstName"]?.InnerText ?? "").Trim();
@@ -737,7 +737,7 @@ namespace CyberApp_FIA.Helper
         private void AdmitParticipants(string eventId, string sessionId)
         {
             var doc = LoadEnrollmentsDoc();
-            var ses = doc.SelectSingleNode($"/enrollments/session[@eventId='{eventId}' and @id='{sessionId}']") as XmlElement;
+            var ses = doc.SelectSingleNode($"/enrollments/session[@eventId={XPathSafe.Lit(eventId)} and @id={XPathSafe.Lit(sessionId)}]") as XmlElement;
             if (ses == null)
                 return;
 
@@ -792,7 +792,7 @@ namespace CyberApp_FIA.Helper
                     doc.AppendChild(root);
                 }
 
-                var user = doc.SelectSingleNode($"/participantBadges/user[@id='{userId}']") as XmlElement;
+                var user = doc.SelectSingleNode($"/participantBadges/user[@id={XPathSafe.Lit(userId)}]") as XmlElement;
                 if (user == null)
                 {
                     user = doc.CreateElement("user");
@@ -803,10 +803,10 @@ namespace CyberApp_FIA.Helper
                 // Prevent duplicates: one badge per course (prefer courseId, fallback to title)
                 XmlElement existing = null;
                 if (!string.IsNullOrWhiteSpace(courseId))
-                    existing = user.SelectSingleNode($"badge[@courseId='{courseId}']") as XmlElement;
+                    existing = user.SelectSingleNode($"badge[@courseId={XPathSafe.Lit(courseId)}]") as XmlElement;
 
                 if (existing == null)
-                    existing = user.SelectSingleNode($"badge[@courseTitle='{titleKey}']") as XmlElement;
+                    existing = user.SelectSingleNode($"badge[@courseTitle={XPathSafe.Lit(titleKey)}]") as XmlElement;
 
                 if (existing != null)
                     return;
@@ -832,7 +832,7 @@ namespace CyberApp_FIA.Helper
                 var doc = new XmlDocument();
                 doc.Load(EventSessionsXmlPath);
 
-                var ses = doc.SelectSingleNode($"/eventSessions/session[@eventId='{eventId}' and @id='{sessionId}']") as XmlElement;
+                var ses = doc.SelectSingleNode($"/eventSessions/session[@eventId={XPathSafe.Lit(eventId)} and @id={XPathSafe.Lit(sessionId)}]") as XmlElement;
                 return ses?["courseId"]?.InnerText?.Trim();
             }
             catch
@@ -854,7 +854,7 @@ namespace CyberApp_FIA.Helper
                 var doc = new XmlDocument();
                 doc.Load(CompletionsXmlPath);
 
-                var user = (XmlElement)doc.SelectSingleNode($"/completions/user[@id='{userId}']");
+                var user = (XmlElement)doc.SelectSingleNode($"/completions/user[@id={XPathSafe.Lit(userId)}]");
                 if (user == null)
                 {
                     user = doc.CreateElement("user");
@@ -862,7 +862,7 @@ namespace CyberApp_FIA.Helper
                     doc.DocumentElement.AppendChild(user);
                 }
 
-                var existing = (XmlElement)user.SelectSingleNode($"course[@id='{courseId}']");
+                var existing = (XmlElement)user.SelectSingleNode($"course[@id={XPathSafe.Lit(courseId)}]");
                 if (existing == null)
                 {
                     var c = doc.CreateElement("course");
@@ -902,7 +902,7 @@ namespace CyberApp_FIA.Helper
                 var doc = new XmlDocument();
                 doc.Load(CompletionsXmlPath);
 
-                var courseNode = doc.SelectSingleNode($"/completions/user[@id='{userId}']/course[@id='{courseId}']") as XmlElement;
+                var courseNode = doc.SelectSingleNode($"/completions/user[@id={XPathSafe.Lit(userId)}]/course[@id={XPathSafe.Lit(courseId)}]") as XmlElement;
                 if (courseNode != null && courseNode.ParentNode != null)
                 {
                     var userNode = courseNode.ParentNode as XmlElement;
@@ -966,7 +966,7 @@ namespace CyberApp_FIA.Helper
                 var doc = new XmlDocument();
                 doc.Load(MissingParticipantSessionsXmlPath);
 
-                var node = doc.SelectSingleNode($"/missingParticipantSessions/missing[@id='{missingId}']") as XmlElement;
+                var node = doc.SelectSingleNode($"/missingParticipantSessions/missing[@id={XPathSafe.Lit(missingId)}]") as XmlElement;
                 if (node != null && node.ParentNode != null)
                 {
                     node.ParentNode.RemoveChild(node);
@@ -1015,10 +1015,10 @@ namespace CyberApp_FIA.Helper
             lock (ParticipantSessionActionLock)
             {
                 var enrollmentsDoc = LoadEnrollmentsDoc();
-                var ses = enrollmentsDoc.SelectSingleNode($"/enrollments/session[@eventId='{eventId}' and @id='{sessionId}']") as XmlElement;
+                var ses = enrollmentsDoc.SelectSingleNode($"/enrollments/session[@eventId={XPathSafe.Lit(eventId)} and @id={XPathSafe.Lit(sessionId)}]") as XmlElement;
                 if (ses == null) return false;
 
-                var enrolledNode = ses.SelectSingleNode($"enrolled/user[@id='{participantId}']") as XmlElement;
+                var enrolledNode = ses.SelectSingleNode($"enrolled/user[@id={XPathSafe.Lit(participantId)}]") as XmlElement;
                 if (enrolledNode == null) return false;
 
                 var snapshot = new ParticipantActionUndoSnapshot
@@ -1110,7 +1110,7 @@ namespace CyberApp_FIA.Helper
                 var doc = new XmlDocument();
                 doc.Load(MicrocoursesXmlPath);
 
-                var node = doc.SelectSingleNode($"/microcourses/course[@id='{courseId}']") as XmlElement;
+                var node = doc.SelectSingleNode($"/microcourses/course[@id={XPathSafe.Lit(courseId)}]") as XmlElement;
                 if (node == null)
                     return null;
 
@@ -1134,10 +1134,10 @@ namespace CyberApp_FIA.Helper
             lock (ParticipantSessionActionLock)
             {
                 var enrollmentsDoc = LoadEnrollmentsDoc();
-                var ses = enrollmentsDoc.SelectSingleNode($"/enrollments/session[@eventId='{eventId}' and @id='{sessionId}']") as XmlElement;
+                var ses = enrollmentsDoc.SelectSingleNode($"/enrollments/session[@eventId={XPathSafe.Lit(eventId)} and @id={XPathSafe.Lit(sessionId)}]") as XmlElement;
                 if (ses == null) return false;
 
-                var enrolledNode = ses.SelectSingleNode($"enrolled/user[@id='{participantId}']") as XmlElement;
+                var enrolledNode = ses.SelectSingleNode($"enrolled/user[@id={XPathSafe.Lit(participantId)}]") as XmlElement;
                 if (enrolledNode == null) return false;
 
                 var snapshot = new ParticipantActionUndoSnapshot
@@ -1197,7 +1197,7 @@ namespace CyberApp_FIA.Helper
                 actionType = snapshot.ActionType ?? string.Empty;
 
                 var enrollmentsDoc = LoadEnrollmentsDoc();
-                var currentSession = enrollmentsDoc.SelectSingleNode($"/enrollments/session[@eventId='{snapshot.EventId}' and @id='{snapshot.SessionId}']") as XmlElement;
+                var currentSession = enrollmentsDoc.SelectSingleNode($"/enrollments/session[@eventId={XPathSafe.Lit(snapshot.EventId)} and @id={XPathSafe.Lit(snapshot.SessionId)}]") as XmlElement;
                 if (currentSession == null)
                     return false;
 
@@ -1329,7 +1329,7 @@ namespace CyberApp_FIA.Helper
 
             XmlElement latest = null;
             DateTime latestTsUtc = default;
-            foreach (XmlElement ck in doc.SelectNodes($"/helperCheckins/checkin[@helperId='{helperId}' and @sessionId='{sessionId}']"))
+            foreach (XmlElement ck in doc.SelectNodes($"/helperCheckins/checkin[@helperId={XPathSafe.Lit(helperId)} and @sessionId={XPathSafe.Lit(sessionId)}]"))
             {
                 var tsRaw = ck.GetAttribute("tsUtc");
                 if (!DateTime.TryParse(tsRaw, null, DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal, out var tsUtc))
@@ -1383,7 +1383,7 @@ namespace CyberApp_FIA.Helper
             XmlElement latest = null;
             DateTime latestTsUtc = default;
 
-            foreach (XmlElement ck in doc.SelectNodes($"/helperCheckins/checkin[@helperId='{helperId}' and @sessionId='{sessionId}']"))
+            foreach (XmlElement ck in doc.SelectNodes($"/helperCheckins/checkin[@helperId={XPathSafe.Lit(helperId)} and @sessionId={XPathSafe.Lit(sessionId)}]"))
             {
                 var tsRaw = ck.GetAttribute("tsUtc");
                 if (!DateTime.TryParse(tsRaw, null, DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal, out var tsUtc))
@@ -1425,7 +1425,7 @@ namespace CyberApp_FIA.Helper
                 return result;
             }
 
-            var ses = enrollmentsDoc.SelectSingleNode($"/enrollments/session[@eventId='{eventId}' and @id='{sessionId}']") as XmlElement;
+            var ses = enrollmentsDoc.SelectSingleNode($"/enrollments/session[@eventId={XPathSafe.Lit(eventId)} and @id={XPathSafe.Lit(sessionId)}]") as XmlElement;
             if (ses == null)
             {
                 return result;
@@ -1505,7 +1505,7 @@ namespace CyberApp_FIA.Helper
             {
                 try
                 {
-                    var node = usersDoc.SelectSingleNode($"/users/user[@id='{userId}']") as XmlElement;
+                    var node = usersDoc.SelectSingleNode($"/users/user[@id={XPathSafe.Lit(userId)}]") as XmlElement;
                     if (node != null)
                     {
                         var firstNode = (node["firstName"]?.InnerText ?? "").Trim();
@@ -1669,11 +1669,11 @@ namespace CyberApp_FIA.Helper
                 return false;
 
             var doc = LoadHelperProgressDoc();
-            var helperNode = doc.SelectSingleNode($"//helper[@id='{helperId}']") as XmlElement;
+            var helperNode = doc.SelectSingleNode($"//helper[@id={XPathSafe.Lit(helperId)}]") as XmlElement;
             if (helperNode == null)
                 return false;
 
-            var courseNode = helperNode.SelectSingleNode($"course[@id='{courseId}']") as XmlElement;
+            var courseNode = helperNode.SelectSingleNode($"course[@id={XPathSafe.Lit(courseId)}]") as XmlElement;
             if (courseNode == null)
                 return false;
 
@@ -1720,11 +1720,11 @@ namespace CyberApp_FIA.Helper
                 return;
 
             var doc = LoadHelperProgressDoc();
-            var helperNode = doc.SelectSingleNode($"//helper[@id='{helperId}']") as XmlElement;
+            var helperNode = doc.SelectSingleNode($"//helper[@id={XPathSafe.Lit(helperId)}]") as XmlElement;
             if (helperNode == null)
                 return;
 
-            var courseNode = helperNode.SelectSingleNode($"course[@id='{courseId}']") as XmlElement;
+            var courseNode = helperNode.SelectSingleNode($"course[@id={XPathSafe.Lit(courseId)}]") as XmlElement;
             if (courseNode == null)
                 return;
 

@@ -209,7 +209,7 @@ namespace CyberApp_FIA.Helper
                 var doc = new XmlDocument();
                 doc.Load(HelperMessagesXmlPath);
 
-                foreach (XmlElement conv in doc.SelectNodes($"/helperMessages/conversation[@helperId='{helperId}']"))
+                foreach (XmlElement conv in doc.SelectNodes($"/helperMessages/conversation[@helperId={XPathSafe.Lit(helperId)}]"))
                 {
                     var pid = (conv.GetAttribute("participantId") ?? string.Empty).Trim();
                     if (string.IsNullOrWhiteSpace(pid))
@@ -351,7 +351,7 @@ namespace CyberApp_FIA.Helper
             doc.Load(HelperProgressXmlPath);
 
             // Search for helper regardless of root name.
-            var helperNode = doc.SelectSingleNode($"//helper[@id='{helperId}']") as XmlElement;
+            var helperNode = doc.SelectSingleNode($"//helper[@id={XPathSafe.Lit(helperId)}]") as XmlElement;
             if (helperNode == null)
             {
                 return;
@@ -478,13 +478,13 @@ namespace CyberApp_FIA.Helper
             }
 
             var doc = LoadHelperProgressDoc();
-            var helperNode = doc.SelectSingleNode($"//helper[@id='{helperId}']") as XmlElement;
+            var helperNode = doc.SelectSingleNode($"//helper[@id={XPathSafe.Lit(helperId)}]") as XmlElement;
             if (helperNode == null)
             {
                 return false;
             }
 
-            var courseNode = helperNode.SelectSingleNode($"course[@id='{courseId}']") as XmlElement;
+            var courseNode = helperNode.SelectSingleNode($"course[@id={XPathSafe.Lit(courseId)}]") as XmlElement;
             if (courseNode == null)
             {
                 return false;
@@ -599,14 +599,14 @@ namespace CyberApp_FIA.Helper
             }
 
             var doc = LoadHelperProgressDoc();
-            var helperNode = doc.SelectSingleNode($"//helper[@id='{helperId}']") as XmlElement;
+            var helperNode = doc.SelectSingleNode($"//helper[@id={XPathSafe.Lit(helperId)}]") as XmlElement;
             if (helperNode == null)
             {
                 RemoveHelpHistoryRow(snapshot);
                 return false;
             }
 
-            var courseNode = helperNode.SelectSingleNode($"course[@id='{courseId}']") as XmlElement;
+            var courseNode = helperNode.SelectSingleNode($"course[@id={XPathSafe.Lit(courseId)}]") as XmlElement;
             if (courseNode == null)
             {
                 RemoveHelpHistoryRow(snapshot);

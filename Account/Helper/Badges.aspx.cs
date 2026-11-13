@@ -136,7 +136,7 @@ namespace CyberApp_FIA.Helper
             var doc = new XmlDocument();
             doc.Load(HelperProgressXmlPath);
 
-            var helper = doc.SelectSingleNode($"/helperProgress/helper[@id='{helperId}']") as XmlElement;
+            var helper = doc.SelectSingleNode($"/helperProgress/helper[@id={XPathSafe.Lit(helperId)}]") as XmlElement;
             if (helper == null)
                 return rows;
 

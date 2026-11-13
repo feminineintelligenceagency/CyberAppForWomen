@@ -611,7 +611,7 @@ namespace CyberApp_FIA.Account
             doc.Load(HelperSessionReviewsXmlPath);
 
             var root = doc.DocumentElement;
-            var review = doc.SelectSingleNode($"/helperSessionReviews/review[@logId='{logId}']") as XmlElement;
+            var review = doc.SelectSingleNode($"/helperSessionReviews/review[@logId={XPathSafe.Lit(logId)}]") as XmlElement;
 
             if (review == null)
             {
@@ -795,7 +795,7 @@ namespace CyberApp_FIA.Account
             var doc = new XmlDocument();
             doc.Load(HelperProgressXmlPath);
 
-            var helperEl = (XmlElement)doc.SelectSingleNode($"/helperProgress/helper[@id='{helperId}']");
+            var helperEl = (XmlElement)doc.SelectSingleNode($"/helperProgress/helper[@id={XPathSafe.Lit(helperId)}]");
             if (helperEl == null)
             {
                 VerificationListPlaceholder.Visible = false;
@@ -1064,7 +1064,7 @@ namespace CyberApp_FIA.Account
             var doc = new XmlDocument();
             doc.Load(HelperProgressXmlPath);
 
-            foreach (XmlElement c in doc.SelectNodes($"/helperProgress/helper[@id='{helperId}']/course"))
+            foreach (XmlElement c in doc.SelectNodes($"/helperProgress/helper[@id={XPathSafe.Lit(helperId)}]/course"))
             {
                 var title = c["title"]?.InnerText ?? string.Empty;
                 if (string.Equals(title.Trim(), courseTitle.Trim(), StringComparison.OrdinalIgnoreCase))
@@ -1133,10 +1133,10 @@ namespace CyberApp_FIA.Account
             var doc = new XmlDocument();
             doc.Load(HelperProgressXmlPath);
 
-            var helperEl = (XmlElement)doc.SelectSingleNode($"/helperProgress/helper[@id='{helperId}']");
+            var helperEl = (XmlElement)doc.SelectSingleNode($"/helperProgress/helper[@id={XPathSafe.Lit(helperId)}]");
             if (helperEl == null) return;
 
-            var courseEl = (XmlElement)helperEl.SelectSingleNode($"./course[@id='{courseId}']");
+            var courseEl = (XmlElement)helperEl.SelectSingleNode($"./course[@id={XPathSafe.Lit(courseId)}]");
             if (courseEl == null) return;
 
             var statusEl = courseEl["verificationStatus"] ?? doc.CreateElement("verificationStatus");
@@ -1163,7 +1163,7 @@ namespace CyberApp_FIA.Account
             var progressDoc = new XmlDocument();
             progressDoc.Load(HelperProgressXmlPath);
 
-            var helperEl = progressDoc.SelectSingleNode($"/helperProgress/helper[@id='{helperId}']") as XmlElement;
+            var helperEl = progressDoc.SelectSingleNode($"/helperProgress/helper[@id={XPathSafe.Lit(helperId)}]") as XmlElement;
             if (helperEl == null)
             {
                 return;

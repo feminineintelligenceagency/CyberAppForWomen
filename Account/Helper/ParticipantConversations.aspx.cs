@@ -84,7 +84,7 @@ namespace CyberApp_FIA.Helper
                 var doc = new XmlDocument();
                 doc.Load(UsersXmlPath);
 
-                var user = (XmlElement)doc.SelectSingleNode($"/users/user[@id='{participantId}']");
+                var user = (XmlElement)doc.SelectSingleNode($"/users/user[@id={XPathSafe.Lit(participantId)}]");
                 if (user == null)
                     return "(participant)";
 
