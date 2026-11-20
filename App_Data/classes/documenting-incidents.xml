@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<class resourceOnly="true">
+  <title>Documenting Incidents</title>
+  <objective>Download a blank checklist to document an incident on your own device.</objective>
+  <close>
+    <resource url="~/Account/Participant/ClassViewer.aspx?class=documenting-incidents&amp;download=checklist">Download the incident documentation checklist (PDF)</resource>
+  </close>
+</class>

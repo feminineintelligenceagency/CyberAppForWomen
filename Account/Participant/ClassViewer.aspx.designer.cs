@@ -13,6 +13,8 @@ namespace CyberApp_FIA.Participant
 
     public partial class ClassViewer
     {
+        protected global::System.Web.UI.WebControls.Repeater ResourceOnlyRepeater;
+        protected global::System.Web.UI.WebControls.Panel ResourceOnlyPanel;
 
         /// <summary>
         /// form1 control.

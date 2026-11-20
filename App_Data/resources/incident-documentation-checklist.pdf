@@ -1,0 +1,78 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+6 0 obj
+<< /Length 2802 >>
+stream
+0.16 0.60 0.86 rg 0 769 612 23 re f
+0.94 0.42 0.66 rg 0 764 612 5 re f
+BT /F2 14 Tf 0.16 0.53 0.76 rg 48 735 Td (FIA) Tj ET
+BT /F2 21 Tf 0.11 0.11 0.11 rg 48 710 Td (Incident Documentation Checklist) Tj ET
+BT /F1 10 Tf 0.11 0.11 0.11 rg 48 689 Td (Use one copy per incident. Write down what you remember, as soon as you can.) Tj ET
+BT /F1 10 Tf 0.11 0.11 0.11 rg 48 674 Td (Save the completed record on your device or print it. Do not upload it to the platform.) Tj ET
+0.17 0.55 0.77 RG 1 w 48 642 9 9 re S
+BT /F2 12 Tf 0.11 0.11 0.11 rg 65 644 Td (Date and time) Tj ET
+BT /F1 9 Tf 0.11 0.11 0.11 rg 65 628 Td (When did it happen? Include a time zone or approximate time if helpful.) Tj ET
+0.68 0.72 0.76 RG 0.6 w 65 614 m 560 614 l S
+0.68 0.72 0.76 RG 0.6 w 65 595 m 560 595 l S
+0.17 0.55 0.77 RG 1 w 48 572 9 9 re S
+BT /F2 12 Tf 0.11 0.11 0.11 rg 65 574 Td (Location) Tj ET
+BT /F1 9 Tf 0.11 0.11 0.11 rg 65 558 Td (Where did it happen? For online incidents, name the app, website, or account.) Tj ET
+0.68 0.72 0.76 RG 0.6 w 65 544 m 560 544 l S
+0.68 0.72 0.76 RG 0.6 w 65 525 m 560 525 l S
+0.17 0.55 0.77 RG 1 w 48 502 9 9 re S
+BT /F2 12 Tf 0.11 0.11 0.11 rg 65 504 Td (What happened) Tj ET
+BT /F1 9 Tf 0.11 0.11 0.11 rg 65 488 Td (Describe what you observed, in order. Include exact words if you remember them.) Tj ET
+0.68 0.72 0.76 RG 0.6 w 65 474 m 560 474 l S
+0.68 0.72 0.76 RG 0.6 w 65 455 m 560 455 l S
+0.68 0.72 0.76 RG 0.6 w 65 436 m 560 436 l S
+0.68 0.72 0.76 RG 0.6 w 65 417 m 560 417 l S
+0.17 0.55 0.77 RG 1 w 48 394 9 9 re S
+BT /F2 12 Tf 0.11 0.11 0.11 rg 65 396 Td (Witnesses) Tj ET
+BT /F1 9 Tf 0.11 0.11 0.11 rg 65 380 Td (Who saw or heard it? Add contact details only if you choose.) Tj ET
+0.68 0.72 0.76 RG 0.6 w 65 366 m 560 366 l S
+0.68 0.72 0.76 RG 0.6 w 65 347 m 560 347 l S
+0.17 0.55 0.77 RG 1 w 48 324 9 9 re S
+BT /F2 12 Tf 0.11 0.11 0.11 rg 65 326 Td (Evidence) Tj ET
+BT /F1 9 Tf 0.11 0.11 0.11 rg 65 310 Td (List screenshots, messages, photos, or other evidence and where you saved them.) Tj ET
+0.68 0.72 0.76 RG 0.6 w 65 296 m 560 296 l S
+0.68 0.72 0.76 RG 0.6 w 65 277 m 560 277 l S
+0.68 0.72 0.76 RG 0.6 w 65 258 m 560 258 l S
+0.17 0.55 0.77 RG 1 w 48 235 9 9 re S
+BT /F2 12 Tf 0.11 0.11 0.11 rg 65 237 Td (Additional notes) Tj ET
+BT /F1 9 Tf 0.11 0.11 0.11 rg 65 221 Td (Add any other details or follow-up actions you want to remember.) Tj ET
+0.68 0.72 0.76 RG 0.6 w 65 207 m 560 207 l S
+0.68 0.72 0.76 RG 0.6 w 65 188 m 560 188 l S
+0.68 0.72 0.76 RG 0.6 w 65 169 m 560 169 l S
+0.68 0.72 0.76 RG 0.6 w 65 150 m 560 150 l S
+BT /F2 9 Tf 0.11 0.11 0.11 rg 48 85 Td (Keep your completed records and evidence somewhere private on your own device.) Tj ET
+BT /F1 9 Tf 0.11 0.11 0.11 rg 48 69 Td (The platform does not collect or store the incident details you write here.) Tj ET
+endstream
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000251 00000 n 
+0000000321 00000 n 
+0000000396 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+3249
+%%EOF
