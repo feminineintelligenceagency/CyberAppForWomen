@@ -133,6 +133,24 @@
       padding:14px;
       color:var(--muted);
     }
+    /* Certificate download (only on badges that have a certificate) */
+    .cert-row{ margin-top:10px; display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+    .btn-cert{
+      display:inline-flex; align-items:center; min-height:44px;
+      padding:8px 14px; border-radius:12px; text-decoration:none;
+      font-family:Poppins; font-weight:600; font-size:.88rem; color:#fff;
+      background:linear-gradient(135deg,var(--fia-blue),var(--fia-teal));
+    }
+    .btn-cert:hover{ box-shadow:0 0 0 5px var(--ring); }
+    .cert-code{ color:var(--muted); font-size:.8rem; font-family:Consolas, monospace; }
+
+    /* Test badge button (development only) */
+    .test-row{ display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin:0 0 6px; }
+    .btn-test{
+      border:2px dashed var(--fia-pink); background:#fff; color:var(--fia-pink);
+      border-radius:12px; padding:8px 14px; font-family:Poppins; font-weight:600; cursor:pointer;
+    }
+    .test-msg{ color:var(--muted); font-size:.9rem; }
   </style>
      <link href="~/Content/mobile.css" rel="stylesheet" /></head>
 
@@ -151,6 +169,21 @@
         </div>
       </div>
 
+      <!-- Development only: hidden on the live site (see code-behind) -->
+      <div class="test-row">
+        <asp:Button ID="BtnAddTestBadge" runat="server"
+          Text="Add test badge (with certificate)"
+          CssClass="btn-test"
+          OnClick="BtnAddTestBadge_Click"
+          CausesValidation="false" />
+        <asp:Button ID="BtnAddTestBadgeNoCert" runat="server"
+          Text="Add test badge (no certificate)"
+          CssClass="btn-test"
+          OnClick="BtnAddTestBadgeNoCert_Click"
+          CausesValidation="false" />
+        <asp:Label ID="TestBadgeMessage" runat="server" EnableViewState="false" CssClass="test-msg" />
+      </div>
+
       <asp:PlaceHolder ID="EmptyPH" runat="server" Visible="false">
         <div class="empty">
           You don’t have any badges yet. Complete a microcourse session to earn your first badge.
@@ -163,11 +196,20 @@
         </HeaderTemplate>
         <ItemTemplate>
           <div class="card">
-            <img class="badgeImg" src="<%# Eval("ImageUrl") %>" alt="" />
+            <asp:Image runat="server" CssClass="badgeImg" ImageUrl='<%# Eval("ImageUrl") %>' AlternateText=""
+              Visible='<%# !string.IsNullOrEmpty((string)Eval("ImageUrl")) %>' />
             <div class="meta">
               <p class="title"><%# Eval("Title") %></p>
               <p class="desc"><%# Eval("Description") %></p>
               <span class="earned">Earned • <%# Eval("EarnedOnLabel") %></span>
+
+              <%-- Only shown when this badge has a certificate --%>
+              <asp:PlaceHolder runat="server" Visible='<%# (bool)Eval("HasCertificate") %>'>
+                <div class="cert-row">
+                  <a class="btn-cert" href='<%# Eval("CertificateUrl") %>'>Download certificate (PDF)</a>
+                  <span class="cert-code">No. <%# Eval("CertificateCode") %></span>
+                </div>
+              </asp:PlaceHolder>
             </div>
           </div>
         </ItemTemplate>

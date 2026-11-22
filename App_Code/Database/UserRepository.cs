@@ -2,10 +2,15 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web.Security;
-
+using System.Xml.Linq;
+using PdfSharp.Drawing;
+using PdfSharp.Pdf;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace CyberApp_FIA.Services
 {
@@ -72,6 +77,27 @@ namespace CyberApp_FIA.Services
             public string Details { get; set; }
         }
 
+
+        /// <summary>One certificate.</summary>
+        public sealed class Certificate
+        {
+            public string VerificationCode { get; set; }
+            public string UserId { get; set; }
+            public string CourseId { get; set; }
+            public string CourseTitle { get; set; }
+            public string RecipientName { get; set; }
+            public DateTime IssuedAtUtc { get; set; }
+        }
+
+        /// <summary>One participant badge.</summary>
+        public sealed class Badge
+        {
+            public string UserId { get; set; }
+            public string CourseId { get; set; }
+            public string CourseTitle { get; set; }
+            public string ImagePath { get; set; }
+            public DateTime AwardedAtUtc { get; set; }
+        }
 
         /// <summary>Maps a SqlDataReader row to a LoginRecord.</summary>
         /// used for both GetLoginByEmail and GetLoginById. Returns null if the reader is empty.
@@ -553,7 +579,329 @@ namespace CyberApp_FIA.Services
             return s.Length <= max ? s : s.Substring(0, max);
         }
 
+        // certificate helpers
+        public static Certificate IssueCertificate(string userId, string courseId, string courseTitle)
+        {
+            if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("A user id is required.", nameof(userId));
+            if (string.IsNullOrWhiteSpace(courseId)) throw new ArgumentException("A course id is required.", nameof(courseId));
+            if (string.IsNullOrWhiteSpace(courseTitle)) throw new ArgumentException("A course title is required.", nameof(courseTitle));
 
+            var existing = GetCertificateForUserAndCourse(userId, courseId);
+            if (existing != null) return existing;
+
+            // A random code could already exist so retry a few times.
+            for (int attempt = 0; attempt < 5; attempt++)
+            {
+                var code = NewCertificateCode();
+                try
+                {
+                    var rows = Database.ExecuteNonQuery(@"
+                        INSERT INTO dbo.Certificates (VerificationCode, UserId, CourseId, CourseTitle, RecipientName)
+                        SELECT @Code, u.UserId, @CourseId, @Title, LTRIM(RTRIM(u.FirstName + N' ' + u.LastName))
+                          FROM dbo.Users u
+                         WHERE u.UserId = @UserId;",
+                        Database.Param("@Code", SqlDbType.Char, 18, code),
+                        UserIdParam(userId),
+                        Database.Param("@CourseId", SqlDbType.NVarChar, 100, courseId.Trim()),
+                        Database.Param("@Title", SqlDbType.NVarChar, 200, courseTitle.Trim()));
+
+                    if (rows == 0) return null;   // no such user
+                    return GetCertificateByCode(code);
+                }
+                catch (SqlException ex) when (Database.IsUniqueViolation(ex))
+                {
+                    // Either the code was taken or the same course was certified at the same moment by another request.
+                    existing = GetCertificateForUserAndCourse(userId, courseId);
+                    if (existing != null) return existing;
+                }
+            }
+
+            throw new InvalidOperationException("Couldn't create a unique certificate code.");
+        }
+
+        /// <summary>Finds a certificate by its verification code.</summary>
+        public static Certificate GetCertificateByCode(string verificationCode)
+        {
+            var code = NormalizeCertificateCode(verificationCode);
+            if (code == null) return null;
+
+            return Database.QuerySingle(CertificateSelectSql + " WHERE VerificationCode = @Code;", MapCertificate,
+                Database.Param("@Code", SqlDbType.Char, 18, code));
+        }
+
+        /// <summary>All of a user's certificates, newest first.</summary>
+        public static List<Certificate> GetCertificatesForUser(string userId)
+        {
+            return Database.Query(CertificateSelectSql + " WHERE UserId = @UserId ORDER BY IssuedAtUtc DESC;", MapCertificate,
+                UserIdParam(userId));
+        }
+
+        /// <summary>The user's certificate for one course, or null.</summary>
+        public static Certificate GetCertificateForUserAndCourse(string userId, string courseId)
+        {
+            return Database.QuerySingle(CertificateSelectSql + " WHERE UserId = @UserId AND CourseId = @CourseId;", MapCertificate,
+                UserIdParam(userId),
+                Database.Param("@CourseId", SqlDbType.NVarChar, 100, (courseId ?? "").Trim()));
+        }
+
+        // PDF Generation
+
+        /// <summary>Draws the certificate as a one-page landscape PDF and returns the file bytes.</summary>
+        public static byte[] CreateCertificatePdf(Certificate cert)
+        {
+            if (cert == null) throw new ArgumentNullException(nameof(cert));
+
+            using (var doc = new PdfDocument())
+            {
+                doc.Info.Title = "Certificate of Completion";
+                doc.Info.Author = "Feminine Intelligence Agency";
+
+                var page = doc.AddPage();
+                page.Size = PdfSharp.PageSize.Letter;
+                page.Orientation = PdfSharp.PageOrientation.Landscape;
+
+                using (var g = XGraphics.FromPdfPage(page))
+                {
+                    double w = page.Width.Point, h = page.Height.Point;
+
+                    var pink = XColor.FromArgb(240, 106, 169);
+                    var blue = XColor.FromArgb(42, 153, 219);
+                    var teal = XColor.FromArgb(69, 195, 179);
+                    var ink = XColor.FromArgb(28, 28, 28);
+                    var muted = XColor.FromArgb(107, 114, 128);
+
+                    // Border
+                    var frame = new XRect(24, 24, w - 48, h - 48);
+                    g.DrawRectangle(new XLinearGradientBrush(frame.TopLeft, frame.BottomRight, pink, blue), frame);
+                    g.DrawRectangle(XBrushes.White, new XRect(34, 34, w - 68, h - 68));
+                    g.DrawRectangle(new XPen(teal, 1), new XRect(44, 44, w - 88, h - 88));
+
+                    // FIA badge
+                    var badge = new XRect(w / 2 - 28, 62, 56, 56);
+                    g.DrawRoundedRectangle(new XLinearGradientBrush(badge.TopLeft, badge.BottomRight, pink, blue),
+                                           badge, new XSize(16, 16));
+                    g.DrawString("FIA", new XFont("Arial", 18, XFontStyle.Bold), XBrushes.White, badge, XStringFormats.Center);
+
+                    // Text
+                    var center = XStringFormats.TopCenter;
+                    g.DrawString("FEMININE INTELLIGENCE AGENCY", new XFont("Arial", 12, XFontStyle.Bold),
+                                 new XSolidBrush(muted), new XRect(0, 132, w, 20), center);
+
+                    g.DrawString("Certificate of Completion", new XFont("Georgia", 36, XFontStyle.Bold),
+                                 new XSolidBrush(ink), new XRect(0, 165, w, 50), center);
+
+                    g.DrawString("This certifies that", new XFont("Arial", 14, XFontStyle.Regular),
+                                 new XSolidBrush(muted), new XRect(0, 235, w, 20), center);
+
+                    g.DrawString(cert.RecipientName, new XFont("Georgia", 30, XFontStyle.Bold),
+                                 new XSolidBrush(blue), new XRect(0, 262, w, 44), center);
+                    g.DrawLine(new XPen(teal, 1.5), w / 2 - 190, 312, w / 2 + 190, 312);
+
+                    g.DrawString("has successfully completed", new XFont("Arial", 14, XFontStyle.Regular),
+                                 new XSolidBrush(muted), new XRect(0, 326, w, 20), center);
+
+                    g.DrawString(cert.CourseTitle, new XFont("Arial", 22, XFontStyle.Bold),
+                                 new XSolidBrush(ink), new XRect(60, 354, w - 120, 34), center);
+
+                    // Bottom row: date (left) and verification code (right)
+                    var small = new XFont("Arial", 11, XFontStyle.Regular);
+                    var smallBold = new XFont("Arial", 13, XFontStyle.Bold);
+
+                    g.DrawString("Date of completion", small, new XSolidBrush(muted), new XRect(90, h - 128, 240, 16), center);
+                    g.DrawString(cert.IssuedAtUtc.ToString("MMMM d, yyyy"), smallBold, new XSolidBrush(ink),
+                                 new XRect(90, h - 110, 240, 18), center);
+
+                    g.DrawString("Verification number", small, new XSolidBrush(muted), new XRect(w - 330, h - 128, 240, 16), center);
+                    g.DrawString(cert.VerificationCode, smallBold, new XSolidBrush(ink),
+                                 new XRect(w - 330, h - 110, 240, 18), center);
+
+                    g.DrawString("Employers can confirm this certificate with the verification number.",
+                                 new XFont("Arial", 9, XFontStyle.Italic), new XSolidBrush(muted),
+                                 new XRect(0, h - 76, w, 14), center);
+                }
+
+                using (var ms = new MemoryStream())
+                {
+                    doc.Save(ms, false);
+                    return ms.ToArray();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Bottom line of the certificate
+        /// </summary>
+        private static string CertificateVerifyLine()
+        {
+            var baseUrl = (System.Configuration.ConfigurationManager.AppSettings["Notifications:BaseUrl"] ?? "").Trim();
+            if (string.IsNullOrEmpty(baseUrl))
+                return "Employers can confirm this certificate with the verification number.";
+
+            return "Verify this certificate at " + baseUrl.TrimEnd('/') + "/VerifyCertificate.aspx";
+        }
+
+        /// <summary>Safe download filename, e.g. "FIA-Certificate-FIA-7KQ2-M9XD-P4TR.pdf".</summary>
+        public static string CertificatePdfFileName(Certificate cert) => "FIA-Certificate-" + cert.VerificationCode + ".pdf";
+
+        // certificate helpers 
+
+        private const string CertificateSelectSql = @"
+        SELECT VerificationCode, UserId, CourseId, CourseTitle, RecipientName, IssuedAtUtc
+          FROM dbo.Certificates";
+
+        // Only numbers and letters allowed
+        private const string CertificateCodeAlphabet = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+
+        /// <summary>Random code like FIA-7KQ2-M9XD-P4TR (12 random characters, about 10^17 possibilities).</summary>
+        private static string NewCertificateCode()
+        {
+            var chars = new char[12];
+            var bytes = new byte[1];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                for (int i = 0; i < chars.Length; i++)
+                {
+                    // Rejection sampling so every character is equally likely.
+                    int limit = 256 - (256 % CertificateCodeAlphabet.Length);
+                    do { rng.GetBytes(bytes); } while (bytes[0] >= limit);
+                    chars[i] = CertificateCodeAlphabet[bytes[0] % CertificateCodeAlphabet.Length];
+                }
+            }
+            var s = new string(chars);
+            return "FIA-" + s.Substring(0, 4) + "-" + s.Substring(4, 4) + "-" + s.Substring(8, 4);
+        }
+
+        /// <summary>
+        /// Accepts what a person might type ("fia 7kq2 m9xd p4tr", "7KQ2M9XDP4TR") and returns
+        /// FIA-7KQ2-M9XD-P4TR, or null if it can't be a valid code.
+        /// </summary>
+        public static string NormalizeCertificateCode(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input)) return null;
+            var raw = new System.Text.StringBuilder();
+            foreach (var c in input.ToUpperInvariant())
+            {
+                if (char.IsLetterOrDigit(c)) raw.Append(c);
+            }
+            var s = raw.ToString();
+            if (s.StartsWith("FIA")) s = s.Substring(3);
+            if (s.Length != 12) return null;
+            foreach (var c in s)
+            {
+                if (CertificateCodeAlphabet.IndexOf(c) < 0) return null;
+            }
+            return "FIA-" + s.Substring(0, 4) + "-" + s.Substring(4, 4) + "-" + s.Substring(8, 4);
+        }
+
+        private static Certificate MapCertificate(SqlDataReader r)
+        {
+            return new Certificate
+            {
+                VerificationCode = r.GetString(r.GetOrdinal("VerificationCode")),
+                UserId = r.GetString(r.GetOrdinal("UserId")),
+                CourseId = r.GetString(r.GetOrdinal("CourseId")),
+                CourseTitle = r.GetString(r.GetOrdinal("CourseTitle")),
+                RecipientName = r.GetString(r.GetOrdinal("RecipientName")),
+                IssuedAtUtc = DateTime.SpecifyKind(r.GetDateTime(r.GetOrdinal("IssuedAtUtc")), DateTimeKind.Utc)
+            };
+        }
+
+        //Badges
+
+        /// <summary>
+        /// Awards a badge for a course (does nothing if the user already has that badge).
+        /// With issueCertificate = true (the default), the course certificate is created in the
+        /// same transaction, unless the user already has one.
+        /// Returns true if a NEW badge was awarded; false if they already had it or the user doesn't exist.
+        /// </summary>
+        public static bool AwardBadge(string userId, string courseId, string courseTitle,
+                                      string imagePath = null, bool issueCertificate = true)
+        {
+            if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("A user id is required.", nameof(userId));
+            if (string.IsNullOrWhiteSpace(courseId)) throw new ArgumentException("A course id is required.", nameof(courseId));
+            if (string.IsNullOrWhiteSpace(courseTitle)) throw new ArgumentException("A course title is required.", nameof(courseTitle));
+
+            var cid = courseId.Trim();
+            var title = courseTitle.Trim();
+
+            // A random certificate code could (very rarely) already exist, or another request could
+            // award the same badge at the same moment. Both show up as unique-key errors: just retry,
+            // and the NOT EXISTS checks below then skip whatever was already saved.
+            for (int attempt = 0; attempt < 5; attempt++)
+            {
+                try
+                {
+                    return Database.InTransaction((conn, tx) =>
+                    {
+                        var badgeRows = Database.ExecuteNonQuery(conn, tx, @"
+                    INSERT INTO dbo.ParticipantBadges (UserId, CourseId, CourseTitle, ImagePath)
+                    SELECT u.UserId, @CourseId, @Title, @Image
+                      FROM dbo.Users u
+                     WHERE u.UserId = @UserId
+                       AND NOT EXISTS (SELECT 1 FROM dbo.ParticipantBadges b WITH (UPDLOCK, HOLDLOCK)
+                    WHERE b.UserId = @UserId AND b.CourseId = @CourseId);",
+                            UserIdParam(userId),
+                            Database.Param("@CourseId", SqlDbType.NVarChar, 100, cid),
+                            Database.Param("@Title", SqlDbType.NVarChar, 200, title),
+                            Database.Param("@Image", SqlDbType.NVarChar, 400, NullIfBlank(imagePath)));
+
+                        if (issueCertificate)
+                        {
+                            Database.ExecuteNonQuery(conn, tx, @"
+                    INSERT INTO dbo.Certificates (VerificationCode, UserId, CourseId, CourseTitle, RecipientName)
+                    SELECT @Code, u.UserId, @CourseId, @Title, LTRIM(RTRIM(u.FirstName + N' ' + u.LastName))
+                      FROM dbo.Users u
+                     WHERE u.UserId = @UserId
+                       AND NOT EXISTS (SELECT 1 FROM dbo.Certificates c WITH (UPDLOCK, HOLDLOCK)
+                    WHERE c.UserId = @UserId AND c.CourseId = @CourseId);",
+                                Database.Param("@Code", SqlDbType.Char, 18, NewCertificateCode()),
+                                UserIdParam(userId),
+                                Database.Param("@CourseId", SqlDbType.NVarChar, 100, cid),
+                                Database.Param("@Title", SqlDbType.NVarChar, 200, title));
+                        }
+
+                        return badgeRows == 1;
+                    });
+                }
+                catch (SqlException ex) when (Database.IsUniqueViolation(ex))
+                {
+                    // Retry (see comment above).
+                }
+            }
+
+            throw new InvalidOperationException("Couldn't save the badge.");
+        }
+
+        /// <summary>All of a participant's badges, newest first.</summary>
+        public static List<Badge> GetBadgesForUser(string userId)
+        {
+            return Database.Query(@"
+            SELECT UserId, CourseId, CourseTitle, ImagePath, AwardedAtUtc
+              FROM dbo.ParticipantBadges
+             WHERE UserId = @UserId
+             ORDER BY AwardedAtUtc DESC;", MapBadge, UserIdParam(userId));
+        }
+
+        /// <summary>True if the participant has the badge for this course.</summary>
+        public static bool HasBadge(string userId, string courseId)
+        {
+            return Convert.ToInt32(Database.ExecuteScalar(
+                "SELECT COUNT(*) FROM dbo.ParticipantBadges WHERE UserId = @UserId AND CourseId = @CourseId;",
+                UserIdParam(userId),
+                Database.Param("@CourseId", SqlDbType.NVarChar, 100, (courseId ?? "").Trim()))) > 0;
+        }
+
+        private static Badge MapBadge(SqlDataReader r)
+        {
+            return new Badge
+            {
+                UserId = r.GetString(r.GetOrdinal("UserId")),
+                CourseId = r.GetString(r.GetOrdinal("CourseId")),
+                CourseTitle = r.GetString(r.GetOrdinal("CourseTitle")),
+                ImagePath = Database.GetStringOrNull(r, "ImagePath"),
+                AwardedAtUtc = DateTime.SpecifyKind(r.GetDateTime(r.GetOrdinal("AwardedAtUtc")), DateTimeKind.Utc)
+            };
+        }
 
         /// <summary>
         /// These are helpers for the querys above. Parameterized queries are used to avoid SQL injection, and these helpers ensure consistent casing and trimming of inputs.

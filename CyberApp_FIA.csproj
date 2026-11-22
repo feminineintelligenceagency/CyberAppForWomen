@@ -54,6 +54,12 @@
     <Reference Include="Otp.NET, Version=1.4.1.0, Culture=neutral, PublicKeyToken=38a48df817e173a6, processorArchitecture=MSIL">
       <HintPath>packages\Otp.NET.1.4.1\lib\net461\Otp.NET.dll</HintPath>
     </Reference>
+    <Reference Include="PdfSharp, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>packages\PDFsharp.1.50.5147\lib\net20\PdfSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.Charting, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>packages\PDFsharp.1.50.5147\lib\net20\PdfSharp.Charting.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="QRCoder, Version=1.8.0.0, Culture=neutral, PublicKeyToken=c4ed5b9ae8358a28, processorArchitecture=MSIL">
@@ -157,6 +163,7 @@
     <Content Include="App_Data\users.xml" />
     <Content Include="Account\Participant\Home.aspx" />
     <Content Include="Account\Participant\SelectEvent.aspx" />
+    <Content Include="Account\CertificateDownload.aspx" />
     <Content Include="ContactUs.aspx" />
     <Content Include="Content\mobile.css" />
     <Content Include="Content\fia-brand.css" />
@@ -227,6 +234,7 @@
     <Content Include="Tier3HelperBadges\Tier3SMSettingsHelper.png" />
     <Content Include="Tier3HelperBadges\Tier3SpywareHelper.png" />
     <Content Include="Tier3HelperBadges\Tier3VPNHelper.png" />
+    <Content Include="VerifyCertificate.aspx" />
     <Content Include="VisualContent\DiamondShielf.jpeg" />
     <Content Include="VisualContent\gogglesOrange.jpeg" />
     <Content Include="VisualContent\kissing2.jpeg" />
@@ -242,6 +250,13 @@
     </Compile>
     <Compile Include="AboutUs.aspx.designer.cs">
       <DependentUpon>AboutUs.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Account\CertificateDownload.aspx.cs">
+      <DependentUpon>CertificateDownload.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Account\CertificateDownload.aspx.designer.cs">
+      <DependentUpon>CertificateDownload.aspx</DependentUpon>
     </Compile>
     <Compile Include="Account\ForgotPassword.aspx.cs">
       <DependentUpon>ForgotPassword.aspx</DependentUpon>
@@ -559,6 +574,13 @@
     </Compile>
     <Compile Include="Security\SessionHelper.cs" />
     <Compile Include="Services\ReminderService.cs" />
+    <Compile Include="VerifyCertificate.aspx.cs">
+      <DependentUpon>VerifyCertificate.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="VerifyCertificate.aspx.designer.cs">
+      <DependentUpon>VerifyCertificate.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Welcome_Page.aspx.cs">
       <DependentUpon>Welcome_Page.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
