@@ -50,6 +50,14 @@ namespace CyberApp_FIA.Account
                 return;
             }
 
+            // The event must belong to this admin's university. Checked on every request (including
+            // button clicks), so changing ?id= can't open another university's event.
+            if (!UniversityScope.AdminOwnsEvent(Session, EventsXmlPath, _eventId))
+            {
+                Response.Redirect("~/Account/UniversityAdmin/UniversityAdminHome.aspx");
+                return;
+            }
+
             if (!IsPostBack)
             {
                 LoadEventHeader();
@@ -398,6 +406,13 @@ namespace CyberApp_FIA.Account
             }
 
             var room = (Room.Text ?? "").Trim();
+            var roomProblem = UrlSafe.RoomProblem(room);
+            if (roomProblem != null)
+            {
+                ScheduleMessage.Text = "<span class='err'>" + Server.HtmlEncode(roomProblem) + "</span>";
+                BindHelpersList();
+                return;
+            }
             if (string.IsNullOrWhiteSpace(room))
             {
                 ScheduleMessage.Text = "<span class='err'>Room is required.</span>";

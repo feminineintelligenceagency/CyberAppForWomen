@@ -122,12 +122,27 @@ namespace CyberApp_FIA.Participant
             }
             QuizMessage.Text = "";
 
+            // Too many unsuccessful tries: ask them to wait (stops trial-and-error guessing of the answers).
+            var userId = Session["UserId"] as string;
+            int minutesLeft;
+            if (QuizAttemptLimiter.IsLimited(userId, _class.Slug, DateTime.UtcNow, out minutesLeft))
+            {
+                QuizMessage.Text = "You've had several unsuccessful attempts. Take another look at the class material, " +
+                                   "then try again in about " + minutesLeft + " minute" + (minutesLeft == 1 ? "" : "s") + ".";
+                return;
+            }
+
             var result = ClassService.Grade(_class, picked);
 
             // passed -> mark the course complete (counts toward progress and badges)
             if (result.Passed)
             {
-                ClassService.MarkCompleted(Server, Session["UserId"] as string, _class.CourseId);
+                QuizAttemptLimiter.Clear(userId, _class.Slug);
+                ClassService.MarkCompleted(Server, userId, _class.CourseId);
+            }
+            else
+            {
+                QuizAttemptLimiter.RecordFailure(userId, _class.Slug, DateTime.UtcNow);
             }
 
             ShowResult(result);

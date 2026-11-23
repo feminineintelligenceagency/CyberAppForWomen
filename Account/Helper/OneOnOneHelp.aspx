@@ -570,8 +570,8 @@
             <ItemTemplate>
               <div class="log-history-item">
                 <div class="log-history-main">
-                  <div class="log-history-title"><%# Eval("CourseTitle") %></div>
-                  <div class="log-history-meta"><%# Eval("WhenLabel") %></div>
+                  <div class="log-history-title"><%#: Eval("CourseTitle") %></div>
+                  <div class="log-history-meta"><%#: Eval("WhenLabel") %></div>
                 </div>
                 <asp:Button ID="UndoHelpItemButton"
                             runat="server"
@@ -618,7 +618,7 @@
             <div class="participant-card">
               <div class="participant-header">
                 <div class="participant-name">
-                  <%# Eval("FirstName") %>
+                  <%#: Eval("FirstName") %>
                 </div>
 
                 <asp:PlaceHolder ID="HasConvoPH" runat="server"
@@ -631,13 +631,13 @@
               </div>
 
               <div class="participant-email">
-                <%# Eval("Email") %>
+                <%#: Eval("Email") %>
               </div>
 
               <asp:PlaceHolder ID="UniversityPH" runat="server"
                                Visible='<%# !string.IsNullOrWhiteSpace(Convert.ToString(Eval("University"))) %>'>
                 <div class="participant-meta">
-                  <%# Eval("University") %>
+                  <%#: Eval("University") %>
                 </div>
               </asp:PlaceHolder>
 

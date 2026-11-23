@@ -53,12 +53,16 @@ namespace CyberApp_FIA.Services
             {
                 DeviceMonitor.CheckSignIn(context, userId, sessionId, GetDeviceType(context.Request.UserAgent), now);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.TraceWarning("New-device check failed: " + ex.Message);
+            }
 
             context.Response.Cookies.Add(new HttpCookie(CookieName, token)
             {
                 HttpOnly = true,
                 Secure = true,
+                SameSite = SameSiteMode.Lax,   // not sent on cross-site POSTs
                 Path = "/"
             });
         }
@@ -151,6 +155,7 @@ namespace CyberApp_FIA.Services
                 Expires = DateTime.UtcNow.AddYears(-1),
                 HttpOnly = true,
                 Secure = true,
+                SameSite = SameSiteMode.Lax,
                 Path = "/"
             });
         }

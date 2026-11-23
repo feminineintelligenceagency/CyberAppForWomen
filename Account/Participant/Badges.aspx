@@ -165,9 +165,9 @@
           <div class="card">
             <img class="badgeImg" src="<%# Eval("ImageUrl") %>" alt="" />
             <div class="meta">
-              <p class="title"><%# Eval("Title") %></p>
-              <p class="desc"><%# Eval("Description") %></p>
-              <span class="earned">Earned • <%# Eval("EarnedOnLabel") %></span>
+              <p class="title"><%#: Eval("Title") %></p>
+              <p class="desc"><%#: Eval("Description") %></p>
+              <span class="earned">Earned • <%#: Eval("EarnedOnLabel") %></span>
             </div>
           </div>
         </ItemTemplate>

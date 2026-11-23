@@ -75,6 +75,13 @@ namespace CyberApp_FIA.Account
                     return;
                 }
 
+                var passwordProblem = PasswordPolicy.Problem(password, email);
+                if (passwordProblem != null)
+                {
+                    ShowError(passwordProblem);
+                    return;
+                }
+
                 if (UserRepository.EmailExists(email))
                 {
                     ShowError("A user with this email already exists.");

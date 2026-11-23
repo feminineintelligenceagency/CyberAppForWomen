@@ -43,6 +43,18 @@ namespace CyberApp_FIA.Participant
                 return;
             }
 
+            // Only a participant who is enrolled (or on the waitlist) for this session may download it.
+            // Being signed in is not enough: otherwise any account could read any session's details.
+            var role = context.Session["Role"] as string;
+            if (!string.Equals(role, "Participant", StringComparison.OrdinalIgnoreCase) ||
+                !IsInSession(context, signedInUser, eventId, sessionId))
+            {
+                context.Response.StatusCode = 403;
+                context.Response.ContentType = "text/plain; charset=utf-8";
+                context.Response.Write("You are not enrolled in this session.");
+                return;
+            }
+
             // --- Load session details ---
             string courseId = null, helper = "", location = "Zoom";
             DateTime startUtc = DateTime.UtcNow, endUtc = DateTime.UtcNow.AddMinutes(30);
@@ -130,6 +142,26 @@ namespace CyberApp_FIA.Participant
             context.Response.ContentType = "text/calendar; charset=utf-8";
             context.Response.AddHeader("Content-Disposition", $"attachment; filename=\"{fileName}\"");
             context.Response.Write(sb.ToString());
+        }
+
+        /// <summary>True if the user is enrolled or waitlisted for this event session (ids are compared safely).</summary>
+        private static bool IsInSession(HttpContext ctx, string userId, string eventId, string sessionId)
+        {
+            var path = ctx.Server.MapPath("~/App_Data/enrollments.xml");
+            if (!File.Exists(path)) return false;
+
+            var doc = new XmlDocument();
+            doc.Load(path);
+
+            var session = doc.SelectSingleNode(
+                $"/enrollments/session[@eventId={XPathSafe.Lit(eventId)} and @id={XPathSafe.Lit(sessionId)}]") as XmlElement;
+            if (session == null) return false;
+
+            foreach (XmlElement person in session.SelectNodes("enrolled/user | waitlist/user"))
+            {
+                if (string.Equals(person.GetAttribute("id"), userId, StringComparison.OrdinalIgnoreCase)) return true;
+            }
+            return false;
         }
 
         private static string SafeFileName(string s)

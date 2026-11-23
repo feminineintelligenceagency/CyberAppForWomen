@@ -15,7 +15,7 @@ namespace CyberApp_FIA.Account.Security
     /// - The user scans it and enters a 6-digit code to prove the app is set up.
     /// - On success, saves the encrypted secret and hashed backup codes in one query to the database (UserRepository.EnableMfa) and shows the backup codes once.
     /// </summary>
-    public partial class Enable2FA : System.Web.UI.Page
+    public partial class Enable2FA : SecurePage
     {
         protected string QrImageUrl;
         protected string VerificationMessage;

@@ -638,22 +638,22 @@
           <ItemTemplate>
             <div class="session-card">
               <div class="session-title">
-                <%# Eval("CourseTitle") %>
+                <%#: Eval("CourseTitle") %>
               </div>
               <div class="session-meta">
                 <div class="session-row">
                   <span class="session-label">Day &amp; time</span>
-                  <span class="session-value"><%# Eval("DayTime") %></span>
+                  <span class="session-value"><%#: Eval("DayTime") %></span>
                 </div>
                 <div class="session-row">
                   <span class="session-label">Capacity</span>
-                  <span class="session-value"><%# Eval("Capacity") %></span>
+                  <span class="session-value"><%#: Eval("Capacity") %></span>
                 </div>
                 <div class="session-row">
                   <span class="session-label">Session Room</span>
                   <asp:PlaceHolder runat="server" Visible='<%# !string.IsNullOrWhiteSpace(Convert.ToString(Eval("Room"))) %>'>
                     <span class="session-value">
-                     <a class="join-room" href='<%# Eval("Room") %>' target="_blank" rel="noopener">Open Room</a>
+                     <a class="join-room" href='<%# CyberApp_FIA.UrlSafe.Href(Eval("Room")) %>' target="_blank" rel="noopener">Open Room</a>
                     </span>
                   </asp:PlaceHolder>
                   <asp:PlaceHolder runat="server" Visible='<%# string.IsNullOrWhiteSpace(Convert.ToString(Eval("Room"))) %>'>
@@ -669,7 +669,7 @@
                   <asp:Repeater ID="ParticipantsRepeater" runat="server" DataSource='<%# Eval("Participants") %>'>
                     <ItemTemplate>
                       <div class="session-participant-row">
-                        <span class="participant-name"><%# (Container.ItemIndex + 1) %>. <%# Eval("Name") %></span>
+                        <span class="participant-name"><%# (Container.ItemIndex + 1) %>. <%#: Eval("Name") %></span>
                         <span class="participant-status">
                           <%# (bool)Eval("Invited") ? "Invited" : "Needs Invite" %>
                         </span>
@@ -731,7 +731,7 @@
   <div class="session-undo-note">
     <div class="session-undo-note-text">
       <strong>Recent action:</strong>
-      <%# Eval("UndoActionText") %>
+      <%#: Eval("UndoActionText") %>
     </div>
 
     <asp:Button ID="UndoParticipantActionBtn"
@@ -745,7 +745,7 @@
 
               <asp:PlaceHolder ID="CheckinMetaPH" runat="server" Visible='<%# (bool)Eval("HasCheckin") %>'>
                 <div class="session-checkin-meta">
-                  Checked in at <%# Eval("CheckedInAtLabel") %>.
+                  Checked in at <%#: Eval("CheckedInAtLabel") %>.
                 </div>
               </asp:PlaceHolder>
             </div>

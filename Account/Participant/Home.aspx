@@ -1095,7 +1095,7 @@
                   <div class="security-device">
                     <span class="session-dot"></span>
                     <div>
-                      <div class="session-title"><%# Eval("TitleText") %></div>
+                      <div class="session-title"><%#: Eval("TitleText") %></div>
                       <div class="session-meta">Created <%# Eval("CreatedLocal", "{0:MMM d, yyyy • h:mm tt}") %> · Last activity <%# Eval("LastActiveLocal", "{0:MMM d, yyyy • h:mm tt}") %></div>
                     </div>
                   </div>
@@ -1103,7 +1103,7 @@
                     <asp:PlaceHolder runat="server" Visible='<%# !(bool)Eval("IsCurrent") %>'>
                       <asp:Button runat="server" CssClass="btn btn-ghost" Text="Sign out" CommandName="signout" CommandArgument='<%# Eval("SessionId") %>' />
                     </asp:PlaceHolder>
-                    <span class="session-chip"><%# Eval("CurrentLabel") %></span>
+                    <span class="session-chip"><%#: Eval("CurrentLabel") %></span>
                   </div>
                 </div>
               </ItemTemplate>
@@ -1258,7 +1258,7 @@
             <ItemTemplate>
               <div class="card">
                 <div class="card-sec">
-                  <h3 class="title"><%# Eval("microcourseTitle") %></h3>
+                  <h3 class="title"><%#: Eval("microcourseTitle") %></h3>
                 </div>
 
                 <div class="card-sec">
@@ -1266,7 +1266,7 @@
                     <span class="label">Helper</span>
                     <span class="chip helper-chip">
                       <span class="dot" style="background:var(--fia-teal);"></span>
-                      <strong><%# Eval("helperName") %></strong>
+                      <strong><%#: Eval("helperName") %></strong>
                     </span>
                   </div>
                 </div>
@@ -1276,7 +1276,7 @@
   <div class="card-sec">
     <div class="conflict-note">
       <strong>Session time updated.</strong>
-      <span><%# Eval("timeChangedMessage") %></span>
+      <span><%#: Eval("timeChangedMessage") %></span>
     </div>
   </div>
 </asp:PlaceHolder>
@@ -1291,7 +1291,7 @@
                     <span class="label">Room</span>
                     <asp:PlaceHolder runat="server" Visible='<%# (bool)Eval("canSeeRoom") %>'>
                       <span class="value">
-                        <a class="join-room" href='<%# Eval("room") %>' target="_blank" rel="noopener">Join Room</a>
+                        <a class="join-room" href='<%# CyberApp_FIA.UrlSafe.Href(Eval("room")) %>' target="_blank" rel="noopener">Join Room</a>
                       </span>
                     </asp:PlaceHolder>
                     <asp:PlaceHolder runat="server" Visible='<%# !(bool)Eval("canSeeRoom") %>'>
@@ -1305,7 +1305,7 @@
                 <div class="card-sec">
                   <div class="conflict-note">
                     <strong>Time conflict.</strong>
-                    <%# Eval("conflictMessage") %>
+                    <%#: Eval("conflictMessage") %>
                     <div class="conflict-actions">
                       <a class="btn btn-ghost" href="<%# Eval("replacementUrl") %>">See Replacements</a>
                     </div>
@@ -1341,7 +1341,7 @@
       <div class="queue-card-top">
         <span class="queue-card-title">Waitlist queue</span>
         <span class="queue-position-pill waitlist-position-pill">
-          Overall position <%# Eval("overallQueuePosition") %>
+          Overall position <%#: Eval("overallQueuePosition") %>
         </span>
       </div>
 
@@ -1362,12 +1362,12 @@
       <div class="queue-card-top">
         <span class="queue-card-title">Session queue</span>
         <span class="queue-position-pill">
-          Position <%# Eval("queuePosition") %> of <%# Eval("enrolledCount") %>
+          Position <%#: Eval("queuePosition") %> of <%#: Eval("enrolledCount") %>
         </span>
       </div>
 
       <div class="queue-card-text">
-        You are currently in position <strong><%# Eval("queuePosition") %></strong>
+        You are currently in position <strong><%#: Eval("queuePosition") %></strong>
         for this session. Please keep this page open around the session time
         and check here for your room link or Helper update when your session is ready.
         Since there are mutiple participants enrolled, your start time may be
@@ -1429,7 +1429,7 @@
 
               <!-- Title -->
               <div class="card-sec">
-                <h3 class="title"><%# Eval("microcourseTitle") %></h3>
+                <h3 class="title"><%#: Eval("microcourseTitle") %></h3>
               </div>
 
               <!-- Helper -->
@@ -1438,7 +1438,7 @@
                   <span class="label">Helper</span>
                   <span class="chip helper-chip">
                     <span class="dot" style="background:var(--fia-teal);"></span>
-                    <strong><%# Eval("helperName") %></strong>
+                    <strong><%#: Eval("helperName") %></strong>
                   </span>
                 </div>
               </div>
@@ -1448,7 +1448,7 @@
                 <div class="info-bar">
                   <span><strong>Seats</strong> remaining</span>
                   <span class='<%# (Convert.ToInt32(Eval("remainingSeats")) <= 3) ? "remain low" : "remain" %>'>
-                    <%# Eval("remainingSeats") %> (<%# Eval("capacity") %>)
+                    <%#: Eval("remainingSeats") %> (<%#: Eval("capacity") %>)
                   </span>
                 </div>
               </div>
@@ -1465,7 +1465,7 @@
                 <div class="card-sec">
                   <div class="blocked-note">
                     <strong>Prerequisite needed.</strong>
-                    You can't join this yet. First complete: <em><%# Eval("missingPrereqTitle") %></em>.
+                    You can't join this yet. First complete: <em><%#: Eval("missingPrereqTitle") %></em>.
                   </div>
                 </div>
               </asp:PlaceHolder>
@@ -1475,7 +1475,7 @@
                 <div class="card-sec">
                   <div class="conflict-note">
                     <strong>Time conflict.</strong>
-                    <%# Eval("conflictMessage") %>
+                    <%#: Eval("conflictMessage") %>
                     <div class="conflict-actions">
                       <a class="btn btn-ghost" href="<%# Eval("replacementUrl") %>">See Replacements</a>
                     </div>
@@ -1569,7 +1569,7 @@
               </HeaderTemplate>
               <ItemTemplate>
                 <a class="conversation-card" href='<%# Eval("ConversationUrl") %>'>
-                  <div class="conversation-title"><%# Eval("Topic") %></div>
+                  <div class="conversation-title"><%#: Eval("Topic") %></div>
                   <div class="conversation-meta">
                     Sent
                     <span><%# Eval("CreatedOnLocal", "{0:MMM d, yyyy • h:mm tt}") %></span>

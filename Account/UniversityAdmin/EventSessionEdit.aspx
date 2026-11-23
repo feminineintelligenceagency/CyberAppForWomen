@@ -494,10 +494,10 @@
           </HeaderTemplate>
           <ItemTemplate>
             <tr>
-              <td class="helper-name-cell"><%# Eval("Name") %></td>
+              <td class="helper-name-cell"><%#: Eval("Name") %></td>
               <td>
-                <span class="helper-status <%# Eval("CertCssClass") %>">
-                  <%# Eval("CertLabel") %>
+                <span class="helper-status <%#: Eval("CertCssClass") %>">
+                  <%#: Eval("CertLabel") %>
                 </span>
               </td>
               <td>
@@ -559,8 +559,8 @@
         </HeaderTemplate>
         <ItemTemplate>
           <tr>
-            <td><%# Eval("Email") %></td>
-            <td><%# Eval("Status") %></td>
+            <td><%#: Eval("Email") %></td>
+            <td><%#: Eval("Status") %></td>
             <td>
               <asp:PlaceHolder ID="ConflictPH" runat="server" Visible='<%# (bool)Eval("HasConflict") %>'>
                 <span class="helper-status status-overlap">Schedule conflict</span>

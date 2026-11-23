@@ -94,9 +94,10 @@ namespace CyberApp_FIA.Helper
             if (!Uri.TryCreate(rawUrl, UriKind.Absolute, out uri) ||
                 (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
             {
+                // Not a normal web link (for example javascript: or data:). Never turn it into a clickable link.
                 FrameWrapper.Visible = false;
-                ErrorLiteral.Text = "This resource link looks unusual. You can still try opening it in a separate tab.";
-                FallbackLink.NavigateUrl = rawUrl;
+                FallbackLink.Visible = false;
+                ErrorLiteral.Text = "This resource link isn't a valid web address (it must start with http:// or https://), so it can't be opened here.";
                 return;
             }
 

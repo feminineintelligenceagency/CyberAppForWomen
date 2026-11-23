@@ -196,7 +196,7 @@
           <div class="hr"></div>
           <asp:Repeater ID="RptDomains" runat="server">
             <ItemTemplate>
-              • <%# Eval("Key") %>: <strong><%# Eval("Value") %></strong><br />
+              • <%#: Eval("Key") %>: <strong><%#: Eval("Value") %></strong><br />
             </ItemTemplate>
           </asp:Repeater>
           <div class="hr"></div>

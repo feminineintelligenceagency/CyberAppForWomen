@@ -352,7 +352,7 @@ gap:18px;
           <asp:TextBox ID="NewHelperPassword" runat="server"
                        CssClass="fia-input"
                        TextMode="Password"
-                       Placeholder="Temporary password for first sign-in"></asp:TextBox>
+                       Placeholder="Temporary password (at least 12 characters)"></asp:TextBox>
           <asp:RequiredFieldValidator ID="RequiredFieldValidator4" runat="server"
             ControlToValidate="NewHelperPassword"
             ErrorMessage="Password is required."

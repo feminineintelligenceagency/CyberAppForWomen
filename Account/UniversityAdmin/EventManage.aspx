@@ -485,9 +485,9 @@
 
         <ItemTemplate>
           <tr>
-            <td><%# Eval("title") %></td>
-            <td><%# Eval("tags") %></td>
-            <td><%# Eval("duration") %></td>
+            <td><%#: Eval("title") %></td>
+            <td><%#: Eval("tags") %></td>
+            <td><%#: Eval("duration") %></td>
             <td>
               <asp:CheckBox ID="Enabled" runat="server" Checked='<%# (bool)Eval("enabled") %>' />
               <asp:HiddenField ID="CourseId" runat="server" Value='<%# Eval("id") %>' />
@@ -624,10 +624,10 @@
           </HeaderTemplate>
           <ItemTemplate>
             <tr>
-              <td class="helper-name-cell"><%# Eval("Name") %></td>
+              <td class="helper-name-cell"><%#: Eval("Name") %></td>
               <td>
-                <span class="helper-status <%# Eval("CertCssClass") %>">
-                  <%# Eval("CertLabel") %>
+                <span class="helper-status <%#: Eval("CertCssClass") %>">
+                  <%#: Eval("CertLabel") %>
                 </span>
               </td>
               <td>
@@ -688,12 +688,12 @@
 
         <ItemTemplate>
           <tr>
-            <td><%# Eval("courseTitle") %></td>
-            <td><%# Eval("startLocal") %></td>
-            <td><%# Eval("endLocal") %></td>
-            <td><%# Eval("room") %></td>
-            <td><%# Eval("helper") %></td>
-            <td><%# Eval("capacity") %></td>
+            <td><%#: Eval("courseTitle") %></td>
+            <td><%#: Eval("startLocal") %></td>
+            <td><%#: Eval("endLocal") %></td>
+            <td><%#: Eval("room") %></td>
+            <td><%#: Eval("helper") %></td>
+            <td><%#: Eval("capacity") %></td>
             <td>
               <a class="btn link small"
                  href='<%# ResolveUrl("~/Account/UniversityAdmin/EventSessionEdit.aspx") 

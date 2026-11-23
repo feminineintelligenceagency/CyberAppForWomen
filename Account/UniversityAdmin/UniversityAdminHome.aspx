@@ -384,11 +384,11 @@
       <ItemTemplate>
         <div class="fia-event-row">
           <div class="fia-event-main">
-            <span class="fia-event-name"><%# Eval("name") %></span>
+            <span class="fia-event-name"><%#: Eval("name") %></span>
             <span class="fia-event-meta">
-              <span><%# Eval("dateHuman") %></span>
+              <span><%#: Eval("dateHuman") %></span>
               <span class="fia-chip">
-                Status: <%# Eval("status") %>
+                Status: <%#: Eval("status") %>
               </span>
             </span>
           </div>
@@ -414,11 +414,11 @@
       <ItemTemplate>
         <div class="fia-event-row">
           <div class="fia-event-main">
-            <span class="fia-event-name"><%# Eval("name") %></span>
+            <span class="fia-event-name"><%#: Eval("name") %></span>
             <span class="fia-event-meta">
-              <span><%# Eval("dateHuman") %></span>
+              <span><%#: Eval("dateHuman") %></span>
               <span class="fia-chip">
-                Status: <%# Eval("status") %>
+                Status: <%#: Eval("status") %>
               </span>
             </span>
           </div>

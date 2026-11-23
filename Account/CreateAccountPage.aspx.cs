@@ -65,6 +65,14 @@ namespace CyberApp_FIA.Account
             {
                 // Quick check first so we don't spend Argon2 time on a duplicate.
                 // CreateUser below still catches a duplicate that slips in between.
+                // Password rules (length, not a well-known password, not the email address).
+                var passwordProblem = PasswordPolicy.Problem(Password.Text, emailLower);
+                if (passwordProblem != null)
+                {
+                    ShowError(passwordProblem);
+                    return;
+                }
+
                 if (UserRepository.EmailExists(emailLower))
                 {
                     ShowError("That email is already registered.");

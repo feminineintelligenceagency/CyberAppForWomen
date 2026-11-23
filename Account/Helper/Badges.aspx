@@ -251,12 +251,12 @@
           <div class="card">
             <img class="badge-img" src="<%# Eval("ImageUrl") %>" alt="" />
             <div class="meta">
-              <p class="title"><%# Eval("CourseTitle") %></p>
-              <p class="desc"><%# Eval("Description") %></p>
+              <p class="title"><%#: Eval("CourseTitle") %></p>
+              <p class="desc"><%#: Eval("Description") %></p>
 
               <div class="row">
-                <span class="pill pill-tier"><%# Eval("TierLabel") %></span>
-                <span class="pill pill-progress"><%# Eval("ProgressLabel") %></span>
+                <span class="pill pill-tier"><%#: Eval("TierLabel") %></span>
+                <span class="pill pill-progress"><%#: Eval("ProgressLabel") %></span>
               </div>
             </div>
           </div>

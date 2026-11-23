@@ -130,10 +130,10 @@
         <HeaderTemplate><div class="grid"></HeaderTemplate>
         <ItemTemplate>
           <div class="card">
-            <div class="title"><%# Eval("title") %></div>
+            <div class="title"><%#: Eval("title") %></div>
             <div class="meta">
               <%# Eval("startLocal","{0:ddd, MMM d • h:mm tt}") %> – <%# Eval("endLocal","{0:h:mm tt}") %><br />
-              Helper: <%# Eval("helper") %> • Seats remaining: <%# Eval("remaining") %> (<%# Eval("capacity") %>)
+              Helper: <%#: Eval("helper") %> • Seats remaining: <%#: Eval("remaining") %> (<%#: Eval("capacity") %>)
             </div>
             <div class="cta">
               <asp:Button ID="SwapToBtn" runat="server"
