@@ -12,16 +12,16 @@ using CyberApp_FIA.Services;
 namespace CyberApp_FIA.Participant
 {
     /// <summary>
-    /// "My Badges" page.
-    /// - Badges come from App_Data/participantBadges.xml (moves to the database later).
+    /// "My Badges" page
+    /// - Badges come from dbo.ParticipantBadges (UserRepository.GetBadgesForUser).
+    /// - Badge descriptions still come from App_Data/badgeDescriptions.xml (course content, not user data).
     /// - A badge that has a certificate (dbo.Certificates, same user + course) shows a
     ///   "Download certificate" button. Badges without one show no button.
-    /// - Test button (only while debugging, compilation debug="true"): adds a test badge
-    ///   with a certificate, so the download can be tried without finishing a course.
+    /// - Test buttons (only while debugging, compilation debug="true"): add a test badge
+    ///   with or without a certificate.
     /// </summary>
     public partial class Badges : SecurePage
     {
-        private string ParticipantBadgesXmlPath => Server.MapPath("~/App_Data/participantBadges.xml");
         private string BadgeDescriptionsXmlPath => Server.MapPath("~/App_Data/badgeDescriptions.xml");
 
         // Test badges (same course ids every time, so clicking twice doesn't add duplicates)
@@ -29,9 +29,6 @@ namespace CyberApp_FIA.Participant
         private const string TestCourseTitle = "Test Course (Certificate Demo)";
         private const string TestNoCertCourseId = "TEST-NO-CERTIFICATE-COURSE";
         private const string TestNoCertCourseTitle = "Test Course (No Certificate)";
-
-        // Guards writes to participantBadges.xml
-        private static readonly object BadgesFileLock = new object();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -49,8 +46,7 @@ namespace CyberApp_FIA.Participant
                 return;
             }
 
-            // The test button only exists on development builds (Web.config: compilation debug="true").
-            // It disappears on the live site, which is built with debug="false".
+            // The test buttons only exist on development builds (Web.config: compilation debug="true").
             BtnAddTestBadge.Visible = Context.IsDebuggingEnabled;
             BtnAddTestBadgeNoCert.Visible = Context.IsDebuggingEnabled;
 
@@ -60,40 +56,34 @@ namespace CyberApp_FIA.Participant
             }
         }
 
-        // ===================== Test badge =====================
+        //Test badges
 
-        /// <summary>Adds a test badge for the signed-in user and issues its certificate.</summary>
+        /// <summary>Adds a test badge for the signed-in user, with its certificate.</summary>
         protected void BtnAddTestBadge_Click(object sender, EventArgs e)
         {
-            if (!Context.IsDebuggingEnabled) return;   // never on the live site
-
-            var userId = Session["UserId"] as string;
-
-            try
-            {
-                AddBadgeToXml(userId, TestCourseId, TestCourseTitle, FirstExistingBadgeImage(userId));
-                UserRepository.IssueCertificate(userId, TestCourseId, TestCourseTitle);
-                TestBadgeMessage.Text = "Test badge added. Its certificate can be downloaded below.";
-            }
-            catch (Exception ex)
-            {
-                TestBadgeMessage.Text = "Couldn't add the test badge: " + Server.HtmlEncode(ex.Message);
-            }
-
-            BindBadges(userId);
+            AddTestBadge(TestCourseId, TestCourseTitle, withCertificate: true,
+                successMessage: "Test badge added. Its certificate can be downloaded below.");
         }
 
         /// <summary>Adds a test badge WITHOUT a certificate (it should show no download button).</summary>
         protected void BtnAddTestBadgeNoCert_Click(object sender, EventArgs e)
         {
+            AddTestBadge(TestNoCertCourseId, TestNoCertCourseTitle, withCertificate: false,
+                successMessage: "Test badge added without a certificate. It should have no download button.");
+        }
+
+        private void AddTestBadge(string courseId, string courseTitle, bool withCertificate, string successMessage)
+        {
             if (!Context.IsDebuggingEnabled) return;   // never on the live site
 
             var userId = Session["UserId"] as string;
 
             try
             {
-                AddBadgeToXml(userId, TestNoCertCourseId, TestNoCertCourseTitle, FirstExistingBadgeImage(userId));
-                TestBadgeMessage.Text = "Test badge added without a certificate. It should have no download button.";
+                UserRepository.AwardBadge(userId, courseId, courseTitle,
+                    imagePath: FirstExistingBadgeImage(userId),
+                    issueCertificate: withCertificate);
+                TestBadgeMessage.Text = successMessage;
             }
             catch (Exception ex)
             {
@@ -103,61 +93,22 @@ namespace CyberApp_FIA.Participant
             BindBadges(userId);
         }
 
-        /// <summary>
-        /// Adds a badge to participantBadges.xml (or does nothing if the user already has a
-        /// badge for that course). Creates the file / user element if needed.
-        /// </summary>
-        private void AddBadgeToXml(string userId, string courseId, string courseTitle, string image)
+        /// <summary>Reuses the image of one of the user's real badges for test badges, if any.</summary>
+        private static string FirstExistingBadgeImage(string userId)
         {
-            lock (BadgesFileLock)
+            try
             {
-                var doc = new XmlDocument();
-                if (File.Exists(ParticipantBadgesXmlPath))
-                    doc.Load(ParticipantBadgesXmlPath);
-                else
-                    doc.LoadXml("<?xml version='1.0' encoding='utf-8'?><participantBadges></participantBadges>");
-
-                var user = doc.SelectSingleNode($"/participantBadges/user[@id={XPathSafe.Lit(userId)}]") as XmlElement;
-                if (user == null)
-                {
-                    user = doc.CreateElement("user");
-                    user.SetAttribute("id", userId);
-                    doc.DocumentElement.AppendChild(user);
-                }
-
-                foreach (XmlElement existing in user.SelectNodes("badge"))
-                {
-                    if (string.Equals(existing.GetAttribute("courseId"), courseId, StringComparison.OrdinalIgnoreCase))
-                        return;   // already has this badge
-                }
-
-                var badge = doc.CreateElement("badge");
-                badge.SetAttribute("courseId", courseId);
-                badge.SetAttribute("courseTitle", courseTitle);
-                badge.SetAttribute("image", image ?? "");
-                badge.SetAttribute("awardedOnUtc", DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture));
-                user.AppendChild(badge);
-
-                doc.Save(ParticipantBadgesXmlPath);
+                return UserRepository.GetBadgesForUser(userId)
+                    .Select(b => b.ImagePath)
+                    .FirstOrDefault(p => !string.IsNullOrWhiteSpace(p)) ?? "";
+            }
+            catch (SqlException)
+            {
+                return "";
             }
         }
 
-        /// <summary>Reuses the image of one of the user's real badges for the test badge, if any.</summary>
-        private string FirstExistingBadgeImage(string userId)
-        {
-            if (!File.Exists(ParticipantBadgesXmlPath)) return "";
-            var doc = new XmlDocument();
-            doc.Load(ParticipantBadgesXmlPath);
-            var img = doc.SelectSingleNode(
-                $"/participantBadges/user[@id={XPathSafe.Lit(userId)}]/badge[@image!='']/@image");
-            if (img != null) return img.Value;
-
-            // Otherwise any badge image in the file
-            img = doc.SelectSingleNode("/participantBadges/user/badge[@image!='']/@image");
-            return img?.Value ?? "";
-        }
-
-        // ===================== Showing badges =====================
+        //Showing badges
 
         private void BindBadges(string userId)
         {
@@ -194,8 +145,11 @@ namespace CyberApp_FIA.Participant
             /// <summary>Download link for the certificate PDF (empty if there's no certificate).</summary>
             public string CertificateUrl { get; set; }
 
-            /// <summary>Verification number shown under the button (empty if there's no certificate).</summary>
+            /// <summary>Verification number shown next to the button (empty if there's no certificate).</summary>
             public string CertificateCode { get; set; }
+
+            /// <summary>Full link an employer can open to verify the certificate (empty if there's no certificate).</summary>
+            public string VerifyUrl { get; set; }
         }
 
         private Dictionary<string, string> LoadDescriptionsByCourseId()
@@ -220,77 +174,53 @@ namespace CyberApp_FIA.Participant
             return map;
         }
 
-        /// <summary>The user's certificates keyed by course id. Empty if the database can't be reached.</summary>
-        private Dictionary<string, UserRepository.Certificate> LoadCertificatesByCourseId(string userId)
-        {
-            var map = new Dictionary<string, UserRepository.Certificate>(StringComparer.OrdinalIgnoreCase);
-            try
-            {
-                foreach (var c in UserRepository.GetCertificatesForUser(userId))
-                    map[c.CourseId] = c;
-            }
-            catch (SqlException)
-            {
-                // Badges still show; download buttons just won't appear until the database is back.
-            }
-            return map;
-        }
-
         private List<BadgeRow> LoadEarnedBadges(string userId)
         {
             var rows = new List<BadgeRow>();
 
-            if (!File.Exists(ParticipantBadgesXmlPath))
+            List<UserRepository.Badge> badges;
+            Dictionary<string, UserRepository.Certificate> certsByCourseId;
+            try
+            {
+                badges = UserRepository.GetBadgesForUser(userId);
+                certsByCourseId = UserRepository.GetCertificatesForUser(userId)
+                    .GroupBy(c => c.CourseId, StringComparer.OrdinalIgnoreCase)
+                    .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+            }
+            catch (SqlException)
+            {
+                // Database briefly unreachable: show the empty state rather than an error page.
                 return rows;
+            }
 
             var descByCourseId = LoadDescriptionsByCourseId();
-            var certsByCourseId = LoadCertificatesByCourseId(userId);
 
-            var doc = new XmlDocument();
-            doc.Load(ParticipantBadgesXmlPath);
-
-            var user = doc.SelectSingleNode($"/participantBadges/user[@id={XPathSafe.Lit(userId)}]") as XmlElement;
-            if (user == null)
-                return rows;
-
-            foreach (XmlElement b in user.SelectNodes("badge"))
+            foreach (var b in badges)
             {
-                var courseId = (b.GetAttribute("courseId") ?? "").Trim();
-                var title = (b.GetAttribute("courseTitle") ?? "").Trim();
-                var image = (b.GetAttribute("image") ?? "").Trim();
-                var awardedRaw = (b.GetAttribute("awardedOnUtc") ?? "").Trim();
-
-                if (!DateTime.TryParse(awardedRaw, CultureInfo.InvariantCulture,
-                    DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal, out var awardedUtc))
-                {
-                    awardedUtc = DateTime.UtcNow;
-                }
-
                 // Description lookup by courseId (most stable)
                 string desc = null;
-                if (!string.IsNullOrWhiteSpace(courseId) && descByCourseId.TryGetValue(courseId, out var d))
+                if (descByCourseId.TryGetValue(b.CourseId, out var d))
                     desc = d;
 
                 if (string.IsNullOrWhiteSpace(desc))
                     desc = "Completed this FIA microcourse and earned the badge.";
 
-                var local = DateTime.SpecifyKind(awardedUtc, DateTimeKind.Utc).ToLocalTime();
+                var local = b.AwardedAtUtc.ToLocalTime();
 
                 // Certificate for this badge's course, if one was issued
-                UserRepository.Certificate cert = null;
-                if (!string.IsNullOrWhiteSpace(courseId))
-                    certsByCourseId.TryGetValue(courseId, out cert);
+                certsByCourseId.TryGetValue(b.CourseId, out var cert);
 
                 rows.Add(new BadgeRow
                 {
-                    ImageUrl = string.IsNullOrWhiteSpace(image) ? "" : ResolveUrl(image),
-                    Title = string.IsNullOrWhiteSpace(title) ? "Badge" : title,
+                    ImageUrl = string.IsNullOrWhiteSpace(b.ImagePath) ? "" : ResolveUrl(b.ImagePath),
+                    Title = string.IsNullOrWhiteSpace(b.CourseTitle) ? "Badge" : b.CourseTitle,
                     Description = desc,
-                    AwardedOnUtc = awardedUtc,
+                    AwardedOnUtc = b.AwardedAtUtc,
                     EarnedOnLabel = local.ToString("MMM d, yyyy", CultureInfo.CurrentCulture),
-                    CourseId = courseId,
+                    CourseId = b.CourseId,
                     HasCertificate = cert != null,
                     CertificateCode = cert?.VerificationCode ?? "",
+                    VerifyUrl = cert == null ? "" : VerifyLinkFor(cert.VerificationCode),
                     // Shared download page for participants and helpers (~/Account/CertificateDownload.aspx)
                     CertificateUrl = cert == null
                         ? ""
@@ -299,6 +229,17 @@ namespace CyberApp_FIA.Participant
             }
 
             return rows;
+        }
+
+        /// <summary>
+        /// Full verification link for sharing, ex. "https://site/VerifyCertificate.aspx?code=FIA-???"
+        /// Built from the current site address, so it's right locally and on the live site.
+        /// </summary>
+        private string VerifyLinkFor(string verificationCode)
+        {
+            return Request.Url.GetLeftPart(UriPartial.Authority)
+                   + ResolveUrl("~/VerifyCertificate.aspx")
+                   + "?code=" + HttpUtility.UrlEncode(verificationCode);
         }
     }
 }

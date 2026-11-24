@@ -142,6 +142,14 @@
       background:linear-gradient(135deg,var(--fia-blue),var(--fia-teal));
     }
     .btn-cert:hover{ box-shadow:0 0 0 5px var(--ring); }
+    .btn-copy{
+      display:inline-flex; align-items:center; min-height:44px;
+      padding:8px 14px; border-radius:12px; cursor:pointer;
+      font-family:Poppins, system-ui, sans-serif; font-weight:600; font-size:.88rem;
+      color:var(--fia-blue); background:#fff; border:2px solid var(--fia-blue);
+    }
+    .btn-copy:hover{ box-shadow:0 0 0 5px rgba(42,153,219,.25); }
+    .btn-copy.copied{ color:#0a5b4e; border-color:var(--fia-teal); }
     .cert-code{ color:var(--muted); font-size:.8rem; font-family:Consolas, monospace; }
 
     /* Test badge button (development only) */
@@ -207,6 +215,9 @@
               <asp:PlaceHolder runat="server" Visible='<%# (bool)Eval("HasCertificate") %>'>
                 <div class="cert-row">
                   <a class="btn-cert" href='<%# Eval("CertificateUrl") %>'>Download certificate (PDF)</a>
+                  <button type="button" class="btn-copy" data-url='<%# HttpUtility.HtmlAttributeEncode((string)Eval("VerifyUrl")) %>'>
+                    Copy verification link
+                  </button>
                   <span class="cert-code">No. <%# Eval("CertificateCode") %></span>
                 </div>
               </asp:PlaceHolder>
@@ -219,6 +230,33 @@
       </asp:Repeater>
 
     </div>
+    <script>
+      // "Copy verification link": copies the employer link for that certificate.
+      document.addEventListener('click', function (e) {
+        var btn = e.target.closest ? e.target.closest('.btn-copy') : null;
+        if (!btn) return;
+        var url = btn.getAttribute('data-url');
+        var label = btn.textContent;
+
+        function done(ok) {
+          btn.textContent = ok ? 'Link copied!' : 'Copy failed: ' + url;
+          if (ok) btn.classList.add('copied');
+          setTimeout(function () { btn.textContent = label; btn.classList.remove('copied'); }, 2500);
+        }
+
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(url).then(function () { done(true); }, function () { done(false); });
+        } else {
+          // Older browsers: copy through a hidden text box
+          var t = document.createElement('textarea');
+          t.value = url; t.style.position = 'fixed'; t.style.opacity = '0';
+          document.body.appendChild(t); t.select();
+          var ok = false; try { ok = document.execCommand('copy'); } catch (err) {}
+          document.body.removeChild(t);
+          done(ok);
+        }
+      });
+    </script>
   </form>
 </body>
 </html>

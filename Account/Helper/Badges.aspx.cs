@@ -59,7 +59,7 @@ namespace CyberApp_FIA.Helper
             { "0c1e0fd46a0244ad8176b65ea44b05f1", "MaliciousAppsHelper.png" },
             { "2415376ae813427bb8fb61f2652fb6d3", "IdentityHelper.png" },
             { "97d38c5f9c0246fd9d3ba79014ab56cc", "HomeNetHelper.png" },
-            { TestCourseId, TestBadgeImage },        // test badges
+            { TestCourseId, TestBadgeImage },        // development test badges
             { TestNoCertCourseId, TestBadgeImage }
         };
 
@@ -89,7 +89,7 @@ namespace CyberApp_FIA.Helper
             }
         }
 
-        //Certificates
+        // ===================== Certificates =====================
 
         /// <summary>
         /// Certificate key for a helper badge: one certificate per course per tier,
@@ -100,7 +100,7 @@ namespace CyberApp_FIA.Helper
         /// <summary>Title printed on a helper certificate, e.g. "Helper Tier 2: Phishing Basics".</summary>
         public static string HelperCertificateTitle(string courseTitle, int tier) => "Helper Tier " + tier + ": " + courseTitle;
 
-        //Test badge
+        // ===================== Test badge =====================
 
         /// <summary>Adds a Tier1 test badge for the signed-in helper and issues its certificate.</summary>
         protected void BtnAddTestBadge_Click(object sender, EventArgs e)
@@ -209,6 +209,9 @@ namespace CyberApp_FIA.Helper
 
             /// <summary>Verification number (empty if there's no certificate).</summary>
             public string CertificateCode { get; set; }
+
+            /// <summary>Full link an employer can open to verify the certificate (empty if there's no certificate).</summary>
+            public string VerifyUrl { get; set; }
         }
 
         private sealed class CourseDescriptionInfo
@@ -364,6 +367,7 @@ namespace CyberApp_FIA.Helper
                     TierSortOrder = tierSortOrder,
                     HasCertificate = cert != null,
                     CertificateCode = cert?.VerificationCode ?? "",
+                    VerifyUrl = cert == null ? "" : VerifyLinkFor(cert.VerificationCode),
                     CertificateUrl = cert == null
                         ? ""
                         : ResolveUrl("~/Account/CertificateDownload.aspx?code="
@@ -383,6 +387,17 @@ namespace CyberApp_FIA.Helper
             return int.TryParse(raw.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out value)
                 ? value
                 : 0;
+        }
+
+        /// <summary>
+        /// Full verification link for sharing, e.g. https://site/VerifyCertificate.aspx?code=FIA-...
+        /// Built from the current site address, so it's right locally and on the live site.
+        /// </summary>
+        private string VerifyLinkFor(string verificationCode)
+        {
+            return Request.Url.GetLeftPart(UriPartial.Authority)
+                   + ResolveUrl("~/VerifyCertificate.aspx")
+                   + "?code=" + HttpUtility.UrlEncode(verificationCode);
         }
     }
 }
