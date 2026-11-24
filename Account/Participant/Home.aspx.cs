@@ -754,6 +754,18 @@ namespace CyberApp_FIA.Participant
                 visibleCourseIds,
                 upcomingCourseIds);
 
+            // Sprint 5: self-paced classes can be started right away (no live session needed)
+            var classUrls = RecommendationService.LoadClassUrls(Server);
+            foreach (var row in rows)
+            {
+                if (classUrls.TryGetValue(row.CourseId, out var url))
+                {
+                    row.ClassUrl = ResolveUrl(url);
+                    row.AvailabilityText = "Self-paced class, start anytime";
+                    row.CanSignUp = true;
+                }
+            }
+
             RecommendedCoursesPanel.Visible = true;
             RecommendedCoursesEmpty.Visible = rows.Count == 0;
             RecommendedCoursesRepeater.DataSource = rows;
@@ -885,6 +897,9 @@ namespace CyberApp_FIA.Participant
             TryAddRecommendationAlias(map, catalog, "Managing Your Digital Footprint", "Managing Digital Footprint");
             TryAddRecommendationAlias(map, catalog, "Identifying Hidden Surveillance Devices (Electronic Scanning)", "Identifying Hidden-Surveilance Devices");
 
+            // Sprint 5: lets the "Account Access" check find the Who Else Is Logged In? course
+            TryAddRecommendationAlias(map, catalog, "Account Access", RecommendationService.AccountAccessCourseTitle);
+
             return map;
         }
 
@@ -983,6 +998,13 @@ namespace CyberApp_FIA.Participant
                 .OrderByDescending(kv => kv.Value)
                 .ThenBy(kv => kv.Key)
                 .ToList();
+
+            // Sprint 5: a high 2FA, password, or spyware gap also recommends the account-access class
+            if (RecommendationService.ShouldRecommendAccountAccess(latest.DomainScores, out var accountGap))
+            {
+                orderedDomains.Add(new KeyValuePair<string, double>("Account Access", accountGap));
+                orderedDomains = orderedDomains.OrderByDescending(kv => kv.Value).ThenBy(kv => kv.Key).ToList();
+            }
 
             int sortOrder = 0;
 
@@ -1357,6 +1379,7 @@ namespace CyberApp_FIA.Participant
             public string GapText { get; set; }
             public bool CanSignUp { get; set; }
             public bool HasMatchingSessions { get; set; }
+            public string ClassUrl { get; set; }   // Sprint 5: link if the course is a self-paced class
         }
 
         private bool SessionOverlapsUser(string eventId, string userId, string sessionId, out Interval conflictWith)

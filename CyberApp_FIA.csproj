@@ -309,6 +309,7 @@
     </Compile>
     <Compile Include="App_Code\Services\AccountDeletionService.cs" />
     <Compile Include="App_Code\Database\Database.cs" />
+    <Compile Include="App_Code\Services\RecommendationService.cs" />
     <Compile Include="PrivacyDisclosure.aspx.cs">
       <DependentUpon>PrivacyDisclosure.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

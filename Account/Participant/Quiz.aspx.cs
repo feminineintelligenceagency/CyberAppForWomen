@@ -180,6 +180,12 @@ namespace CyberApp_FIA.Account.Participant
 
             BlWins.DataSource = result.QuickWins;
             BlWins.DataBind();
+
+            // Sprint 5: show the top 3 recommended courses right after the quiz
+            var recs = RecommendationService.GetRecommendations(Server, UserKey, result.DomainScores, 3);
+            RptRecommendations.DataSource = recs;
+            RptRecommendations.DataBind();
+            RecommendationsHolder.Visible = recs.Count > 0;
         }
 
         protected void BtnSaveShare_Click(object sender, EventArgs e)

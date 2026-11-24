@@ -206,6 +206,23 @@
           <div style="margin-top:8px"><strong>Quick wins</strong>
             <asp:BulletedList ID="BlWins" runat="server" CssClass="list"></asp:BulletedList>
           </div>
+
+                    <%-- Sprint 5: recommended courses right after the quiz --%>
+          <asp:PlaceHolder ID="RecommendationsHolder" runat="server" Visible="false">
+            <div class="hr"></div>
+            <div><strong>Recommended for you</strong></div>
+            <asp:Repeater ID="RptRecommendations" runat="server">
+              <ItemTemplate>
+                <div style="margin-top:10px">
+                  <strong><%#: Eval("Title") %></strong><br />
+                  <span style="color:var(--muted)"><%#: Eval("Reason") %></span><br />
+                  <a href='<%# ResolveUrl((bool)Eval("IsClass") ? (string)Eval("ClassUrl") : "~/Account/Participant/Home.aspx") %>'>
+                    <%# (bool)Eval("IsClass") ? "Start class" : "Find a session on your home page" %>
+                  </a>
+                </div>
+              </ItemTemplate>
+            </asp:Repeater>
+          </asp:PlaceHolder>
         </div>
 
         <div class="summary">

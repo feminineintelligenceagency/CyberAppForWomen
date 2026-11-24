@@ -1193,7 +1193,13 @@
   </div>
 </asp:PlaceHolder>
 
-<asp:PlaceHolder runat="server" Visible='<%# !Convert.ToBoolean(Eval("HasMatchingSessions")) %>'>
+<asp:PlaceHolder runat="server" Visible='<%# !string.IsNullOrEmpty((string)Eval("ClassUrl")) %>'>
+  <div class="card-sec">
+    <a class="btn btn-primary" href='<%# Eval("ClassUrl") %>'>Start class</a>
+  </div>
+</asp:PlaceHolder>
+
+<asp:PlaceHolder runat="server" Visible='<%# !Convert.ToBoolean(Eval("HasMatchingSessions")) && string.IsNullOrEmpty((string)Eval("ClassUrl")) %>'>
   <div class="card-sec">
     <div class="subtle">No matching session card is currently posted for this event.</div>
   </div>
