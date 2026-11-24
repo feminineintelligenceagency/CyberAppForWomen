@@ -677,6 +677,103 @@
 		</D>
 	</Question>
 
+	<!-- Story #18: workplace retaliation, boundaries, and documentation -->
+	<Question id="q41">
+		<Text>In the past year, after you said no to someone at work (a date, a favor, extra hours), did anything change for you, like fewer shifts, worse schedules, or being left out?</Text>
+		<A>
+			Yes, and it started soon after I said no<Map module="retaliation" weight="4"/><Map module="documentation" weight="2"/>
+		</A>
+		<B>
+			Maybe, but I am not sure if it is connected<Map module="retaliation" weight="3"/><Map module="documentation" weight="2"/>
+		</B>
+		<C>
+			No<Map module="retaliation" weight="-1"/>
+		</C>
+		<D>
+			I prefer not to say<Map module="retaliation" weight="0"/>
+		</D>
+	</Question>
+
+	<Question id="q42">
+		<Text>Has a manager or coworker treated you worse after you reported a problem or set a limit with them?</Text>
+		<A>
+			Yes<Map module="retaliation" weight="3"/><Map module="documentation" weight="2"/>
+		</A>
+		<B>
+			It might have happened once or twice<Map module="retaliation" weight="2"/><Map module="documentation" weight="1"/>
+		</B>
+		<C>
+			No<Map module="retaliation" weight="-1"/>
+		</C>
+		<D>
+			I prefer not to say<Map module="retaliation" weight="0"/>
+		</D>
+	</Question>
+
+	<Question id="q43">
+		<Text>Has a coworker or manager followed or messaged you on your personal social media when you did not want them to?</Text>
+		<A>
+			Yes, and I did not feel I could say no<Map module="boundaries" weight="4"/><Map module="documentation" weight="1"/><Map module="social_privacy" weight="1"/>
+		</A>
+		<B>
+			Yes, but I handled it the way I wanted<Map module="boundaries" weight="1"/>
+		</B>
+		<C>
+			No<Map module="boundaries" weight="-1"/>
+		</C>
+		<D>
+			I prefer not to say<Map module="boundaries" weight="0"/>
+		</D>
+	</Question>
+
+	<Question id="q44">
+		<Text>In work group chats, how often are comments about your looks, body, or personal life brushed off as "just jokes"?</Text>
+		<A>
+			Often<Map module="boundaries" weight="4"/><Map module="documentation" weight="2"/>
+		</A>
+		<B>
+			Sometimes<Map module="boundaries" weight="2"/><Map module="documentation" weight="1"/>
+		</B>
+		<C>
+			Rarely or never<Map module="boundaries" weight="-1"/>
+		</C>
+		<D>
+			I am not in work group chats or prefer not to say<Map module="boundaries" weight="0"/>
+		</D>
+	</Question>
+
+	<Question id="q45">
+		<Text>If a message in a work chat crossed a line for you, how confident are you that you would know what to say?</Text>
+		<A>
+			Not confident, I would probably stay quiet<Map module="boundaries" weight="3"/>
+		</A>
+		<B>
+			Somewhat confident<Map module="boundaries" weight="1"/>
+		</B>
+		<C>
+			Very confident<Map module="boundaries" weight="-2"/>
+		</C>
+		<D>
+			I prefer not to say<Map module="boundaries" weight="0"/>
+		</D>
+	</Question>
+
+	<Question id="q46">
+		<Text>If something at work made you uncomfortable, would you keep a record of it (dates, screenshots, who was there)?</Text>
+		<A>
+			No, I would not know what to save<Map module="documentation" weight="4"/>
+		</A>
+		<B>
+			Sometimes, but it would be scattered<Map module="documentation" weight="2"/>
+		</B>
+		<C>
+			Yes, dated notes and screenshots saved somewhere private<Map module="documentation" weight="-2"/>
+		</C>
+		<D>
+			I prefer not to say<Map module="documentation" weight="0"/>
+		</D>
+	</Question>
+
 </QuizQuestions>
 
 

@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Sprint 5 (Story #18, Task #123): "Documenting Incidents" class, built from the sponsor's class-building template.
+  courseId must match this course's id in microcourses.xml.
+  Recommended on the participant Home page when the "documentation" score is high. Retaliation and
+  boundary questions in the risk quiz also add to that score, so it comes up alongside those classes.
+-->
+<class courseId="99a6567f5ab846a78535e5894fed7bcd" passScore="80">
+	<title>Documenting Incidents</title>
+	<objective>Write a dated incident note, save screenshots that show who, what, and when, and keep your records somewhere safe that work can't take away.</objective>
+	<northStar>When HR asked "when did this start?", I opened my notes and read off the dates. It took 5 minutes a week to keep them. Let me show you how.</northStar>
+
+	<!-- Template section 1: the hook (real-world workplace example) -->
+	<block minutes="0-5" name="The Hook: &quot;Do You Have Proof?&quot;">
+		<text>After months of comments in the group chat and losing her weekend shifts, April finally went to HR. The first questions were: "When did this start? Who else saw it? Do you have the messages?"</text>
+		<text>She remembered a lot, but not the dates. Some messages had been deleted by the sender. Her old schedules were gone from the app.</text>
+		<text>April's story was true either way. But a simple record kept as things happened would have made it much easier for others to see the pattern and act on it.</text>
+		<question>If you had to explain something that happened at work three months ago, what details would you be missing?</question>
+	</block>
+
+	<!-- Template section 3: the one thing -->
+	<block minutes="5-10" name="The One Thing">
+		<text>Today you'll learn to write a short incident note and save proof the same day something happens.</text>
+		<text>This matters because memories fade, messages get deleted, and schedules change. A dated record keeps the facts safe and makes it harder for anyone to say "that never happened."</text>
+	</block>
+
+	<!-- Core concept -->
+	<block minutes="10-20" name="Core Concept: Who, What, When, Where, Witnesses">
+		<text>A good incident note answers: When did it happen (date and time)? Where (place, chat, or app)? Who did it? What exactly was said or done, in their words if you can? Who else saw or heard it? What happened after?</text>
+		<text>Write facts, not guesses. "He said 'nice outfit, who's it for?' in the team chat at 8:14pm on March 3" is stronger than "he's always creepy."</text>
+		<text>Write it the same day if you can. Notes made close to the time are more trusted.</text>
+		<text>Keep it somewhere safe: your own phone, your personal email, or a personal cloud account. Not a work laptop, work email, or work drive, because you can lose access to those at any time.</text>
+		<question>Why is "he's always creepy" weaker than a note with the exact words, date, and time?</question>
+	</block>
+
+	<!-- Template section 4: real examples -->
+	<block minutes="20-35" name="Real Examples: Good Note or Weak Note?">
+		<text>Weak note: "Manager was weird again this week."</text>
+		<text>Strong note: "Tues Mar 10, 9:05am, back room. Manager Dan asked me out again after I said no on Mar 3. Jess was restocking nearby and heard. Later that day I was taken off Sat/Sun shifts (screenshot of schedule saved)."</text>
+		<text>Screenshots that help: show the sender's name, the date and time, and enough of the conversation to understand it. Save the whole thread, not just one line.</text>
+		<question>Take the weak note above and rewrite it as a strong note using made-up details. What did you have to add?</question>
+	</block>
+
+	<!-- Hands-on task on the student's own device -->
+	<block minutes="35-50" name="Hands-On: Set Up Your Incident Log">
+		<step>Create a note called "Work log" in a notes app on your own phone, or a document in your personal (not work) cloud account.</step>
+		<step>Add this template at the top: Date / Time / Where / Who / What was said or done / Witnesses / What happened after / Screenshots saved?</step>
+		<step>Make a photo album or folder called "Work log screenshots" and move any work-related screenshots into it.</step>
+		<step>Turn on backup for that note or folder in your personal account so it's safe if your phone is lost.</step>
+		<step>Fill in one entry, even for something small, so you know how it works.</step>
+		<question>Where will you keep your log so that only you can open it, even if you leave this job?</question>
+	</block>
+
+	<!-- Template section 7: the close -->
+	<close>
+		<oneAction>Within 24 hours, write your first log entry and move one screenshot into your "Work log screenshots" folder.</oneAction>
+		<teachingPrompt>Your friend says, "I'll remember it, I don't need to write it down." What would you show her from your own log?</teachingPrompt>
+		<resource url="https://www.eeoc.gov/filing-charge-discrimination">U.S. EEOC: Filing a charge of discrimination</resource>
+		<resource url="https://www.eeoc.gov/time-limits-filing-charge">U.S. EEOC: Time limits for filing a charge</resource>
+	</close>
+
+	<!-- Template section 6: the quiz (20 questions) -->
+	<quiz>
+		<q id="1" correct="B">
+			<text>When April went to HR, they asked when things started and who saw them. What would have helped her most?</text>
+			<option key="A" feedback="Memory fades, especially for dates and exact words.">Trying harder to remember</option>
+			<option key="B">A dated log with what happened, who saw it, and screenshots saved as things happened</option>
+			<option key="C" feedback="Asking the person who did it isn't reliable proof.">Asking her manager to confirm the dates</option>
+			<option key="D" feedback="Rumors aren't records.">What coworkers have been saying about it</option>
+		</q>
+		<q id="2" correct="D">
+			<text>Which details belong in a good incident note?</text>
+			<option key="A" feedback="Feelings can be included, but facts come first.">Only how you felt</option>
+			<option key="B" feedback="Guesses about why someone did it weaken the note.">Your guesses about the person's motives</option>
+			<option key="C" feedback="The date alone isn't enough.">Just the date</option>
+			<option key="D">Date, time, where, who, what was said or done, witnesses, and what happened after</option>
+		</q>
+		<q id="3" correct="A">
+			<text>Which note is strongest?</text>
+			<option key="A">"Mar 3, 8:14pm, team chat: Mike wrote 'nice outfit, who's it for?' Screenshot saved. Sara and Jo reacted."</option>
+			<option key="B" feedback="This has no date, words, or witnesses.">"Mike is always creepy."</option>
+			<option key="C" feedback="This has no details someone else could check.">"Bad week at work again."</option>
+			<option key="D" feedback="Opinions about the person don't show what happened.">"Everyone knows Mike is the worst."</option>
+		</q>
+		<q id="4" correct="C">
+			<text>When is the best time to write an incident note?</text>
+			<option key="A" feedback="A month later, details are already fading.">At the end of the month</option>
+			<option key="B" feedback="Waiting until you report means you may have forgotten a lot.">Only when you decide to report</option>
+			<option key="C">The same day, while details are fresh</option>
+			<option key="D" feedback="A year is far too long.">Once a year</option>
+		</q>
+		<q id="5" correct="B">
+			<text>True or false: it's safest to keep your incident log on your work laptop.</text>
+			<option key="A" feedback="Your employer controls work devices and accounts, and you can lose access any time.">True</option>
+			<option key="B">False</option>
+		</q>
+		<q id="6" correct="D">
+			<text>Where is a good place to keep your log and screenshots?</text>
+			<option key="A" feedback="Your employer can access work email.">Your work email drafts</option>
+			<option key="B" feedback="A shared drive can be seen by others.">A shared team drive</option>
+			<option key="C" feedback="Group chats can be seen and deleted by others.">The work group chat</option>
+			<option key="D">Your own phone or a personal cloud account with backup turned on</option>
+		</q>
+		<q id="7" correct="A">
+			<text>What should a helpful screenshot show?</text>
+			<option key="A">The sender's name, the date and time, and enough of the conversation to understand it</option>
+			<option key="B" feedback="Cropping out the name makes it hard to know who sent it.">Only the message, cropped to hide the name</option>
+			<option key="C" feedback="Your reply alone doesn't show what they said.">Only your reply</option>
+			<option key="D" feedback="Editing a screenshot can make it look untrustworthy.">An edited version with highlights drawn on it</option>
+		</q>
+		<q id="8" correct="C">
+			<text>The person who sent a rude message deletes it. Why does it matter that you took a screenshot first?</text>
+			<option key="A" feedback="It isn't about embarrassing them.">So you can post it online</option>
+			<option key="B" feedback="Screenshots don't bring back the original message.">It brings the message back for everyone</option>
+			<option key="C">You still have proof of what was said and when</option>
+			<option key="D" feedback="It does matter. Deleted messages are common.">It doesn't matter</option>
+		</q>
+		<q id="9" correct="B">
+			<text>Why include witnesses in your note?</text>
+			<option key="A" feedback="Witnesses aren't about blame.">So you can blame them too</option>
+			<option key="B">Other people who saw or heard it can back up what happened</option>
+			<option key="C" feedback="You don't need witnesses for every entry, but they help.">Because a note without witnesses doesn't count</option>
+			<option key="D" feedback="Witnesses help any report, not just lawsuits.">They only matter in court</option>
+		</q>
+		<q id="10" correct="A">
+			<text>True or false: you should write facts, not guesses, in your log.</text>
+			<option key="A">True</option>
+			<option key="B" feedback="Guesses make a note easier to dismiss. Stick to what happened.">False</option>
+		</q>
+		<q id="11" correct="D">
+			<text>Your shifts were cut right after you reported a coworker. What should you save?</text>
+			<option key="A" feedback="Your feelings matter, but proof of the change matters more here.">Just a note that you're upset</option>
+			<option key="B" feedback="Waiting risks losing the old schedule.">Nothing yet</option>
+			<option key="C" feedback="Only the new schedule doesn't show the change.">Only the new schedule</option>
+			<option key="D">Screenshots of your schedule before and after, plus the date you reported</option>
+		</q>
+		<q id="12" correct="C">
+			<text>Why turn on backup for your log?</text>
+			<option key="A" feedback="Backup doesn't share it with anyone.">So your coworkers can see it</option>
+			<option key="B" feedback="It doesn't send it to HR.">So it's sent to HR automatically</option>
+			<option key="C">So you don't lose it if your phone is lost, broken, or replaced</option>
+			<option key="D" feedback="It doesn't make it look more official.">So it looks more official</option>
+		</q>
+		<q id="13" correct="B">
+			<text>Is something "too small" to write down?</text>
+			<option key="A" feedback="Small things often become a pattern.">Yes, only write down big events</option>
+			<option key="B">No, small things can add up to a clear pattern over time</option>
+			<option key="C" feedback="There's no rule like that.">Only if it happens three times</option>
+			<option key="D" feedback="Physical contact isn't the only thing that counts.">Only if someone touches you</option>
+		</q>
+		<q id="14" correct="A">
+			<text>Your log is meant to be...</text>
+			<option key="A">Your private record. You decide if and when to share it.</option>
+			<option key="B" feedback="You don't have to share it with anyone.">Shared with the whole team</option>
+			<option key="C" feedback="Posting it publicly can hurt you.">Posted online for support</option>
+			<option key="D" feedback="It's not for the person you're writing about.">Sent to the person who did it</option>
+		</q>
+		<q id="15" correct="D">
+			<text>If you decide to report to HR, what's a good way to do it?</text>
+			<option key="A" feedback="A hallway chat leaves no record.">Mention it in passing in the hallway</option>
+			<option key="B" feedback="Anonymous notes may not be acted on.">Leave an anonymous sticky note</option>
+			<option key="C" feedback="Posting in the group chat isn't a report.">Post it in the group chat</option>
+			<option key="D">In writing (like an email from your personal account), with dates from your log, and save a copy</option>
+		</q>
+		<q id="16" correct="C">
+			<text>Pushback: "I'll remember it, I don't need to write it down." What's the best response?</text>
+			<option key="A" feedback="Agreeing means losing dates and exact words.">"You're right, memory is enough"</option>
+			<option key="B" feedback="Exaggerating hurts trust.">"You'll forget everything by tomorrow"</option>
+			<option key="C">"You'll remember what happened, but probably not the exact date, time, and words three months from now. That's what people will ask."</option>
+			<option key="D" feedback="Asking someone else to remember isn't a record.">"Ask a coworker to remember for you"</option>
+		</q>
+		<q id="17" correct="B">
+			<text>Pushback: "Keeping a log is like spying on people." What's the best response?</text>
+			<option key="A" feedback="Agreeing leaves you without a record of what happened to you.">"Yeah, it's kind of sneaky"</option>
+			<option key="B">"You're writing down what happened to you. That's your experience, not spying."</option>
+			<option key="C" feedback="Secret recordings can be illegal in some places. A written log is different.">"Just secretly record everyone instead"</option>
+			<option key="D" feedback="Dropping it leaves you without proof.">"Then don't bother"</option>
+		</q>
+		<q id="18" correct="A">
+			<text>Pushback: "Writing it down will just make me think about it more." What's the best response?</text>
+			<option key="A">"Writing it down can help you stop replaying it. Once it's saved, you don't have to hold onto every detail."</option>
+			<option key="B" feedback="Bottling it up isn't the only option.">"Then just try to forget it"</option>
+			<option key="C" feedback="Writing it every hour isn't needed.">"Write about it every hour so you don't forget"</option>
+			<option key="D" feedback="Posting publicly isn't the same as keeping a private record.">"Post it online instead"</option>
+		</q>
+		<q id="19" correct="D">
+			<text>Teaching: you have 10 minutes to teach a friend this topic. What should you do first?</text>
+			<option key="A" feedback="Legal deadlines matter, but start with something she can do now.">Explain EEOC deadlines in detail</option>
+			<option key="B" feedback="Stories alone don't give her a tool.">Tell her about other people's lawsuits</option>
+			<option key="C" feedback="Sending a link skips the part where she actually does it.">Send her a link and leave</option>
+			<option key="D">Help her make a "Work log" note on her own phone with the template at the top</option>
+		</q>
+		<q id="20" correct="C">
+			<text>Teaching: your friend realizes she deleted old messages from a coworker. She feels it's too late. What do you tell her?</text>
+			<option key="A" feedback="It's not too late. She can start now.">"Yeah, without them there's no point"</option>
+			<option key="B" feedback="Making things up would hurt her.">"Just rewrite the messages from memory as screenshots"</option>
+			<option key="C">"Write down what you remember now with approximate dates, and start saving everything from today on."</option>
+			<option key="D" feedback="Asking him for copies could tip him off.">"Ask him to send them again"</option>
+		</q>
+	</quiz>
+</class>

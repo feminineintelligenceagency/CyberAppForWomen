@@ -135,7 +135,14 @@
     <Content Include="App_Data\Audit_Log\UnvAdminAudit.xml" />
     <Content Include="App_Data\badgeDescriptions.xml" />
     <Content Include="App_Data\certificationRules.xml" />
+    <None Include="Database\Import-AllData.ps1" />
+    <None Include="Database\Import-Batch1.ps1" />
+    <None Include="Database\Import-Batch2.ps1" />
+    <None Include="Database\Import-UsersXml.ps1" />
     <Content Include="App_Data\classes\active-sessions.xml" />
+    <Content Include="App_Data\classes\documenting-incidents.xml" />
+    <Content Include="App_Data\classes\recognizing-retaliation.xml" />
+    <Content Include="App_Data\classes\setting-boundaries.xml" />
     <Content Include="App_Data\completions.xml" />
     <Content Include="App_Data\enrollments.xml" />
     <Content Include="App_Data\eventCourses.xml" />

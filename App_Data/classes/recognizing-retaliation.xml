@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Sprint 5 (Story #18, Task #121): "Recognizing Retaliation at Work" class, built from the sponsor's class-building template.
+  courseId must match this course's id in microcourses.xml.
+  Recommended on the participant Home page when the "retaliation" quiz domain score is high.
+-->
+<class courseId="dac2f400336d484a9486ed20261d359c" passScore="80">
+	<title>Recognizing Retaliation at Work</title>
+	<objective>Spot the signs that a change at work is payback for saying no or speaking up, connect the timing, and know your first safe steps.</objective>
+	<northStar>When my hours got cut right after I turned down my manager, I learned to line up the dates. Let me show you what to look for.</northStar>
+
+	<!-- Template section 1: the hook (real-world workplace example) -->
+	<block minutes="0-5" name="The Hook: April's Schedule">
+		<text>April works at a coffee shop. Her shift manager asked her out twice. She said no both times, politely.</text>
+		<text>The next week, April was taken off the weekend schedule, her best-paying shifts. When she asked why, the manager said "business is slow." Two newer employees still got weekend shifts.</text>
+		<text>April wondered if she was overthinking it. She wasn't. A bad change that comes right after you say no, complain, or report something, and that wouldn't have happened otherwise, is what retaliation looks like.</text>
+		<question>Has anything at work ever changed for you right after you said no to someone or raised a concern?</question>
+	</block>
+
+	<!-- Template section 3: the one thing -->
+	<block minutes="5-10" name="The One Thing">
+		<text>Today you'll learn to tell the difference between a normal work change and retaliation.</text>
+		<text>This matters because retaliation is often quiet. It rarely sounds like "I'm punishing you." It looks like fewer shifts, worse tasks, being left out, or sudden write-ups.</text>
+	</block>
+
+	<!-- Core concept -->
+	<block minutes="10-20" name="Core Concept: The Three Pieces">
+		<text>Retaliation usually has three pieces: (1) you did something protected, like saying no to unwanted advances, reporting harassment, or backing up a coworker who did; (2) something bad happened to you at work; (3) the bad thing happened because of what you did.</text>
+		<text>Timing is a big clue. A change that comes days or weeks after you said no or spoke up, with no other good reason, deserves a closer look.</text>
+		<text>Watch for: cut hours or worse shifts, being taken off projects, sudden bad reviews after good ones, being left out of meetings or group chats, rumors started about you, or being told "you're not a team player."</text>
+		<text>In the U.S., punishing someone for reporting or opposing harassment or discrimination is illegal under federal law, even if the original complaint isn't proven.</text>
+		<question>Why is the date that something changed so important?</question>
+	</block>
+
+	<!-- Template section 4: real examples -->
+	<block minutes="20-35" name="Real Examples: Retaliation or Normal Change?">
+		<text>Example 1: Everyone on your team had hours cut the same week because the store lost a big contract. You hadn't reported anything. This is likely a normal business change.</text>
+		<text>Example 2: The day after you reported a coworker's comments to HR, your supervisor moved you to the closing shift that you had told him you can't work. This is a red flag for retaliation.</text>
+		<text>Example 3: After you stopped replying to your manager's late-night personal texts, you started getting written up for small things nobody else gets written up for. This is a red flag for retaliation.</text>
+		<question>In Example 3, what two things would you write down to show the pattern?</question>
+	</block>
+
+	<!-- Hands-on task -->
+	<block minutes="35-50" name="Hands-On: Build Your Timeline">
+		<step>Open a private notes app on your own phone (not a work device or work account).</step>
+		<step>Write the date you said no, complained, or reported something, and who you said it to.</step>
+		<step>Under it, list every change at work since then, with the date: schedule, pay, tasks, reviews, how people treat you.</step>
+		<step>Next to each change, write whether coworkers in the same role got the same change.</step>
+		<step>Save screenshots of schedules or messages that show the change. Keep them somewhere only you can open.</step>
+		<question>Looking at your timeline, do the dates line up? What would you want a trusted person or HR to see first?</question>
+	</block>
+
+	<!-- Template section 7: the close -->
+	<close>
+		<oneAction>Within 24 hours, write down one date and one change at work that you've been unsure about, even if it seems small.</oneAction>
+		<teachingPrompt>A friend says, "My boss is being weird since I turned him down, but maybe I'm overreacting." What's the first question you'd ask her?</teachingPrompt>
+		<resource url="https://www.eeoc.gov/retaliation">U.S. EEOC: Retaliation</resource>
+		<resource url="https://www.eeoc.gov/harassment">U.S. EEOC: Harassment</resource>
+	</close>
+
+	<!-- Template section 6: the quiz (20 questions) -->
+	<quiz>
+		<q id="1" correct="B">
+			<text>April turned down her manager's date invitations. A week later she lost her weekend shifts, but newer coworkers kept theirs. What's the best way to describe this?</text>
+			<option key="A" feedback="Schedules do change, but the timing and the fact that only she lost shifts point to something else.">A normal schedule change</option>
+			<option key="B">A possible sign of retaliation, because the bad change came right after she said no</option>
+			<option key="C" feedback="Saying no politely isn't rude, and being polite doesn't make punishment okay.">Her fault for being rude</option>
+			<option key="D" feedback="It may not be proven yet, but that doesn't mean it can be ignored.">Nothing, since she can't prove it</option>
+		</q>
+		<q id="2" correct="C">
+			<text>What are the three pieces that usually make up retaliation?</text>
+			<option key="A" feedback="Feelings matter, but retaliation is about actions and timing.">You feel upset, a coworker agrees, and HR is told</option>
+			<option key="B" feedback="A written threat isn't required. Retaliation is often quiet.">A written threat, a witness, and a lawyer</option>
+			<option key="C">You did something protected, something bad happened at work, and it happened because of what you did</option>
+			<option key="D" feedback="Getting fired is only one kind of retaliation. Smaller changes count too.">You get fired, you file a lawsuit, and you win</option>
+		</q>
+		<q id="3" correct="D">
+			<text>Which of these is a protected action you can take at work?</text>
+			<option key="A" feedback="Skipping shifts isn't protected. Speaking up about harassment is.">Skipping shifts without telling anyone</option>
+			<option key="B" feedback="Sharing private customer data isn't protected.">Posting customer information online</option>
+			<option key="C" feedback="Breaking rules isn't protected activity.">Ignoring safety rules</option>
+			<option key="D">Reporting harassment, or refusing a manager's unwanted advances</option>
+		</q>
+		<q id="4" correct="A">
+			<text>True or false: retaliation can be illegal even if your original harassment complaint isn't proven.</text>
+			<option key="A">True</option>
+			<option key="B" feedback="You're protected for reporting in good faith, even if the complaint isn't proven in the end.">False</option>
+		</q>
+		<q id="5" correct="B">
+			<text>Which change is most likely NOT retaliation?</text>
+			<option key="A" feedback="Being singled out right after a report is a red flag.">You're moved to the worst shift the day after you report a coworker</option>
+			<option key="B">The whole team's hours are cut after the business loses a contract, and you hadn't reported anything</option>
+			<option key="C" feedback="Sudden bad reviews after you speak up are a common sign.">Your reviews go from great to bad right after you complain</option>
+			<option key="D" feedback="Being cut out of team communication after saying no is a common sign.">You're removed from the team group chat after turning down your manager</option>
+		</q>
+		<q id="6" correct="C">
+			<text>Why is timing such a strong clue?</text>
+			<option key="A" feedback="Time of day isn't the point. The gap between your action and the change is.">Retaliation always happens at night</option>
+			<option key="B" feedback="There is no rule like that. Timing is a clue, not a deadline.">Anything after 30 days can't count</option>
+			<option key="C">A bad change that comes soon after you said no or spoke up, with no other good reason, suggests a connection</option>
+			<option key="D" feedback="Timing helps everyone see the pattern, not just HR.">Only HR cares about dates</option>
+		</q>
+		<q id="7" correct="D">
+			<text>After you stopped answering your manager's late-night personal texts, he started writing you up for small things nobody else gets written up for. What should you write down?</text>
+			<option key="A" feedback="Your feelings matter, but dates and facts are what show the pattern.">Only how upset you feel</option>
+			<option key="B" feedback="Waiting for something bigger loses details you'll need.">Nothing until it gets worse</option>
+			<option key="C" feedback="Rumors aren't evidence. Stick to what you saw and received.">What coworkers are guessing about him</option>
+			<option key="D">The date you stopped replying, each write-up and its date, and that coworkers aren't written up for the same thing</option>
+		</q>
+		<q id="8" correct="B">
+			<text>Which of these can be a form of retaliation?</text>
+			<option key="A" feedback="A friendly reminder that applies to everyone isn't retaliation.">A reminder email sent to the whole staff</option>
+			<option key="B">Being left out of meetings and group chats you used to be part of</option>
+			<option key="C" feedback="A raise for everyone isn't a punishment.">A company-wide raise</option>
+			<option key="D" feedback="Normal training that everyone gets isn't retaliation.">Training that everyone takes</option>
+		</q>
+		<q id="9" correct="A">
+			<text>Where should you keep your timeline of what happened?</text>
+			<option key="A">In a private place only you control, like a notes app on your own phone</option>
+			<option key="B" feedback="Your employer can see and control work accounts and devices.">In a shared work drive</option>
+			<option key="C" feedback="A group chat can be seen and shared by others.">In the work group chat</option>
+			<option key="D" feedback="Memory fades. Writing it down protects details.">Just in your head</option>
+		</q>
+		<q id="10" correct="B">
+			<text>True or false: retaliation always involves someone saying "I'm punishing you."</text>
+			<option key="A" feedback="Retaliation is usually quiet and given another excuse, like &quot;business is slow.&quot;">True</option>
+			<option key="B">False</option>
+		</q>
+		<q id="11" correct="B">
+			<text>Your supervisor says your hours were cut because "business is slow," but two newer employees got more hours. What does that tell you?</text>
+			<option key="A" feedback="The reason given doesn't match what happened to others.">The explanation is definitely true</option>
+			<option key="B">The reason may not be the real reason, and it's worth writing down</option>
+			<option key="C" feedback="You don't have to quit. Writing it down and getting support come first.">You should quit right away</option>
+			<option key="D" feedback="Confronting him alone could make things harder. Write it down first.">You should yell at him in front of everyone</option>
+		</q>
+		<q id="12" correct="D">
+			<text>Who else is usually protected from retaliation?</text>
+			<option key="A" feedback="Customers aren't usually covered by workplace retaliation rules.">Customers who leave bad reviews</option>
+			<option key="B" feedback="The person accused isn't the one being protected here.">The person who was reported</option>
+			<option key="C" feedback="It isn't limited to managers.">Only managers</option>
+			<option key="D">Coworkers who back you up or act as witnesses</option>
+		</q>
+		<q id="13" correct="A">
+			<text>What's a good first step if you think you're facing retaliation?</text>
+			<option key="A">Write down the dates and changes, save proof, and talk to someone you trust or HR</option>
+			<option key="B" feedback="Public posts can be used against you and tip off the person.">Post about it publicly on social media</option>
+			<option key="C" feedback="Deleting messages destroys the proof you need.">Delete all your work messages</option>
+			<option key="D" feedback="Waiting lets more time pass and details fade.">Wait a year to see if it stops</option>
+		</q>
+		<q id="14" correct="C">
+			<text>Is there a time limit for filing a formal complaint with the U.S. EEOC?</text>
+			<option key="A" feedback="There are deadlines, so it's not unlimited.">No, you can file any time</option>
+			<option key="B" feedback="It's longer than that.">Yes, 7 days</option>
+			<option key="C">Yes, usually 180 days, or 300 days in many states</option>
+			<option key="D" feedback="It's much shorter than 10 years.">Yes, 10 years</option>
+		</q>
+		<q id="15" correct="B">
+			<text>A coworker says, "If you didn't get fired, it's not retaliation." Is that right?</text>
+			<option key="A" feedback="Smaller changes like cut hours or bad shifts can count.">Yes, only firing counts</option>
+			<option key="B">No, cut hours, worse shifts, bad reviews, and being left out can all be retaliation</option>
+			<option key="C" feedback="A demotion isn't the only other kind.">No, but only demotions count</option>
+			<option key="D" feedback="Retaliation can happen at any job size.">It only counts at big companies</option>
+		</q>
+		<q id="16" correct="D">
+			<text>Pushback: "Maybe I'm just being sensitive." What's the best response?</text>
+			<option key="A" feedback="Dismissing your instinct can leave a real problem unchecked.">"You're probably right, forget it"</option>
+			<option key="B" feedback="Labeling it for sure isn't fair without looking at the facts.">"It's definitely retaliation, sue them"</option>
+			<option key="C" feedback="Quitting isn't the first step.">"Just quit"</option>
+			<option key="D">"Let's check the dates. If the change came right after you said no and others weren't affected, it's worth taking seriously."</option>
+		</q>
+		<q id="17" correct="A">
+			<text>Pushback: "Writing things down feels dramatic." What's the best response?</text>
+			<option key="A">"It's just notes for you. If you never need them, nothing is lost. If you do, you'll be glad you have dates."</option>
+			<option key="B" feedback="Notes aren't about getting anyone in trouble. They protect you.">"It's so you can get your boss fired"</option>
+			<option key="C" feedback="Agreeing means losing details you might need later.">"You're right, skip it"</option>
+			<option key="D" feedback="Notes don't need to be shared with everyone.">"Send your notes to the whole team"</option>
+		</q>
+		<q id="18" correct="C">
+			<text>Pushback: "HR works for the company, so there's no point telling them." What's the best response?</text>
+			<option key="A" feedback="HR can be one step, but not the only one.">"HR is always on your side"</option>
+			<option key="B" feedback="Giving up leaves you without options.">"Then there's nothing you can do"</option>
+			<option key="C">"Reporting in writing still creates a record and protects you. You can also go to outside places like the EEOC."</option>
+			<option key="D" feedback="Threatening HR can backfire. Stay factual.">"Threaten HR until they listen"</option>
+		</q>
+		<q id="19" correct="B">
+			<text>Teaching: you have 10 minutes to teach a friend this topic. What should you do first?</text>
+			<option key="A" feedback="Legal terms first lose people. Start with their own situation.">Read her the law word for word</option>
+			<option key="B">Help her write down the date she said no or spoke up, and what changed after</option>
+			<option key="C" feedback="Scary stories alone don't show her what to do.">Tell her every bad workplace story you know</option>
+			<option key="D" feedback="Sending a link skips the part where she actually does it.">Send her a link and leave</option>
+		</q>
+		<q id="20" correct="D">
+			<text>Teaching: your friend lines up her dates and sees her shifts were cut two days after she reported harassment. She feels scared. What do you tell her?</text>
+			<option key="A" feedback="Panicking doesn't help. There are clear next steps.">"There's nothing you can do"</option>
+			<option key="B" feedback="Confronting him alone could put her at risk.">"Go confront your manager alone"</option>
+			<option key="C" feedback="Deleting proof hurts her case.">"Delete everything so it doesn't get worse"</option>
+			<option key="D">"Save your schedules and messages, keep adding to your timeline, and let's find someone you trust or HR to report it to in writing."</option>
+		</q>
+	</quiz>
+</class>
