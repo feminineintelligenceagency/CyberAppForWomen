@@ -764,12 +764,24 @@ namespace CyberApp_FIA.Participant
                     row.AvailabilityText = "Self-paced class, start anytime";
                     row.CanSignUp = true;
                 }
+            // Self-paced classes (App_Data/classes) can be started right from the card.
+            var classSlugByCourseId = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var c in ClassService.LoadAll(Server))
+            {
+                if (!string.IsNullOrWhiteSpace(c.CourseId) && !classSlugByCourseId.ContainsKey(c.CourseId))
+                    classSlugByCourseId[c.CourseId] = c.Slug;
+            }
+            foreach (var row in rows)
+            {
+                if (classSlugByCourseId.TryGetValue(row.CourseId, out var slug))
+                    row.ClassUrl = ResolveUrl("~/Account/Participant/ClassViewer.aspx?class=" + HttpUtility.UrlEncode(slug));
             }
 
             RecommendedCoursesPanel.Visible = true;
             RecommendedCoursesEmpty.Visible = rows.Count == 0;
             RecommendedCoursesRepeater.DataSource = rows;
             RecommendedCoursesRepeater.DataBind();
+            }
         }
 
         private Dictionary<string, RecommendationCourse> LoadRecommendationCatalog()
@@ -993,8 +1005,13 @@ namespace CyberApp_FIA.Participant
         {
             var rowsByCourseId = new Dictionary<string, RecommendationRow>(StringComparer.OrdinalIgnoreCase);
 
+            // Story #18: is the participant's retaliation or boundary score high?
+            var workplaceRiskHigh =
+                DomainScore(latest, RetaliationDomainTitle) >= WorkplaceHighScore ||
+                DomainScore(latest, BoundariesDomainTitle) >= WorkplaceHighScore;
+
             var orderedDomains = latest.DomainScores
-                .Where(kv => kv.Value > 0)
+                .Where(kv => IsRecommendableDomain(kv.Key, kv.Value, workplaceRiskHigh))
                 .OrderByDescending(kv => kv.Value)
                 .ThenBy(kv => kv.Key)
                 .ToList();
@@ -1028,16 +1045,26 @@ namespace CyberApp_FIA.Participant
                 // No unmet prereq chain, so recommend the target directly.
                 if (chain.Count == 1 && string.Equals(chain[0], targetCourseId, StringComparison.OrdinalIgnoreCase))
                 {
+                    var isWorkplace = WorkplaceDomainTitles.Contains(domain.Key);
+                    var reason = isWorkplace && domain.Value < WorkplaceHighScore
+                        ? "Recommended because your answers about retaliation or boundaries at work were high. Dated notes and screenshots make it much easier to get help."
+                        : $"Recommended because your {domain.Key} gap was {domain.Value:0.##}/10, which suggests a bigger need in this area right now.";
+
                     UpsertRecommendationRow(
                         rowsByCourseId,
                         targetCourse,
                         sortOrder,
                         domain.Value,
-                        $"Recommended because your {domain.Key} gap was {domain.Value:0.##}/10, which suggests a bigger need in this area right now.",
+                        reason,
                         isPrereq: false,
                         isLockedByPrereq: false,
                         visibleCourseIds: visibleCourseIds,
                         upcomingCourseIds: upcomingCourseIds);
+
+                    // Workplace-safety courses always show when they're recommended,
+                    // so the cyber courses can't push them out of the top 4.
+                    if (isWorkplace)
+                        rowsByCourseId[targetCourseId].IsPinned = true;
 
                     sortOrder++;
                     continue;
@@ -1100,11 +1127,51 @@ namespace CyberApp_FIA.Participant
                 }
             }
 
-            return rowsByCourseId.Values
+            var ordered = rowsByCourseId.Values
                 .OrderBy(r => r.SortOrder)
                 .ThenByDescending(r => r.GapScore)
-                .Take(4)
                 .ToList();
+
+            var shown = ordered.Take(4).ToList();
+            shown.AddRange(ordered.Skip(4).Where(r => r.IsPinned));
+            return shown;
+        }
+
+        // ---------- Story #18: workplace-safety recommendations ----------
+        // These titles match the quiz domains in quiz_rules.xml and the courses in microcourses.xml.
+        private const string RetaliationDomainTitle = "Recognizing Retaliation at Work";
+        private const string BoundariesDomainTitle = "Setting Boundaries in Work Group Chats";
+        private const string DocumentationDomainTitle = "Documenting Incidents";
+
+        // Score (out of 10) at or above which a workplace-safety course is recommended.
+        private const double WorkplaceHighScore = 5.0;
+
+        private static readonly HashSet<string> WorkplaceDomainTitles =
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                RetaliationDomainTitle,
+                BoundariesDomainTitle,
+                DocumentationDomainTitle
+            };
+
+        private static double DomainScore(QuizService.ScoreResult result, string title)
+        {
+            return result.DomainScores != null && result.DomainScores.TryGetValue(title, out var score) ? score : 0;
+        }
+
+        // Cyber domains: recommend any gap above 0 (unchanged).
+        // Workplace domains: only when the score is high. Documenting Incidents is also
+        // recommended whenever the retaliation or boundary score is high.
+        private static bool IsRecommendableDomain(string title, double score, bool workplaceRiskHigh)
+        {
+            if (!WorkplaceDomainTitles.Contains(title))
+                return score > 0;
+
+            if (score >= WorkplaceHighScore)
+                return true;
+
+            return workplaceRiskHigh &&
+                   string.Equals(title, DocumentationDomainTitle, StringComparison.OrdinalIgnoreCase);
         }
 
         private List<string> GetRecursiveRecommendationChain(
@@ -1379,7 +1446,8 @@ namespace CyberApp_FIA.Participant
             public string GapText { get; set; }
             public bool CanSignUp { get; set; }
             public bool HasMatchingSessions { get; set; }
-            public string ClassUrl { get; set; }   // Sprint 5: link if the course is a self-paced class
+            public bool IsPinned { get; set; }       // always shown, even past the top 4
+            public string ClassUrl { get; set; }     // self-paced class page, if this course has one
         }
 
         private bool SessionOverlapsUser(string eventId, string userId, string sessionId, out Interval conflictWith)

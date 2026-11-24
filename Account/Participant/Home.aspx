@@ -1183,6 +1183,12 @@
               </div>
             </div>
 
+            <asp:PlaceHolder runat="server" Visible='<%# !string.IsNullOrEmpty((string)Eval("ClassUrl")) %>'>
+              <div class="card-sec">
+                <a class="btn btn-primary" href='<%#: Eval("ClassUrl") %>'>Start class</a>
+              </div>
+            </asp:PlaceHolder>
+
             <asp:PlaceHolder runat="server" Visible='<%# Convert.ToBoolean(Eval("HasMatchingSessions")) %>'>
   <div class="card-sec">
     <button type="button"

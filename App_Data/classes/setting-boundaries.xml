@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Sprint 5 (Story #18, Task #122): "Setting Boundaries in Work Group Chats" class, built from the sponsor's class-building template.
+  courseId must match this course's id in microcourses.xml.
+  Recommended on the participant Home page when the "boundaries" quiz domain score is high.
+-->
+<class courseId="d89b58c2a48a41e4973850510ea3ef0d" passScore="80">
+	<title>Setting Boundaries in Work Group Chats</title>
+	<objective>Say a clear, calm "no" to unwanted comments and personal contact from coworkers, lock down what they can see on your personal accounts, and know when to escalate.</objective>
+	<northStar>I used to laugh along when the group chat got personal. Now I have one sentence ready, and it takes 10 seconds. Let me show you mine.</northStar>
+
+	<!-- Template section 1: the hook (real-world workplace example) -->
+	<block minutes="0-5" name="The Hook: &quot;It's Just a Joke&quot;">
+		<text>April's team uses a group chat to swap shifts. Over a few weeks, a coworker started posting comments about her outfits. Others reacted with laughing emojis. When she didn't reply, he messaged, "Relax, it's just a joke."</text>
+		<text>Around the same time, her shift manager followed her personal Instagram and started liking old photos from years ago.</text>
+		<text>April felt she couldn't say anything without being called "too sensitive." But comments about your body or personal life in a work chat aren't part of your job, and you're allowed to stop them.</text>
+		<question>Have you ever stayed quiet in a work chat because you didn't want to be "that person"?</question>
+	</block>
+
+	<!-- Template section 3: the one thing -->
+	<block minutes="5-10" name="The One Thing">
+		<text>Today you'll learn to set a boundary in writing, in one short message, and to control who from work can see your personal accounts.</text>
+		<text>This matters because silence is often read as "okay." A short, calm written boundary makes your "no" clear and creates a record if it keeps happening.</text>
+	</block>
+
+	<!-- Core concept -->
+	<block minutes="10-20" name="Core Concept: Clear, Calm, Written">
+		<text>A good boundary message is short, names the behavior, and says what you want instead. Example: "Please don't comment on my appearance in this chat. Let's keep it to work."</text>
+		<text>You don't need to explain, apologize, or argue. "It's just a joke" doesn't change whether it's okay. You decide what's okay about your own body and life.</text>
+		<text>Your personal accounts are yours. You can make them private, remove followers, restrict or block coworkers, and turn off "suggest my account to others" without telling anyone.</text>
+		<text>If the behavior continues after you've said no, it's no longer a misunderstanding. That's the time to take screenshots and report it to a manager you trust or HR.</text>
+		<question>Why is a written boundary in the chat sometimes better than saying it out loud in person?</question>
+	</block>
+
+	<!-- Template section 4: real examples -->
+	<block minutes="20-35" name="Real Examples: Pick the Best Reply">
+		<text>Situation: A coworker posts "Someone's dressed up today 😏 who's it for?" with your name tagged.</text>
+		<text>Weak reply: "lol stop." It can be read as playing along.</text>
+		<text>Strong reply: "Please don't comment on how I look in the work chat. Thanks." It's calm, clear, and on the record.</text>
+		<text>Situation: Your manager sends a follow request to your private Instagram. You can leave it pending, decline it, or accept and add them to a "Restricted" list. You don't owe anyone access to your personal life.</text>
+		<question>Write your own one-sentence boundary for a comment you've seen in a chat. How does it feel to read it out loud?</question>
+	</block>
+
+	<!-- Hands-on task on the student's own device -->
+	<block minutes="35-50" name="Hands-On: Lock Down and Prepare">
+		<step>Instagram: go to Settings, then Account privacy, and turn on Private account.</step>
+		<step>Instagram: open your Followers list and remove, restrict, or block anyone from work you don't want there.</step>
+		<step>Instagram: in Settings, under Accounts Center or "Suggested accounts", turn off suggesting your account to others so coworkers are less likely to find you.</step>
+		<step>Write your boundary sentence in your notes app so it's ready to copy and paste when you need it.</step>
+		<step>Mute the work group chat outside work hours if your app allows it.</step>
+		<question>Which coworker would you remove or restrict first, and what's stopped you from doing it before?</question>
+	</block>
+
+	<!-- Template section 7: the close -->
+	<close>
+		<oneAction>Within 24 hours, set your personal Instagram (or another account) to private and review who from work follows you.</oneAction>
+		<teachingPrompt>Your friend says, "My coworkers keep joking about my body in the group chat, but I don't want to make it weird." What sentence would you give her to send?</teachingPrompt>
+		<resource url="https://help.instagram.com/">Instagram Help Center: privacy, restrict, and block</resource>
+		<resource url="https://www.eeoc.gov/harassment">U.S. EEOC: Harassment</resource>
+	</close>
+
+	<!-- Template section 6: the quiz (20 questions) -->
+	<quiz>
+		<q id="1" correct="C">
+			<text>A coworker keeps posting comments about your outfits in the team group chat. When you don't reply, he says "it's just a joke." What's true?</text>
+			<option key="A" feedback="Calling it a joke doesn't make it okay if it's unwanted.">If it's a joke, you have to accept it</option>
+			<option key="B" feedback="Silence is often read as being okay with it.">Staying quiet makes it stop</option>
+			<option key="C">You're allowed to tell him to stop, and comments about your body aren't part of your job</option>
+			<option key="D" feedback="Leaving the chat may cut you off from shift updates you need.">You should leave the chat and miss shift updates</option>
+		</q>
+		<q id="2" correct="B">
+			<text>What makes a strong boundary message?</text>
+			<option key="A" feedback="Long explanations invite arguments.">A long paragraph explaining all your feelings</option>
+			<option key="B">Short, names the behavior, and says what you want instead</option>
+			<option key="C" feedback="Apologizing makes it sound like you did something wrong.">Starting with "Sorry, but..."</option>
+			<option key="D" feedback="An emoji can be read as playing along.">A laughing emoji so it doesn't seem serious</option>
+		</q>
+		<q id="3" correct="A">
+			<text>Which reply is the clearest boundary?</text>
+			<option key="A">"Please don't comment on how I look in the work chat. Thanks."</option>
+			<option key="B" feedback="&quot;lol stop&quot; can be read as playing along.">"lol stop"</option>
+			<option key="C" feedback="Insults can escalate things and be used against you.">"You're so gross, everyone hates you"</option>
+			<option key="D" feedback="This doesn't say what you want to stop.">"Ok"</option>
+		</q>
+		<q id="4" correct="D">
+			<text>Why can it help to set your boundary in writing in the chat?</text>
+			<option key="A" feedback="The goal isn't embarrassment. It's clarity.">It embarrasses the person</option>
+			<option key="B" feedback="Writing doesn't guarantee they'll stop, but it helps.">It guarantees they'll stop</option>
+			<option key="C" feedback="Writing isn't required by law, but it helps you.">It's required by law</option>
+			<option key="D">It's clear, it can't be misheard, and it creates a record if it keeps happening</option>
+		</q>
+		<q id="5" correct="B">
+			<text>True or false: you have to explain why a comment bothers you before you can ask someone to stop.</text>
+			<option key="A" feedback="You don't owe anyone a reason to stop commenting on your body or life.">True</option>
+			<option key="B">False</option>
+		</q>
+		<q id="6" correct="C">
+			<text>Your shift manager sends a follow request to your private Instagram. What are your options?</text>
+			<option key="A" feedback="You don't have to accept anyone, even a boss.">You have to accept because they're your boss</option>
+			<option key="B" feedback="You don't need to delete your account.">Delete your account</option>
+			<option key="C">Leave it pending, decline it, or accept and restrict them. It's your choice.</option>
+			<option key="D" feedback="Asking a coworker to decide for you isn't needed.">Ask the group chat to vote on it</option>
+		</q>
+		<q id="7" correct="A">
+			<text>What does setting your Instagram account to private do?</text>
+			<option key="A">Only approved followers can see your posts and stories</option>
+			<option key="B" feedback="Private accounts can still be messaged in some cases.">It stops anyone from ever messaging you</option>
+			<option key="C" feedback="It doesn't hide you from people who already follow you.">It removes all your current followers</option>
+			<option key="D" feedback="It doesn't delete anything.">It deletes your old photos</option>
+		</q>
+		<q id="8" correct="D">
+			<text>A coworker is liking years-old photos on your profile. What's a quick way to limit what they see without a confrontation?</text>
+			<option key="A" feedback="Posting about it can escalate things.">Post a story calling them out</option>
+			<option key="B" feedback="Liking their photos back doesn't set a boundary.">Like all their photos back</option>
+			<option key="C" feedback="Changing your name doesn't limit their access.">Change your username</option>
+			<option key="D">Remove them as a follower, or restrict or block them</option>
+		</q>
+		<q id="9" correct="B">
+			<text>You set a clear boundary and the comments keep happening. What does that tell you?</text>
+			<option key="A" feedback="After a clear no, it's no longer a misunderstanding.">It's still probably a misunderstanding</option>
+			<option key="B">It's time to take screenshots and report it to a manager you trust or HR</option>
+			<option key="C" feedback="Repeating yourself forever isn't the only option.">You should keep asking nicely forever</option>
+			<option key="D" feedback="You didn't cause it by speaking up.">You made it worse by speaking up</option>
+		</q>
+		<q id="10" correct="B">
+			<text>True or false: "It's just a joke" means the comment is okay.</text>
+			<option key="A" feedback="Whether it's okay depends on whether it's unwanted, not on what it's called.">True</option>
+			<option key="B">False</option>
+		</q>
+		<q id="11" correct="C">
+			<text>A coworker starts private-messaging you late at night about your dating life. What's a good boundary?</text>
+			<option key="A" feedback="Answering keeps the conversation going when you don't want it.">Answer so he doesn't get upset</option>
+			<option key="B" feedback="Blocking is an option, but if you work together, a clear written no first helps if you need to report later.">Block him without saving anything</option>
+			<option key="C">"I'd like to keep our messages about work." Then save a screenshot in case it continues.</option>
+			<option key="D" feedback="Sharing it in the group chat can escalate things.">Post his messages in the group chat</option>
+		</q>
+		<q id="12" correct="B">
+			<text>What should you do with screenshots of unwanted comments?</text>
+			<option key="A" feedback="Posting them can escalate things and break work rules.">Post them publicly</option>
+			<option key="B">Save them somewhere private that only you control, with the date</option>
+			<option key="C" feedback="Your employer controls work drives.">Save them only on a shared work drive</option>
+			<option key="D" feedback="Deleting them loses your proof.">Delete them so you can move on</option>
+		</q>
+		<q id="13" correct="D">
+			<text>Which of these is a reasonable boundary about work chats?</text>
+			<option key="A" feedback="Shift updates are part of the job.">Never reading any work messages</option>
+			<option key="B" feedback="Threats aren't a boundary.">Threatening to get someone fired</option>
+			<option key="C" feedback="Being always available isn't a boundary.">Answering personal messages at 2am</option>
+			<option key="D">Keeping the work chat about work, and muting it outside work hours</option>
+		</q>
+		<q id="14" correct="A">
+			<text>Turning off "suggest my account to others" on Instagram helps because...</text>
+			<option key="A">Coworkers are less likely to find your personal account</option>
+			<option key="B" feedback="It doesn't affect who already follows you.">It removes all your followers</option>
+			<option key="C" feedback="It doesn't make your posts disappear.">It deletes your posts</option>
+			<option key="D" feedback="It doesn't change your password.">It changes your password</option>
+		</q>
+		<q id="15" correct="C">
+			<text>Someone replies to your boundary with "Wow, you're so sensitive." What's the best next move?</text>
+			<option key="A" feedback="You don't need to apologize for setting a boundary.">Apologize and take it back</option>
+			<option key="B" feedback="Arguing in the chat rarely helps.">Argue back with insults</option>
+			<option key="C">Don't argue. Your boundary stands. Save a screenshot in case it continues.</option>
+			<option key="D" feedback="Changing yourself isn't the fix.">Change how you dress so they stop</option>
+		</q>
+		<q id="16" correct="B">
+			<text>Pushback: "If I say something, I'll look like I can't take a joke." What's the best response?</text>
+			<option key="A" feedback="Agreeing keeps you stuck with comments you don't want.">"True, better to stay quiet"</option>
+			<option key="B">"One calm sentence isn't overreacting. It just tells people where the line is."</option>
+			<option key="C" feedback="Going straight to anger usually escalates things.">"Yell at them so they learn"</option>
+			<option key="D" feedback="Quitting isn't the first step.">"Just find a new job"</option>
+		</q>
+		<q id="17" correct="D">
+			<text>Pushback: "My boss follows me, so I can't make my account private." What's the best response?</text>
+			<option key="A" feedback="Your personal account isn't part of your job.">"You're right, bosses get full access"</option>
+			<option key="B" feedback="You don't need to delete everything.">"Delete your whole account"</option>
+			<option key="C" feedback="Posting less doesn't limit who sees what you do post.">"Just never post again"</option>
+			<option key="D">"Your personal account is yours. You can make it private or restrict them without telling them."</option>
+		</q>
+		<q id="18" correct="A">
+			<text>Pushback: "Reporting a group chat is pointless, it's just words." What's the best response?</text>
+			<option key="A">"Repeated comments about your body at work can be harassment. Screenshots with dates make it real to HR."</option>
+			<option key="B" feedback="Words can be harassment when they're repeated and unwanted.">"You're right, words don't count"</option>
+			<option key="C" feedback="Public shaming can backfire.">"Post it online instead"</option>
+			<option key="D" feedback="Waiting for something worse isn't safe.">"Wait until it gets physical"</option>
+		</q>
+		<q id="19" correct="C">
+			<text>Teaching: you have 10 minutes to teach a friend this topic. What should you do first?</text>
+			<option key="A" feedback="Definitions first lose people. Start with something she can do.">Explain the legal definition of harassment</option>
+			<option key="B" feedback="Stories alone don't give her a tool.">Tell her about every bad coworker you've had</option>
+			<option key="C">Help her write her own one-sentence boundary and save it in her notes</option>
+			<option key="D" feedback="Sending a link skips the part where she actually does it.">Send her a link and leave</option>
+		</q>
+		<q id="20" correct="B">
+			<text>Teaching: your friend sent her boundary, and a coworker kept posting comments anyway. She's upset. What do you tell her?</text>
+			<option key="A" feedback="She didn't fail. He ignored a clear boundary.">"You should have said it nicer"</option>
+			<option key="B">"You did the right thing. Now screenshot it with the date and report it to a manager you trust or HR."</option>
+			<option key="C" feedback="Leaving the chat may cut her off from shifts and doesn't stop him.">"Just leave the chat"</option>
+			<option key="D" feedback="Waiting lets it keep going.">"Ignore it and it'll stop"</option>
+		</q>
+	</quiz>
+</class>

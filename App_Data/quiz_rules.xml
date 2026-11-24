@@ -46,6 +46,16 @@
 		<Domain id="home_wifi" title="Securing Home Wi-Fi Networks"
 				quickWin="Change admin creds; use WPA3; enable a separate guest network."
 				factor="Defaults and shared main credentials expose the home network." />
+		<!-- Story #18: workplace safety domains. Titles match the microcourse titles so results recommend them directly. -->
+		<Domain id="retaliation" title="Recognizing Retaliation at Work"
+				quickWin="Write down the date you said no or spoke up, and every work change since."
+				factor="Lost shifts or worse treatment after saying no or reporting can be retaliation." />
+		<Domain id="boundaries" title="Setting Boundaries in Work Group Chats"
+				quickWin="Save a one-sentence boundary in your notes; make personal accounts private."
+				factor="Unwanted comments and personal contact from coworkers go unchecked." />
+		<Domain id="documentation" title="Documenting Incidents"
+				quickWin="Start a private, dated work log on your own phone and save screenshots."
+				factor="Without dated records, incidents are easy to dismiss." />
 	</Ruleset>
 </QuizRules>
 

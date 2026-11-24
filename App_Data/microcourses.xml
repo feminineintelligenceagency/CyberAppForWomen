@@ -368,4 +368,64 @@
     <maxParticipants>
     </maxParticipants>
   </course>
+  <course id="dac2f400336d484a9486ed20261d359c" status="Published" createdAt="2026-11-17T00:00:00.0000000Z" createdBy="">
+    <title>Recognizing Retaliation at Work</title>
+    <summary>Learn to tell a normal work change from retaliation: lost shifts, worse tasks, sudden write-ups, or being left out right after you said no or spoke up. Includes a real-world workplace example and a hands-on timeline you build on your own phone.</summary>
+    <duration>50</duration>
+    <externalLink>
+    </externalLink>
+    <tags>
+      <tag>workplace</tag>
+      <tag>retaliation</tag>
+      <tag>safety</tag>
+    </tags>
+    <requiredRules />
+    <prerequisites />
+    <startTime>
+    </startTime>
+    <endTime>
+    </endTime>
+    <maxParticipants>
+    </maxParticipants>
+  </course>
+  <course id="d89b58c2a48a41e4973850510ea3ef0d" status="Published" createdAt="2026-11-17T00:00:00.0000000Z" createdBy="">
+    <title>Setting Boundaries in Work Group Chats</title>
+    <summary>Say a clear, calm "no" to unwanted comments in work group chats, control what coworkers can see on your personal social media, and know when to escalate. Includes a real-world workplace example and hands-on privacy steps.</summary>
+    <duration>50</duration>
+    <externalLink>
+    </externalLink>
+    <tags>
+      <tag>workplace</tag>
+      <tag>boundaries</tag>
+      <tag>social-media</tag>
+    </tags>
+    <requiredRules />
+    <prerequisites />
+    <startTime>
+    </startTime>
+    <endTime>
+    </endTime>
+    <maxParticipants>
+    </maxParticipants>
+  </course>
+  <course id="99a6567f5ab846a78535e5894fed7bcd" status="Published" createdAt="2026-11-17T00:00:00.0000000Z" createdBy="">
+    <title>Documenting Incidents</title>
+    <summary>Write dated incident notes, save screenshots that show who, what, and when, and keep your records somewhere work can't take away. Includes a real-world workplace example and a ready-to-use incident log template.</summary>
+    <duration>50</duration>
+    <externalLink>
+    </externalLink>
+    <tags>
+      <tag>workplace</tag>
+      <tag>documentation</tag>
+      <tag>safety</tag>
+    </tags>
+    <requiredRules />
+    <prerequisites />
+    <startTime>
+    </startTime>
+    <endTime>
+    </endTime>
+    <maxParticipants>
+    </maxParticipants>
+  </course>
 </microcourses>

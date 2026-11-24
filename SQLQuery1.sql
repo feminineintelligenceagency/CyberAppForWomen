@@ -15,6 +15,7 @@
      003  Quiz rulesets/questions/options, QuizProgress, QuizResults (+ scores, items)
      004  MFA columns on UserCredentials, UserMfaBackupCodes
      005  PasswordResetTokens
+     006  Story #18 workplace courses: microcourses, quiz domains, questions q41-q46
 */
 
 IF DB_ID(N'CyberAppDB') IS NULL
@@ -565,6 +566,138 @@ BEGIN
 
     CREATE INDEX IX_PasswordResetTokens_UserId ON dbo.PasswordResetTokens (UserId);
 END
+GO
+
+/*
+   006_Story18_WorkplaceCourses.sql
+   Story #18: courses on recognizing retaliation, setting boundaries, and documenting incidents.
+
+   - Adds the three microcourses (same ids as App_Data/microcourses.xml)
+   - Adds quiz domains retaliation / boundaries / documentation (same as App_Data/quiz_rules.xml)
+   - Adds risk-quiz questions q41-q46 with their option weights (same as App_Data/quiz_questions.xml)
+
+   Ruleset stays 2.0, so nobody is forced to retake the quiz. Participants get the new
+   recommendations the next time they take it.
+
+   Safe to run more than once.
+*/
+
+-- Microcourses
+INSERT INTO dbo.Microcourses (CourseId, Title, Summary, Status, DurationMinutes, CreatedAtUtc, CreatedByEmail)
+SELECT v.CourseId, v.Title, v.Summary, 'Published', 50, '2026-11-17T00:00:00', NULL
+  FROM (VALUES
+        ('dac2f400336d484a9486ed20261d359c', N'Recognizing Retaliation at Work',
+         N'Learn to tell a normal work change from retaliation: lost shifts, worse tasks, sudden write-ups, or being left out right after you said no or spoke up. Includes a real-world workplace example and a hands-on timeline you build on your own phone.'),
+        ('d89b58c2a48a41e4973850510ea3ef0d', N'Setting Boundaries in Work Group Chats',
+         N'Say a clear, calm "no" to unwanted comments in work group chats, control what coworkers can see on your personal social media, and know when to escalate. Includes a real-world workplace example and hands-on privacy steps.'),
+        ('99a6567f5ab846a78535e5894fed7bcd', N'Documenting Incidents',
+         N'Write dated incident notes, save screenshots that show who, what, and when, and keep your records somewhere work can''t take away. Includes a real-world workplace example and a ready-to-use incident log template.')
+       ) AS v (CourseId, Title, Summary)
+ WHERE NOT EXISTS (SELECT 1 FROM dbo.Microcourses m WHERE m.CourseId = v.CourseId);
+
+INSERT INTO dbo.MicrocourseTags (CourseId, Tag)
+SELECT v.CourseId, v.Tag
+  FROM (VALUES
+        ('dac2f400336d484a9486ed20261d359c', N'workplace'), ('dac2f400336d484a9486ed20261d359c', N'retaliation'), ('dac2f400336d484a9486ed20261d359c', N'safety'),
+        ('d89b58c2a48a41e4973850510ea3ef0d', N'workplace'), ('d89b58c2a48a41e4973850510ea3ef0d', N'boundaries'),  ('d89b58c2a48a41e4973850510ea3ef0d', N'social-media'),
+        ('99a6567f5ab846a78535e5894fed7bcd', N'workplace'), ('99a6567f5ab846a78535e5894fed7bcd', N'documentation'), ('99a6567f5ab846a78535e5894fed7bcd', N'safety')
+       ) AS v (CourseId, Tag)
+ WHERE NOT EXISTS (SELECT 1 FROM dbo.MicrocourseTags t WHERE t.CourseId = v.CourseId AND t.Tag = v.Tag);
+GO
+
+-- Quiz domains
+INSERT INTO dbo.QuizDomains (DomainKey, Title, QuickWin, Factor, CourseId, RulesetVersion)
+SELECT v.DomainKey, v.Title, v.QuickWin, v.Factor, v.CourseId, '2.0'
+  FROM (VALUES
+        ('retaliation', N'Recognizing Retaliation at Work',
+         N'Write down the date you said no or spoke up, and every work change since.',
+         N'Lost shifts or worse treatment after saying no or reporting can be retaliation.',
+         'dac2f400336d484a9486ed20261d359c'),
+        ('boundaries', N'Setting Boundaries in Work Group Chats',
+         N'Save a one-sentence boundary in your notes; make personal accounts private.',
+         N'Unwanted comments and personal contact from coworkers go unchecked.',
+         'd89b58c2a48a41e4973850510ea3ef0d'),
+        ('documentation', N'Documenting Incidents',
+         N'Start a private, dated work log on your own phone and save screenshots.',
+         N'Without dated records, incidents are easy to dismiss.',
+         '99a6567f5ab846a78535e5894fed7bcd')
+       ) AS v (DomainKey, Title, QuickWin, Factor, CourseId)
+ WHERE NOT EXISTS (SELECT 1 FROM dbo.QuizDomains d WHERE d.DomainKey = v.DomainKey);
+GO
+
+-- Quiz questions
+INSERT INTO dbo.QuizQuestions (QuestionId, QuestionText, SortOrder, IsActive)
+SELECT v.QuestionId, v.QuestionText, v.SortOrder, 1
+  FROM (VALUES
+        ('q41', N'In the past year, after you said no to someone at work (a date, a favor, extra hours), did anything change for you, like fewer shifts, worse schedules, or being left out?', 41),
+        ('q42', N'Has a manager or coworker treated you worse after you reported a problem or set a limit with them?', 42),
+        ('q43', N'Has a coworker or manager followed or messaged you on your personal social media when you did not want them to?', 43),
+        ('q44', N'In work group chats, how often are comments about your looks, body, or personal life brushed off as "just jokes"?', 44),
+        ('q45', N'If a message in a work chat crossed a line for you, how confident are you that you would know what to say?', 45),
+        ('q46', N'If something at work made you uncomfortable, would you keep a record of it (dates, screenshots, who was there)?', 46)
+       ) AS v (QuestionId, QuestionText, SortOrder)
+ WHERE NOT EXISTS (SELECT 1 FROM dbo.QuizQuestions q WHERE q.QuestionId = v.QuestionId);
+
+INSERT INTO dbo.QuizOptions (QuestionId, OptionKey, OptionText)
+SELECT v.QuestionId, v.OptionKey, v.OptionText
+  FROM (VALUES
+        ('q41', 'A', N'Yes, and it started soon after I said no'),
+        ('q41', 'B', N'Maybe, but I am not sure if it is connected'),
+        ('q41', 'C', N'No'),
+        ('q41', 'D', N'I prefer not to say'),
+        ('q42', 'A', N'Yes'),
+        ('q42', 'B', N'It might have happened once or twice'),
+        ('q42', 'C', N'No'),
+        ('q42', 'D', N'I prefer not to say'),
+        ('q43', 'A', N'Yes, and I did not feel I could say no'),
+        ('q43', 'B', N'Yes, but I handled it the way I wanted'),
+        ('q43', 'C', N'No'),
+        ('q43', 'D', N'I prefer not to say'),
+        ('q44', 'A', N'Often'),
+        ('q44', 'B', N'Sometimes'),
+        ('q44', 'C', N'Rarely or never'),
+        ('q44', 'D', N'I am not in work group chats or prefer not to say'),
+        ('q45', 'A', N'Not confident, I would probably stay quiet'),
+        ('q45', 'B', N'Somewhat confident'),
+        ('q45', 'C', N'Very confident'),
+        ('q45', 'D', N'I prefer not to say'),
+        ('q46', 'A', N'No, I would not know what to save'),
+        ('q46', 'B', N'Sometimes, but it would be scattered'),
+        ('q46', 'C', N'Yes, dated notes and screenshots saved somewhere private'),
+        ('q46', 'D', N'I prefer not to say')
+       ) AS v (QuestionId, OptionKey, OptionText)
+ WHERE NOT EXISTS (SELECT 1 FROM dbo.QuizOptions o WHERE o.QuestionId = v.QuestionId AND o.OptionKey = v.OptionKey);
+
+INSERT INTO dbo.QuizOptionWeights (QuestionId, OptionKey, DomainKey, Weight)
+SELECT v.QuestionId, v.OptionKey, v.DomainKey, v.Weight
+  FROM (VALUES
+        ('q41', 'A', 'retaliation', 4),   ('q41', 'A', 'documentation', 2),
+        ('q41', 'B', 'retaliation', 3),   ('q41', 'B', 'documentation', 2),
+        ('q41', 'C', 'retaliation', -1),
+        ('q41', 'D', 'retaliation', 0),
+        ('q42', 'A', 'retaliation', 3),   ('q42', 'A', 'documentation', 2),
+        ('q42', 'B', 'retaliation', 2),   ('q42', 'B', 'documentation', 1),
+        ('q42', 'C', 'retaliation', -1),
+        ('q42', 'D', 'retaliation', 0),
+        ('q43', 'A', 'boundaries', 4),    ('q43', 'A', 'documentation', 1), ('q43', 'A', 'social_privacy', 1),
+        ('q43', 'B', 'boundaries', 1),
+        ('q43', 'C', 'boundaries', -1),
+        ('q43', 'D', 'boundaries', 0),
+        ('q44', 'A', 'boundaries', 4),    ('q44', 'A', 'documentation', 2),
+        ('q44', 'B', 'boundaries', 2),    ('q44', 'B', 'documentation', 1),
+        ('q44', 'C', 'boundaries', -1),
+        ('q44', 'D', 'boundaries', 0),
+        ('q45', 'A', 'boundaries', 3),
+        ('q45', 'B', 'boundaries', 1),
+        ('q45', 'C', 'boundaries', -2),
+        ('q45', 'D', 'boundaries', 0),
+        ('q46', 'A', 'documentation', 4),
+        ('q46', 'B', 'documentation', 2),
+        ('q46', 'C', 'documentation', -2),
+        ('q46', 'D', 'documentation', 0)
+       ) AS v (QuestionId, OptionKey, DomainKey, Weight)
+ WHERE NOT EXISTS (SELECT 1 FROM dbo.QuizOptionWeights w
+                    WHERE w.QuestionId = v.QuestionId AND w.OptionKey = v.OptionKey AND w.DomainKey = v.DomainKey);
 GO
 
 SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
