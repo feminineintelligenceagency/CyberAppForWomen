@@ -16,6 +16,11 @@
      004  MFA columns on UserCredentials, UserMfaBackupCodes
      005  PasswordResetTokens
      006  Story #18 workplace courses: microcourses, quiz domains, questions q41-q46
+     007  Certificates (certificates of completion + verification numbers)
+     008  ParticipantBadges
+
+   Creates EMPTY tables (plus the Story #18 course/quiz rows). To copy the existing
+   App_Data XML data in, run Import-AllData.ps1 afterwards.
 */
 
 IF DB_ID(N'CyberAppDB') IS NULL
@@ -579,8 +584,15 @@ GO
    Ruleset stays 2.0, so nobody is forced to retake the quiz. Participants get the new
    recommendations the next time they take it.
 
-   Safe to run more than once.
+   Safe to run more than once, and safe on a brand-new database: the quiz ruleset row
+   is created if missing, and weights for domains that don't exist yet (e.g. social_privacy
+   before the XML import) are skipped. Import-Batch2.ps1 fills those in afterwards.
 */
+
+-- Ruleset 2.0 must exist before domains can point to it (empty on a brand-new database).
+IF NOT EXISTS (SELECT 1 FROM dbo.QuizRulesets WHERE Version = '2.0')
+    INSERT INTO dbo.QuizRulesets (Version, CreatedAtUtc) VALUES ('2.0', NULL);
+GO
 
 -- Microcourses
 INSERT INTO dbo.Microcourses (CourseId, Title, Summary, Status, DurationMinutes, CreatedAtUtc, CreatedByEmail)
@@ -697,7 +709,56 @@ SELECT v.QuestionId, v.OptionKey, v.DomainKey, v.Weight
         ('q46', 'D', 'documentation', 0)
        ) AS v (QuestionId, OptionKey, DomainKey, Weight)
  WHERE NOT EXISTS (SELECT 1 FROM dbo.QuizOptionWeights w
-                    WHERE w.QuestionId = v.QuestionId AND w.OptionKey = v.OptionKey AND w.DomainKey = v.DomainKey);
+                    WHERE w.QuestionId = v.QuestionId AND w.OptionKey = v.OptionKey AND w.DomainKey = v.DomainKey)
+   AND EXISTS (SELECT 1 FROM dbo.QuizDomains d WHERE d.DomainKey = v.DomainKey);   -- skip domains not created yet
+GO
+
+/* =====================================================================
+   007_CreateCertificates.sql
+   ===================================================================== */
+IF OBJECT_ID(N'dbo.Certificates', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Certificates
+    (
+        CertificateId     INT IDENTITY(1,1) NOT NULL,
+        VerificationCode  CHAR(18)       NOT NULL,   -- FIA-XXXX-XXXX-XXXX
+        UserId            CHAR(32)       NOT NULL,
+        CourseId          NVARCHAR(100)  NOT NULL,
+        CourseTitle       NVARCHAR(200)  NOT NULL,
+        RecipientName     NVARCHAR(201)  NOT NULL,
+        IssuedAtUtc       DATETIME2(3)   NOT NULL CONSTRAINT DF_Certificates_IssuedAtUtc DEFAULT SYSUTCDATETIME(),
+
+        CONSTRAINT PK_Certificates PRIMARY KEY (CertificateId),
+        CONSTRAINT UQ_Certificates_VerificationCode UNIQUE (VerificationCode),
+        CONSTRAINT UQ_Certificates_User_Course UNIQUE (UserId, CourseId),   -- one certificate per course
+        CONSTRAINT FK_Certificates_Users FOREIGN KEY (UserId)
+            REFERENCES dbo.Users (UserId) ON DELETE CASCADE
+    );
+
+    CREATE INDEX IX_Certificates_UserId ON dbo.Certificates (UserId);
+END
+GO
+
+/* =====================================================================
+   008_CreateParticipantBadges.sql
+   ===================================================================== */
+IF OBJECT_ID(N'dbo.ParticipantBadges', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.ParticipantBadges
+    (
+        BadgeId       INT IDENTITY(1,1) NOT NULL,
+        UserId        CHAR(32)       NOT NULL,
+        CourseId      NVARCHAR(100)  NOT NULL,
+        CourseTitle   NVARCHAR(200)  NOT NULL,
+        ImagePath     NVARCHAR(400)  NULL,
+        AwardedAtUtc  DATETIME2(3)   NOT NULL CONSTRAINT DF_ParticipantBadges_AwardedAtUtc DEFAULT SYSUTCDATETIME(),
+
+        CONSTRAINT PK_ParticipantBadges PRIMARY KEY (BadgeId),
+        CONSTRAINT UQ_ParticipantBadges_User_Course UNIQUE (UserId, CourseId),   -- one badge per course
+        CONSTRAINT FK_ParticipantBadges_Users FOREIGN KEY (UserId)
+            REFERENCES dbo.Users (UserId) ON DELETE CASCADE
+    );
+END
 GO
 
 SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
