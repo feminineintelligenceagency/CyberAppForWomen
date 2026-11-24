@@ -40,6 +40,16 @@ namespace CyberApp_FIA.Participant
                 return;
             }
 
+            if (Request.QueryString["download"] == "checklist" && _class.Slug == "documenting-incidents" && _class.ResourceOnly)
+            {
+                Response.Clear();
+                Response.ContentType = "application/pdf";
+                Response.AddHeader("Content-Disposition", "attachment; filename=incident-documentation-checklist.pdf");
+                Response.TransmitFile(Server.MapPath("~/App_Data/resources/incident-documentation-checklist.pdf"));
+                Response.End();
+                return;
+            }
+
             if (!IsPostBack) ShowClass();
         }
 
@@ -59,6 +69,10 @@ namespace CyberApp_FIA.Participant
             ClassTitle.Text = Server.HtmlEncode(_class.Title);
             Objective.Text = Server.HtmlEncode(_class.Objective);
             PassScore.Text = _class.PassScore.ToString();
+            QuizPanel.Visible = !_class.ResourceOnly;
+            ResourceOnlyPanel.Visible = _class.ResourceOnly;
+            ResourceOnlyRepeater.DataSource = _class.ResourceOnly ? _class.Resources : null;
+            ResourceOnlyRepeater.DataBind();
 
             BlocksRepeater.DataSource = _class.Blocks;
             BlocksRepeater.DataBind();
@@ -106,6 +120,7 @@ namespace CyberApp_FIA.Participant
 
         protected void BtnSubmit_Click(object sender, EventArgs e)
         {
+            if (_class == null || _class.ResourceOnly || _class.Questions.Count == 0) return;
             // collect what the student picked: question id -> option key
             var picked = new Dictionary<string, string>();
             foreach (RepeaterItem item in QuestionsRepeater.Items)

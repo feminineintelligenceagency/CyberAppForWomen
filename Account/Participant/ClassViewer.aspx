@@ -36,7 +36,7 @@
       <%-- List of all classes (shown when no class is picked) --%>
       <asp:Panel ID="ListPanel" runat="server">
         <h1>Classes</h1>
-        <p class="sub">Short classes you can take at your own pace. Pass the quiz to complete one.</p>
+        <p class="sub">Short classes and resources you can explore at your own pace.</p>
         <asp:Repeater ID="ClassListRepeater" runat="server">
           <ItemTemplate>
             <div class="card">
@@ -58,6 +58,14 @@
           <strong>By the end of this class, you will be able to:</strong>
           <p><asp:Literal ID="Objective" runat="server" /></p>
         </div>
+
+        <asp:Panel ID="ResourceOnlyPanel" runat="server" Visible="false" CssClass="card">
+          <h2>Download the checklist</h2>
+          <p>Save the blank PDF to your device and complete it there or print it. Keep completed records on your device; do not upload incident details to this platform.</p>
+          <asp:Repeater ID="ResourceOnlyRepeater" runat="server">
+            <ItemTemplate><p><a href="<%#: ResolveUrl((string)Eval("Url")) %>"><%#: Eval("Title") %></a></p></ItemTemplate>
+          </asp:Repeater>
+        </asp:Panel>
 
         <%-- Time blocks: Hook, The One Thing, Core Concept, Real Examples, Hands-On --%>
         <asp:Repeater ID="BlocksRepeater" runat="server" OnItemDataBound="BlocksRepeater_ItemDataBound">

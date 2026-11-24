@@ -142,6 +142,8 @@
     <Content Include="App_Data\badgeDescriptions.xml" />
     <Content Include="App_Data\certificationRules.xml" />
     <Content Include="App_Data\classes\active-sessions.xml" />
+    <Content Include="App_Data\classes\documenting-incidents.xml" />
+    <Content Include="App_Data\resources\incident-documentation-checklist.pdf" />
     <Content Include="App_Data\completions.xml" />
     <Content Include="App_Data\enrollments.xml" />
     <Content Include="App_Data\eventCourses.xml" />

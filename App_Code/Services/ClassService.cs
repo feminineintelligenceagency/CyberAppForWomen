@@ -18,6 +18,7 @@ namespace CyberApp_FIA.Services
             public string Slug { get; set; }          // file name without .xml, used in the page URL
             public string CourseId { get; set; }      // links to the course in microcourses.xml
             public string Title { get; set; }
+            public bool ResourceOnly { get; set; }
             public string Objective { get; set; }
             public string NorthStar { get; set; }
             public int PassScore { get; set; }        // percent needed to pass
@@ -113,6 +114,7 @@ namespace CyberApp_FIA.Services
                 Slug = slug,
                 CourseId = root.GetAttribute("courseId"),
                 Title = Text(root, "title"),
+                ResourceOnly = string.Equals(root.GetAttribute("resourceOnly"), "true", StringComparison.OrdinalIgnoreCase),
                 Objective = Text(root, "objective"),
                 NorthStar = Text(root, "northStar"),
                 PassScore = int.TryParse(root.GetAttribute("passScore"), out var p) ? p : 80
