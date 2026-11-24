@@ -441,8 +441,8 @@
           <ItemTemplate>
             <div class="helper-row">
               <div class="helper-main">
-                <span class="helper-name"><%# Eval("DisplayName") %></span>
-                <span class="helper-email"><%# Eval("Email") %></span>
+                <span class="helper-name"><%#: Eval("DisplayName") %></span>
+                <span class="helper-email"><%#: Eval("Email") %></span>
               </div>
 
               <asp:Button
@@ -567,16 +567,16 @@
                 <ItemTemplate>
                   <tr>
                     <td>
-                      <div><%# Eval("TimestampDate") %></div>
+                      <div><%#: Eval("TimestampDate") %></div>
                       <div style="font-size:.8rem; color:var(--muted);">
-                        <%# Eval("TimestampTime") %>
+                        <%#: Eval("TimestampTime") %>
                       </div>
                     </td>
-                    <td><span class="pill"><%# Eval("Role") %></span></td>
-                    <td><%# Eval("Type") %></td>
-                    <td><%# Eval("FirstName") %></td>
-                    <td><%# Eval("Email") %></td>
-                    <td class="details-cell"><%# Eval("Details") %></td>
+                    <td><span class="pill"><%#: Eval("Role") %></span></td>
+                    <td><%#: Eval("Type") %></td>
+                    <td><%#: Eval("FirstName") %></td>
+                    <td><%#: Eval("Email") %></td>
+                    <td class="details-cell"><%#: Eval("Details") %></td>
                   </tr>
                 </ItemTemplate>
               </asp:Repeater>

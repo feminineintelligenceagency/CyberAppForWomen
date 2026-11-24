@@ -16,7 +16,7 @@ namespace CyberApp_FIA.Account
     /// - Provides navigation into the university-scoped audit log.
     /// - NEW: Provides navigation to the "Add Helper" page for this university.
     /// </summary>
-    public partial class UniversityAdminHome : Page
+    public partial class UniversityAdminHome : SecurePage
     {
         /// <summary>
         /// Physical path to the events XML datastore (per-app, non-public App_Data folder).

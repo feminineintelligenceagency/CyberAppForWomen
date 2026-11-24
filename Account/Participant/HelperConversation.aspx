@@ -202,10 +202,10 @@
             <ItemTemplate>
               <div class='<%# Eval("CssClass") %>'>
                 <div class="msg-meta">
-                  <span class="msg-sender"><%# Eval("SenderName") %></span>
+                  <span class="msg-sender"><%#: Eval("SenderName") %></span>
                   <span class="msg-time"><%# Eval("TimeLocal", "{0:MMM d, h:mm tt}") %></span>
                 </div>
-                <div class="msg-body"><%# Eval("Body") %></div>
+                <div class="msg-body" style="white-space:pre-wrap;"><%#: Eval("Body") %></div>
               </div>
             </ItemTemplate>
           </asp:Repeater>

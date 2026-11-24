@@ -419,10 +419,10 @@
 
           <ItemTemplate>
             <tr>
-              <td><%# Eval("Title") %></td>
-              <td><span class="status-pill"><%# Eval("Status") %></span></td>
-              <td><%# Eval("CreatedAtDisplay") %></td>
-              <td><%# Eval("CreatedBy") %></td>
+              <td><%#: Eval("Title") %></td>
+              <td><span class="status-pill"><%#: Eval("Status") %></span></td>
+              <td><%#: Eval("CreatedAtDisplay") %></td>
+              <td><%#: Eval("CreatedBy") %></td>
               <td>
                 <asp:Button
                   ID="BtnEditCourse"

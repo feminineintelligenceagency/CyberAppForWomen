@@ -352,7 +352,7 @@
 
           <div>
   <label for="NewPassword">New Password</label>
-  <asp:TextBox ID="NewPassword" runat="server" TextMode="Password" />
+  <asp:TextBox ID="NewPassword" runat="server" TextMode="Password" placeholder="At least 12 characters" />
   <asp:RequiredFieldValidator
     runat="server"
     ControlToValidate="NewPassword"

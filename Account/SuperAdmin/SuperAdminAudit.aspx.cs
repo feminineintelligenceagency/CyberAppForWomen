@@ -150,12 +150,8 @@ namespace CyberApp_FIA.Account
 
         private static string CsvEscape(string s)
         {
-            if (s == null) return "";
-            if (s.Contains("\"") || s.Contains(",") || s.Contains("\r") || s.Contains("\n"))
-            {
-                return "\"" + s.Replace("\"", "\"\"") + "\"";
-            }
-            return s;
+            // Also neutralises cells starting with = + - @ so they are not run as formulas in Excel/Sheets.
+            return CsvSafe.Escape(s);
         }
 
         private void InitializeFilters()

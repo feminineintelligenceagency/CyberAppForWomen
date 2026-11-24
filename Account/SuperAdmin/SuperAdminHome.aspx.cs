@@ -19,7 +19,7 @@ namespace CyberApp_FIA.Account
     /// - Binds selectable certification rules from ~/App_Data/certificationRules.xml
     /// - NEW: Allows selecting existing microcourses as prerequisites
     /// </summary>
-    public partial class SuperAdminHome : Page
+    public partial class SuperAdminHome : SecurePage
     {
         // Path to microcourses datastore (XML with <microcourses><course .../></microcourses>)
         private string MicrocoursesXmlPath => Server.MapPath("~/App_Data/microcourses.xml");

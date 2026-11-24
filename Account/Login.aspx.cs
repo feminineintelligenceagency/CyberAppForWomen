@@ -19,15 +19,19 @@ namespace CyberApp_FIA.Account
     /// </summary>
     public partial class Login : Page
     {
-        private const string GenericLoginError =
-            "<span style='color:#c21d1d'>Invalid email or password.</span>";
+        // One message for every failed sign-in (unknown email, wrong password, locked account, too many
+        // attempts from this address). Different messages would let someone tell which emails have accounts.
+        private static readonly string GenericLoginError =
+            "<span style='color:#c21d1d'>Invalid email or password. If you have tried several times, "
+            + "your account may be temporarily locked: wait "
+            + (int)LoginRateLimiting.LockoutDuration.TotalMinutes
+            + " minutes or reset your password.</span>";
 
         private const string ServiceUnavailableError =
             "<span style='color:#c21d1d'>Sign-in is temporarily unavailable. Please try again in a moment.</span>";
 
-        private static readonly string LockoutError =
-            "<span style='color:#c21d1d'>Too many failed attempts. Your account is locked for "
-            + (int)LoginRateLimiting.LockoutDuration.TotalMinutes + " minutes.</span>";
+        // Same text as every other failure on purpose (see GenericLoginError).
+        private static string LockoutError { get { return GenericLoginError; } }
 
         /// <summary>
         /// when SecurePage sends the user here with ?expired=1, end the old session on the server and show a message.
@@ -48,6 +52,14 @@ namespace CyberApp_FIA.Account
             var emailLower = (Email.Text ?? "").Trim().ToLowerInvariant();
             var password = Password.Text ?? "";
             var now = DateTime.UtcNow;
+            var clientIp = Request.UserHostAddress;
+
+            // Too many failed sign-ins from this address recently: refuse before doing any work.
+            if (LoginIpThrottle.IsBlocked(clientIp, now))
+            {
+                FormMessage.Text = GenericLoginError;
+                return;
+            }
 
             //Look up the user
             UserRepository.LoginRecord user;
@@ -67,6 +79,7 @@ namespace CyberApp_FIA.Account
             {
                 // Take about as long as a real check so timing doesn't reveal registered emails.
                 passHasher.dummyVerify(password);
+                LoginIpThrottle.RecordFailure(clientIp, now);
 
                 WriteFailedSignInAudit(null, emailLower, "Unknown", "", "",
                     "Sign In Failed (Unknown Email)",
@@ -79,6 +92,9 @@ namespace CyberApp_FIA.Account
             //refuse before checking the password if user is locked out
             if (user.IsLockedOut(now))
             {
+                // Take as long as a real check, so a locked account can't be told apart by speed.
+                passHasher.dummyVerify(password);
+                LoginIpThrottle.RecordFailure(clientIp, now);
                 FormMessage.Text = LockoutError;
                 return;
             }
@@ -97,6 +113,8 @@ namespace CyberApp_FIA.Account
 
             if (!valid)
             {
+                LoginIpThrottle.RecordFailure(clientIp, now);
+
                 //count the failure; lock after repeated invalid attempts.
                 DateTime? lockedUntil = null;
                 try
@@ -163,7 +181,8 @@ namespace CyberApp_FIA.Account
             // Issue the auth token that Global.asax checks on every request.
             AuthSession.SignIn(Context);
 
-            try { UniversityAuditLogger.AppendForCurrentUser(this, "Sign In", user.Role + " signed in."); } catch { }
+            try { UniversityAuditLogger.AppendForCurrentUser(this, "Sign In", user.Role + " signed in."); }
+            catch (Exception ex) { System.Diagnostics.Trace.TraceWarning("Sign-in audit entry failed: " + ex.Message); }
 
             Response.Redirect(GetLandingPage(user.Role));
         }

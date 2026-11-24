@@ -39,7 +39,6 @@ namespace CyberApp_FIA.Services
         public const int Argon2SaltSize = 16;
         public const int Argon2HashSize = 32;
 
-        public const int pbkdf2SaltSize = 100000;
         public const int pbkdf2HashSize = 32;
 
         private static byte[] dummySalt = GenerateSalt();
@@ -144,7 +143,7 @@ namespace CyberApp_FIA.Services
 
                 return true;
             }
-            // TODO: if pbldf2 is used, set doRehash to true so that the user can be upgraded to Argon2 on next login.
+            // Legacy PBKDF2 hashes still verify, and doRehash = true makes the login page upgrade them to Argon2.
             else if (algo == pbkdf2ID || string.IsNullOrEmpty(algo))
             {
                 var computedHash = HashPassword(password, salt);
@@ -155,10 +154,11 @@ namespace CyberApp_FIA.Services
             }
             else
             {
-                throw new ArgumentException("Unknown hashing algorithm specified.");
+                // A row with an algorithm this code doesn't know is treated as a failed sign-in,
+                // not a crash (an exception here would show the user an error page instead).
+                System.Diagnostics.Trace.TraceError("passHasher: unknown hashing algorithm '" + algo + "' on a stored password.");
+                return false;
             }
-
-            return false;
         }
 
         /// <summary>

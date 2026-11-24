@@ -13,7 +13,6 @@ namespace CyberApp_FIA.Account
     /// </summary>
     public partial class ResetPassword : Page
     {
-        private const int MinPasswordLength = 8;
 
         private string Token => Request.QueryString["token"] ?? "";
 
@@ -38,9 +37,10 @@ namespace CyberApp_FIA.Account
 
             var newPassword = NewPassword.Text ?? "";
 
-            if (newPassword.Length < MinPasswordLength)
+            var passwordProblem = PasswordPolicy.Problem(newPassword);
+            if (passwordProblem != null)
             {
-                FormMessage.Text = "Your password must be at least " + MinPasswordLength + " characters.";
+                FormMessage.Text = Server.HtmlEncode(passwordProblem);
                 return;
             }
 

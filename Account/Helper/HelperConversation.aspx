@@ -325,12 +325,12 @@
               </HeaderTemplate>
 
               <ItemTemplate>
-                <div class='message-row <%# Eval("FromRoleCss") %>'>
-                  <div class='message-bubble <%# Eval("FromRoleCss") %>'>
+                <div class='message-row <%#: Eval("FromRoleCss") %>'>
+                  <div class='message-bubble <%#: Eval("FromRoleCss") %>'>
                     <%# Eval("BodyHtml") %>
                   </div>
                   <div class="message-meta">
-                    <%# Eval("FromLabel") %> • <%# Eval("SentOnLocal", "{0:MMM d, yyyy • h:mm tt}") %>
+                    <%#: Eval("FromLabel") %> • <%# Eval("SentOnLocal", "{0:MMM d, yyyy • h:mm tt}") %>
                   </div>
                 </div>
               </ItemTemplate>

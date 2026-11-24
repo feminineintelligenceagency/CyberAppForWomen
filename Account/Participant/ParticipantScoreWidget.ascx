@@ -119,7 +119,7 @@
       <ItemTemplate>
   <div id="Cell" runat="server" class="cell">
     <div class="cellLeft">
-      <span class="name"><%# Eval("Key") %></span>
+      <span class="name"><%#: Eval("Key") %></span>
       <span id="CompletedBadge" runat="server" class="doneBadge" visible="false">Completed</span>
     </div>
     <span id="Chip" runat="server" class="chip">–</span>

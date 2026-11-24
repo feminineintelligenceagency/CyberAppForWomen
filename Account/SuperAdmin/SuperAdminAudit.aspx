@@ -537,17 +537,17 @@
                 <ItemTemplate>
                   <tr>
                     <td>
-                      <div><%# Eval("TimestampDate") %></div>
+                      <div><%#: Eval("TimestampDate") %></div>
                       <div style="font-size:.8rem; color:var(--muted);">
-                        <%# Eval("TimestampTime") %>
+                        <%#: Eval("TimestampTime") %>
                       </div>
                     </td>
-                    <td><%# Eval("University") %></td>
-                    <td><span class="pill"><%# Eval("Role") %></span></td>
-                    <td><%# Eval("Type") %></td>
-                    <td><%# Eval("FirstName") %></td>
-                    <td><%# Eval("Email") %></td>
-                    <td class="details-cell"><%# Eval("Details") %></td>
+                    <td><%#: Eval("University") %></td>
+                    <td><span class="pill"><%#: Eval("Role") %></span></td>
+                    <td><%#: Eval("Type") %></td>
+                    <td><%#: Eval("FirstName") %></td>
+                    <td><%#: Eval("Email") %></td>
+                    <td class="details-cell"><%#: Eval("Details") %></td>
                   </tr>
                 </ItemTemplate>
               </asp:Repeater>
@@ -684,17 +684,17 @@
                 <ItemTemplate>
                   <tr>
                     <td>
-                      <div><%# Eval("TimestampDate") %></div>
+                      <div><%#: Eval("TimestampDate") %></div>
                       <div style="font-size:.8rem; color:var(--muted);">
-                        <%# Eval("TimestampTime") %>
+                        <%#: Eval("TimestampTime") %>
                       </div>
                     </td>
-                    <td><%# Eval("University") %></td>
-                    <td><span class="pill"><%# Eval("Role") %></span></td>
-                    <td><%# Eval("Type") %></td>
-                    <td><%# Eval("FirstName") %></td>
-                    <td><%# Eval("Email") %></td>
-                    <td class="details-cell"><%# Eval("Details") %></td>
+                    <td><%#: Eval("University") %></td>
+                    <td><span class="pill"><%#: Eval("Role") %></span></td>
+                    <td><%#: Eval("Type") %></td>
+                    <td><%#: Eval("FirstName") %></td>
+                    <td><%#: Eval("Email") %></td>
+                    <td class="details-cell"><%#: Eval("Details") %></td>
                   </tr>
                 </ItemTemplate>
               </asp:Repeater>

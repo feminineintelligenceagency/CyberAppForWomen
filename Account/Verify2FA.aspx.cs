@@ -102,7 +102,8 @@ namespace CyberApp_FIA.Account
 
                 AuthSession.SignIn(Context);
 
-                try { UniversityAuditLogger.AppendForCurrentUser(this, "Sign In", user.Role + " signed in (two-factor)."); } catch { }
+                try { UniversityAuditLogger.AppendForCurrentUser(this, "Sign In", user.Role + " signed in (two-factor)."); }
+                catch (Exception ex) { System.Diagnostics.Trace.TraceWarning("Sign-in audit entry failed: " + ex.Message); }
 
                 Response.Redirect(GetLandingPage(user.Role), false);
                 Context.ApplicationInstance.CompleteRequest();

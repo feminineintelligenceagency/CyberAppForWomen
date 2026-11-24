@@ -11,7 +11,7 @@ namespace CyberApp_FIA.Helper
     /// Greets the Helper by name, shows their university and role,
     /// and gives them a branded top panel.
     /// </summary>
-    public partial class Home : Page
+    public partial class Home : SecurePage
     {
         private string UsersXmlPath => Server.MapPath("~/App_Data/users.xml");
 

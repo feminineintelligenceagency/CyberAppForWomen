@@ -132,7 +132,7 @@
 
           <asp:Repeater ID="ResourcesRepeater" runat="server">
             <HeaderTemplate><h2>Learn more</h2></HeaderTemplate>
-            <ItemTemplate><p><a href="<%#: Eval("Url") %>" target="_blank" rel="noopener"><%#: Eval("Title") %></a></p></ItemTemplate>
+            <ItemTemplate><p><a href="<%# CyberApp_FIA.UrlSafe.Href(Eval("Url")) %>" target="_blank" rel="noopener"><%#: Eval("Title") %></a></p></ItemTemplate>
           </asp:Repeater>
         </asp:Panel>
       </asp:Panel>

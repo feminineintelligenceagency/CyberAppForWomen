@@ -697,25 +697,25 @@
     <div class="verification-list">
       <asp:Repeater ID="VerificationRepeater" runat="server" OnItemCommand="VerificationRepeater_ItemCommand">
         <ItemTemplate>
-          <div class="verification-card <%# Eval("CssClass") %>">
+          <div class="verification-card <%#: Eval("CssClass") %>">
             <div class="verification-main">
               <div class="verification-status">
-                <%# Eval("StatusLabel") %>
-                <span class="submission-pill"><%# Eval("SubmissionLabel") %></span>
+                <%#: Eval("StatusLabel") %>
+                <span class="submission-pill"><%#: Eval("SubmissionLabel") %></span>
               </div>
-              <div class="verification-title"><%# Eval("CourseTitle") %></div>
+              <div class="verification-title"><%#: Eval("CourseTitle") %></div>
               <div>
                 Helper reported: reviewed resources and passed the quiz for this microcourse.
               </div>
               <div class="verification-meta">
-                Last updated: <%# Eval("LastUpdatedLabel") %>
+                Last updated: <%#: Eval("LastUpdatedLabel") %>
               </div>
 
               <asp:PlaceHolder ID="HelperNotePH" runat="server"
                 Visible='<%# (bool)Eval("HasHelperNote") %>'>
                 <div class="helper-note-chip">
                   <span class="helper-note-label">Helper note:</span>
-                  <span class="helper-note-text"><%# Eval("HelperNote") %></span>
+                  <span class="helper-note-text"><%#: Eval("HelperNote") %></span>
                 </div>
               </asp:PlaceHolder>
             </div>
@@ -787,18 +787,18 @@
     <div class="verification-list">
       <asp:Repeater ID="TeachingLogReviewRepeater" runat="server" OnItemCommand="TeachingLogReviewRepeater_ItemCommand">
         <ItemTemplate>
-          <div class='verification-card <%# Eval("CssClass") %>'>
+          <div class='verification-card <%#: Eval("CssClass") %>'>
             <div class="verification-main">
-              <div class="verification-status"><%# Eval("StatusLabel") %></div>
-              <div class="verification-title"><%# Eval("CourseTitle") %></div>
-              <div class="verification-meta">Logged: <%# Eval("WhenLabel") %></div>
-              <div style="margin-top:4px;"><%# Eval("Details") %></div>
+              <div class="verification-status"><%#: Eval("StatusLabel") %></div>
+              <div class="verification-title"><%#: Eval("CourseTitle") %></div>
+              <div class="verification-meta">Logged: <%#: Eval("WhenLabel") %></div>
+              <div style="margin-top:4px;"><%#: Eval("Details") %></div>
 
               <asp:PlaceHolder ID="AdminNotePH" runat="server"
                 Visible='<%# !string.IsNullOrWhiteSpace((string)Eval("AdminNote")) %>'>
                 <div class="helper-note-chip" style="margin-top:6px;">
                   <span class="helper-note-label">Admin note:</span>
-                  <span><%# Eval("AdminNote") %></span>
+                  <span><%#: Eval("AdminNote") %></span>
                 </div>
               </asp:PlaceHolder>
             </div>
@@ -872,18 +872,18 @@
     <div class="verification-list">
       <asp:Repeater ID="HelpLogReviewRepeater" runat="server" OnItemCommand="HelpLogReviewRepeater_ItemCommand">
         <ItemTemplate>
-          <div class='verification-card <%# Eval("CssClass") %>'>
+          <div class='verification-card <%#: Eval("CssClass") %>'>
             <div class="verification-main">
-              <div class="verification-status"><%# Eval("StatusLabel") %></div>
-              <div class="verification-title"><%# Eval("CourseTitle") %></div>
-              <div class="verification-meta">Logged: <%# Eval("WhenLabel") %></div>
-              <div style="margin-top:4px;"><%# Eval("Details") %></div>
+              <div class="verification-status"><%#: Eval("StatusLabel") %></div>
+              <div class="verification-title"><%#: Eval("CourseTitle") %></div>
+              <div class="verification-meta">Logged: <%#: Eval("WhenLabel") %></div>
+              <div style="margin-top:4px;"><%#: Eval("Details") %></div>
 
               <asp:PlaceHolder ID="AdminNotePH" runat="server"
                 Visible='<%# !string.IsNullOrWhiteSpace((string)Eval("AdminNote")) %>'>
                 <div class="helper-note-chip" style="margin-top:6px;">
                   <span class="helper-note-label">Admin note:</span>
-                  <span><%# Eval("AdminNote") %></span>
+                  <span><%#: Eval("AdminNote") %></span>
                 </div>
               </asp:PlaceHolder>
             </div>
@@ -1010,13 +1010,13 @@
                 <ItemTemplate>
                   <tr>
                     <td>
-                      <div><%# Eval("TimestampDate") %></div>
+                      <div><%#: Eval("TimestampDate") %></div>
                       <div style="font-size:.8rem; color:var(--muted);">
-                        <%# Eval("TimestampTime") %>
+                        <%#: Eval("TimestampTime") %>
                       </div>
                     </td>
-                    <td><%# Eval("Type") %></td>
-                    <td class="details-cell"><%# Eval("Details") %></td>
+                    <td><%#: Eval("Type") %></td>
+                    <td class="details-cell"><%#: Eval("Details") %></td>
                   </tr>
                 </ItemTemplate>
               </asp:Repeater>

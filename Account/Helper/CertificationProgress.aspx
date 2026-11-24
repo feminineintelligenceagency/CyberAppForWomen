@@ -718,15 +718,15 @@
           </div>
 
           <div class="questioned-banner-sub">
-            <strong><%# Eval("Title") %></strong>:
-            <%# Eval("TeachingHoldSentence") %>
+            <strong><%#: Eval("Title") %></strong>:
+            <%#: Eval("TeachingHoldSentence") %>
           </div>
 
           <asp:PlaceHolder ID="TeachingBannerNotePH" runat="server"
             Visible='<%# (bool)Eval("HasTeachingReviewNote") %>'>
             <div class="questioned-banner-note">
               <strong>Admin note:</strong>
-              <span><%# Eval("TeachingReviewNote") %></span>
+              <span><%#: Eval("TeachingReviewNote") %></span>
             </div>
           </asp:PlaceHolder>
 
@@ -762,15 +762,15 @@
           </div>
 
           <div class="questioned-banner-sub">
-            <strong><%# Eval("Title") %></strong>:
-            <%# Eval("HelpHoldSentence") %>
+            <strong><%#: Eval("Title") %></strong>:
+            <%#: Eval("HelpHoldSentence") %>
           </div>
 
           <asp:PlaceHolder ID="HelpBannerNotePH" runat="server"
             Visible='<%# (bool)Eval("HasHelpReviewNote") %>'>
             <div class="questioned-banner-note">
               <strong>Admin note:</strong>
-              <span><%# Eval("HelpReviewNote") %></span>
+              <span><%#: Eval("HelpReviewNote") %></span>
             </div>
           </asp:PlaceHolder>
 
@@ -812,14 +812,14 @@
               <ItemTemplate>
                 <div class="module-pill">
                   <div class="module-pill-title">
-  <%# Eval("Title") %>
-  <span class="verified-check <%# Eval("VerificationCssClass") %>">
+  <%#: Eval("Title") %>
+  <span class="verified-check <%#: Eval("VerificationCssClass") %>">
     ✓ Verified
   </span>
 </div>
 
-                  <div class="module-pill-status <%# Eval("StatusCssClass") %>">
-                    <%# Eval("StatusLabel") %>
+                  <div class="module-pill-status <%#: Eval("StatusCssClass") %>">
+                    <%#: Eval("StatusLabel") %>
                   </div>
                 </div>
               </ItemTemplate>
@@ -837,14 +837,14 @@
               <ItemTemplate>
                 <div class="module-pill">
                   <div class="module-pill-title">
-  <%# Eval("Title") %>
-  <span class="verified-check <%# Eval("VerificationCssClass") %>">
+  <%#: Eval("Title") %>
+  <span class="verified-check <%#: Eval("VerificationCssClass") %>">
     ✓ Verified
   </span>
 </div>
 
-                  <div class="module-pill-status <%# Eval("StatusCssClass") %>">
-                    <%# Eval("StatusLabel") %>
+                  <div class="module-pill-status <%#: Eval("StatusCssClass") %>">
+                    <%#: Eval("StatusLabel") %>
                   </div>
                 </div>
               </ItemTemplate>
@@ -862,14 +862,14 @@
               <ItemTemplate>
                 <div class="module-pill">
                   <div class="module-pill-title">
-  <%# Eval("Title") %>
-  <span class="verified-check <%# Eval("VerificationCssClass") %>">
+  <%#: Eval("Title") %>
+  <span class="verified-check <%#: Eval("VerificationCssClass") %>">
     ✓ Verified
   </span>
 </div>
 
-                  <div class="module-pill-status <%# Eval("StatusCssClass") %>">
-                    <%# Eval("StatusLabel") %>
+                  <div class="module-pill-status <%#: Eval("StatusCssClass") %>">
+                    <%#: Eval("StatusLabel") %>
                   </div>
                 </div>
               </ItemTemplate>
@@ -893,18 +893,18 @@
               <div class="req-card">
                 <div class="req-header">
   <h3 class="req-title">
-    <%# Eval("Title") %>
-    <span class="verified-check <%# Eval("VerificationCssClass") %>">
+    <%#: Eval("Title") %>
+    <span class="verified-check <%#: Eval("VerificationCssClass") %>">
       ✓ Verified
     </span>
   </h3>
-  <span class="req-status-pill <%# Eval("HeaderStatusCss") %>">
-    <%# Eval("HeaderStatusLabel") %>
+  <span class="req-status-pill <%#: Eval("HeaderStatusCss") %>">
+    <%#: Eval("HeaderStatusLabel") %>
   </span>
 </div>
 
                 <p class="req-desc">
-                  <%# Eval("Description") %>
+                  <%#: Eval("Description") %>
                 </p>
 
                 <div class="req-grid">
@@ -913,14 +913,14 @@
                     <div class="req-item-title quiz">Quiz</div>
                     <div class="req-item-row">
                       <span class="req-item-label">Required:</span>
-                      <span class="req-item-value"><%# Eval("QuizRequirementText") %></span>
+                      <span class="req-item-value"><%#: Eval("QuizRequirementText") %></span>
                     </div>
                     <div class="req-item-row">
                       <span class="req-item-label">Your score:</span>
-                      <span class="req-item-value"><%# Eval("QuizProgressText") %></span>
+                      <span class="req-item-value"><%#: Eval("QuizProgressText") %></span>
                     </div>
-                    <div class="req-item-status <%# Eval("QuizStatusCss") %>">
-                      <%# Eval("QuizStatusText") %>
+                    <div class="req-item-status <%#: Eval("QuizStatusCss") %>">
+                      <%#: Eval("QuizStatusText") %>
                     </div>
                   </div>
 
@@ -930,24 +930,24 @@
 
 <div class="req-item-row">
   <span class="req-item-label">Required:</span>
-  <span class="req-item-value"><%# Eval("TeachingRequirementText") %></span>
+  <span class="req-item-value"><%#: Eval("TeachingRequirementText") %></span>
 </div>
 
 <div class="req-item-row">
   <span class="req-item-label">Your progress:</span>
-  <span class="req-item-value"><%# Eval("TeachingProgressText") %></span>
+  <span class="req-item-value"><%#: Eval("TeachingProgressText") %></span>
 </div>
 
 <asp:PlaceHolder ID="TeachingQuestionedCountPH" runat="server"
   Visible='<%# (bool)Eval("HasTeachingQuestionedCount") %>'>
   <div class="req-item-row questioned-row">
     <span class="req-item-label">Questioned:</span>
-    <span class="req-item-value"><%# Eval("TeachingQuestionedCountText") %></span>
+    <span class="req-item-value"><%#: Eval("TeachingQuestionedCountText") %></span>
   </div>
 </asp:PlaceHolder>
 
-<div class="req-item-status <%# Eval("TeachingStatusCss") %>">
-  <%# Eval("TeachingStatusText") %>
+<div class="req-item-status <%#: Eval("TeachingStatusCss") %>">
+  <%#: Eval("TeachingStatusText") %>
 </div>
 
 <asp:PlaceHolder ID="TeachingOnHoldPH" runat="server"
@@ -956,9 +956,9 @@
        style="margin-top:4px; padding:6px 8px; border-radius:10px;
               background:#fef2f2; color:#991b1b;">
     <strong>Admin note (teaching):</strong>
-    <span><%# Eval("TeachingReviewNote") %></span>
+    <span><%#: Eval("TeachingReviewNote") %></span>
     <br />
-    <span><%# Eval("TeachingHoldSentence") %></span>
+    <span><%#: Eval("TeachingHoldSentence") %></span>
   </div>
 </asp:PlaceHolder>
 
@@ -970,24 +970,24 @@
 
 <div class="req-item-row">
   <span class="req-item-label">Required:</span>
-  <span class="req-item-value"><%# Eval("HelpRequirementText") %></span>
+  <span class="req-item-value"><%#: Eval("HelpRequirementText") %></span>
 </div>
 
 <div class="req-item-row">
   <span class="req-item-label">Your progress:</span>
-  <span class="req-item-value"><%# Eval("HelpProgressText") %></span>
+  <span class="req-item-value"><%#: Eval("HelpProgressText") %></span>
 </div>
 
 <asp:PlaceHolder ID="HelpQuestionedCountPH" runat="server"
   Visible='<%# (bool)Eval("HasHelpQuestionedCount") %>'>
   <div class="req-item-row questioned-row">
     <span class="req-item-label">Questioned:</span>
-    <span class="req-item-value"><%# Eval("HelpQuestionedCountText") %></span>
+    <span class="req-item-value"><%#: Eval("HelpQuestionedCountText") %></span>
   </div>
 </asp:PlaceHolder>
 
-<div class="req-item-status <%# Eval("HelpStatusCss") %>">
-  <%# Eval("HelpStatusText") %>
+<div class="req-item-status <%#: Eval("HelpStatusCss") %>">
+  <%#: Eval("HelpStatusText") %>
 </div>
 
 <asp:PlaceHolder ID="HelpOnHoldPH" runat="server"
@@ -996,9 +996,9 @@
        style="margin-top:4px; padding:6px 8px; border-radius:10px;
               background:#fef2f2; color:#991b1b;">
     <strong>Admin note (1:1 help):</strong>
-    <span><%# Eval("HelpReviewNote") %></span>
+    <span><%#: Eval("HelpReviewNote") %></span>
     <br />
-    <span><%# Eval("HelpHoldSentence") %></span>
+    <span><%#: Eval("HelpHoldSentence") %></span>
   </div>
 </asp:PlaceHolder>
 
@@ -1009,10 +1009,10 @@
                     <div class="req-item-title expiry">Expiry</div>
                     <div class="req-item-row">
                       <span class="req-item-label">Rule:</span>
-                      <span class="req-item-value"><%# Eval("ExpiryText") %></span>
+                      <span class="req-item-value"><%#: Eval("ExpiryText") %></span>
                     </div>
                     <div class="req-meta">
-                      <%# Eval("ExpiryMetaText") %>
+                      <%#: Eval("ExpiryMetaText") %>
                     </div>
                   </div>
                 </div>
@@ -1022,7 +1022,7 @@
                   <div class="resource-row">
                     <span class="resource-label">Resources:</span>
                     <a class="resource-link"
-                       href='<%# Eval("ExternalLink") %>' target="_blank">
+                       href='<%# CyberApp_FIA.UrlSafe.Href(Eval("ExternalLink")) %>' target="_blank">
                       Open Google Classroom Resources
                     </a>
                   </div>
@@ -1052,7 +1052,7 @@
        style="margin-top:6px; padding:6px 8px; border-radius:10px;
               background:#fef2f2; color:#991b1b;">
     <strong>Your admin’s note:</strong>
-    <span><%# Eval("AdminNote") %></span>
+    <span><%#: Eval("AdminNote") %></span>
   </div>
 </asp:PlaceHolder>
 

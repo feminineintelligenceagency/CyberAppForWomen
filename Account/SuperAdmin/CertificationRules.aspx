@@ -596,12 +596,12 @@
 
             <ItemTemplate>
               <tr>
-                <td><%# Eval("id") %></td>
-                <td><%# Eval("name") %></td>
-                <td><%# Eval("requireQuizText") %></td>
-                <td><%# Eval("passScore") %>%</td>
-                <td><%# Eval("minSessions") %></td>
-                <td><%# Eval("minHelpSessions") %></td>
+                <td><%#: Eval("id") %></td>
+                <td><%#: Eval("name") %></td>
+                <td><%#: Eval("requireQuizText") %></td>
+                <td><%#: Eval("passScore") %>%</td>
+                <td><%#: Eval("minSessions") %></td>
+                <td><%#: Eval("minHelpSessions") %></td>
                 <td>
                   <asp:LinkButton
                     runat="server"

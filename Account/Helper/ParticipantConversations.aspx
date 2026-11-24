@@ -278,7 +278,7 @@
           <ItemTemplate>
             <div class="conversation-card">
               <div class="conversation-topic">
-                <%# Eval("Topic") %>
+                <%#: Eval("Topic") %>
               </div>
               <div class="conversation-meta">
                 Started

@@ -12,7 +12,7 @@ namespace CyberApp_FIA.Account
     /// - Creates the user and credentials in one transaction (UserRepository.CreateUser)
     /// - Writes an audit entry recording which SuperAdmin created the account
     /// </summary>
-    public partial class CreateUniversityAdmin : Page
+    public partial class CreateUniversityAdmin : SecurePage
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -70,6 +70,13 @@ namespace CyberApp_FIA.Account
             try
             {
                 // Quick check first so we don't spend Argon2 time on a duplicate.
+                var passwordProblem = PasswordPolicy.Problem(password, email);
+                if (passwordProblem != null)
+                {
+                    ShowError(passwordProblem);
+                    return;
+                }
+
                 if (UserRepository.EmailExists(email))
                 {
                     ShowError("That email is already registered.");

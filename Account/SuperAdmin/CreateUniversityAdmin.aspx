@@ -416,7 +416,7 @@
 
           <div class="grid-full">
             <label for="Password">Password</label>
-            <asp:TextBox ID="Password" runat="server" TextMode="Password" />
+            <asp:TextBox ID="Password" runat="server" TextMode="Password" placeholder="At least 12 characters" />
             <asp:RequiredFieldValidator
               ID="ReqPassword"
               runat="server"

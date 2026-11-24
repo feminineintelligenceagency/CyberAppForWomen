@@ -38,6 +38,16 @@ namespace CyberApp_FIA
                 return;
             }
 
+            // Role gate on EVERY request (including postbacks), based on the folder the page lives in.
+            // Pages used to check the role only on first load, so a button click could skip the check.
+            var requiredRole = RequiredRoleForPath(Request.AppRelativeCurrentExecutionFilePath);
+            if (requiredRole != null &&
+                !string.Equals((Session["Role"] as string ?? "").Trim(), requiredRole, StringComparison.OrdinalIgnoreCase))
+            {
+                Response.Redirect("~/Account/Login.aspx");
+                return;
+            }
+
             var timeoutMs = Session.Timeout * 60 * 1000;
             var loginUrl = ResolveUrl("~/Account/Login.aspx?expired=1");
 
@@ -58,6 +68,20 @@ namespace CyberApp_FIA
         }
 
         /// <summary>
+        /// Which role may open pages in each role folder. Pages outside these folders
+        /// (for example Account/Security) only need a signed-in user.
+        /// </summary>
+        private static string RequiredRoleForPath(string appRelativePath)
+        {
+            var path = appRelativePath ?? "";
+            if (path.StartsWith("~/Account/SuperAdmin/", StringComparison.OrdinalIgnoreCase)) return "SuperAdmin";
+            if (path.StartsWith("~/Account/UniversityAdmin/", StringComparison.OrdinalIgnoreCase)) return "UniversityAdmin";
+            if (path.StartsWith("~/Account/Helper/", StringComparison.OrdinalIgnoreCase)) return "Helper";
+            if (path.StartsWith("~/Account/Participant/", StringComparison.OrdinalIgnoreCase)) return "Participant";
+            return null;
+        }
+
+        /// <summary>
         /// Compares the user's passwordChangedUtc in users.xml with the value saved in the
         /// session at login. If they're different, the password was changed after this login.
         /// </summary>
@@ -73,9 +97,13 @@ namespace CyberApp_FIA
             }
             catch
             {
-                // If users.xml can't be read for a moment (e.g. it's being saved),
-                // don't kick everyone out. The next request checks again.
-                return true;
+                // If the account store can't be read for a moment, don't kick regular users out
+                // (the next request checks again). Admin sessions fail closed instead: they can
+                // change other people's data, so they must not continue on an unchecked session.
+                var role = (Session["Role"] as string ?? "").Trim();
+                var isAdmin = string.Equals(role, "SuperAdmin", StringComparison.OrdinalIgnoreCase) ||
+                              string.Equals(role, "UniversityAdmin", StringComparison.OrdinalIgnoreCase);
+                return !isAdmin;
             }
         }
     }
