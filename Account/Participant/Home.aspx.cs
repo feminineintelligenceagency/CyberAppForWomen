@@ -771,10 +771,10 @@ namespace CyberApp_FIA.Participant
                 if (!string.IsNullOrWhiteSpace(c.CourseId) && !classSlugByCourseId.ContainsKey(c.CourseId))
                     classSlugByCourseId[c.CourseId] = c.Slug;
             }
-            foreach (var row in rows)
+            foreach (var item in rows)
             {
-                if (classSlugByCourseId.TryGetValue(row.CourseId, out var slug))
-                    row.ClassUrl = ResolveUrl("~/Account/Participant/ClassViewer.aspx?class=" + HttpUtility.UrlEncode(slug));
+                if (classSlugByCourseId.TryGetValue(item.CourseId, out var slug))
+                        item.ClassUrl = ResolveUrl("~/Account/Participant/ClassViewer.aspx?class=" + HttpUtility.UrlEncode(slug));
             }
 
             RecommendedCoursesPanel.Visible = true;
