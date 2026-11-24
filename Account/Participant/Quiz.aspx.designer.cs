@@ -157,9 +157,7 @@ namespace CyberApp_FIA.Account.Participant
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.BulletedList BlWins;
-        protected global::System.Web.UI.WebControls.PlaceHolder RecommendationsHolder;
-        protected global::System.Web.UI.WebControls.Repeater RptRecommendations;
-
+        
         /// <summary>
         /// RecommendationsHolder control.
         /// </summary>
